@@ -1,0 +1,5 @@
+mongo_url: "mongodb://mongoadmin:949cad0977fb8daf334e@mongo:27017/"
+mongo_database: ocas_trace
+mongo_collection: ocas_span
+mongo_span_ttl_duration: "24h"
+otel_tracing_ratio: 0.1
