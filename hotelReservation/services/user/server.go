@@ -6,9 +6,9 @@ import (
 	"net"
 	"time"
 
-	"github.com/delimitrou/DeathStarBench/hotelreservation/registry"
-	pb "github.com/delimitrou/DeathStarBench/hotelreservation/services/user/proto"
-	"github.com/delimitrou/DeathStarBench/hotelreservation/tls"
+	"github.com/crane-cloud/ocas/hotelreservation/registry"
+	pb "github.com/crane-cloud/ocas/hotelreservation/services/user/proto"
+	"github.com/crane-cloud/ocas/hotelreservation/tls"
 	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"

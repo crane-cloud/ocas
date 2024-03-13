@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/delimitrou/DeathStarBench/hotelreservation/tls"
+	"github.com/crane-cloud/ocas/hotelreservation/tls"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	consul "github.com/hashicorp/consul/api"
 	lb "github.com/olivere/grpc/lb/consul"
