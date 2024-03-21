@@ -187,7 +187,7 @@ services:
         tag: "reservation"
 
   jaeger:
-    image: jaegertracing/all-in-one:1.48
+    image: jaegertracing/all-in-one:latest
     container_name: 'hotel_reserv_jaeger'
     ports:
       - "14250:14250"
@@ -201,6 +201,7 @@ services:
       - "6831:6831/udp"
       - "6832:6832/udp"  
     environment:
+      JAEGER_DISABLED: "true"
       SPAN_STORAGE_TYPE: "grpc-plugin"
       GRPC_STORAGE_PLUGIN_BINARY: "/app/jaeger-mongodb"
       GRPC_STORAGE_PLUGIN_CONFIGURATION_FILE: "/app/configs/config.yaml"
