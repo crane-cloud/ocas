@@ -215,7 +215,8 @@ services:
       - /home/ubuntu/ocas/jaeger-mongodb:/app
 
   mongo:
-    image: mongo:4.4.6
+    #image: mongo:4.4.6
+    image: mongo:5.0.25
     restart: always
     container_name: 'mongo'
     ports:

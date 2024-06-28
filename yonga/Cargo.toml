@@ -8,13 +8,20 @@ edition = "2021"
 [dependencies]
 mongodb = "2.8"
 bson = { version = "2.9", features = ["chrono-0_4"] } # Needed for using chrono datetime in doc
-tokio = "1.36"
+tokio = { version = "1.36", features = ["full"] }
 chrono = "0.4" # Used for setting DateTimes
 serde = "1" # Used in the Map Data into Structs section
-clap = "4.5"
+clap = "4.5.7"
 serde_yaml = "0.9"
-
+reqwest = { version = "0.12.5", features = ["json"] }
+serde_json = "1.0"
+regex = "1.5"
+prometheus-http-query= "0.8.3"
 
 [[bin]]
 name = "yonga"
 path = "src/yonga.rs"
+
+[[bin]]
+name = "monitor"
+path = "src/monitor.rs"
