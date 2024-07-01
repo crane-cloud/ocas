@@ -3,7 +3,6 @@ use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use mongodb::{options::ClientOptions, Client as MongoClient, Collection};
 use mongodb::bson::{doc, Document};
-use std::mem;
 use std::{fs, error::Error};
 use clap::{Arg, Command, ArgAction};
 use regex::Regex;
@@ -11,36 +10,10 @@ use bson::DateTime;
 use chrono::Utc;
 use serde_json::Value;
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct Node {
-    id: String,
-    name: String,
-    ip: String,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct Resource {
-    cpu: f64,
-    memory: f64,
-    disk: f64,
-    network: f64,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct Environment {
-    node: Node,
-    bandwidth: f64,
-    latency: f64,
-    packet_loss: f64,
-}
-
 #[derive(Debug, Deserialize, Clone)]
-struct Prometheus {
-    url: String,
-    label: String,
-    stack: String,
-    query: String,
-    metric: String,
+struct Cluster {
+    nodes: Vec<Node>,
+    prometheus: Prometheus,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -63,18 +36,6 @@ struct Service {
     db: String
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct ServicePrometheus {
-    name: String,
-    node: Vec<Node>
-}
-
-#[derive(Debug, Deserialize, Clone)]
-struct Cluster {
-    nodes: Vec<Node>,
-    prometheus: Prometheus,
-}
-
 #[derive(Debug, Deserialize, Clone)]
 struct Config {
     cluster: Cluster,
@@ -83,18 +44,69 @@ struct Config {
 }
 
 
-//Node exporter metrics
+#[derive(Debug, Deserialize, Serialize, Clone)]
+struct Node {
+    id: String,
+    name: String,
+    ip: String,
+}
+
+// Network metrics
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct Network {
+    available: bool,
+    bandwidth: f64,
+    latency: f64,
+    packet_loss: f64,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+struct Resource {
+    cpu: f64,
+    memory: f64,
+    disk: f64,
+    network: f64,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+struct EnvironmentMetric {
+    node: Node,
+    network: Network,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+struct Prometheus {
+    url: String,
+    label: String,
+    stack: String,
+    query: String,
+    metric: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct ServicePrometheus {
+    name: String,
+    node: Vec<Node>
+}
+
 #[derive(Debug, Serialize, Deserialize)]
-struct NodeMetric {
+struct ServiceMetric {
+    service: Service,
+    utilization: Resource,
+}
+
+
+#[derive(Debug, Serialize, Deserialize)]
+struct NodeMongo {
     timestamp: DateTime,
     metadata: Node,
     resource: Resource,
-    environment: Vec<Environment>,
+    environment: Vec<EnvironmentMetric>,
     services: Vec<ServiceMetric>,
 }
 
-// Convert NodeMetric to BSON Document
-impl Into<Document> for NodeMetric {
+// convert NodeMongo to BSON Document
+impl Into<Document> for NodeMongo {
     fn into(self) -> Document {
         doc! {
             "timestamp": self.timestamp,
@@ -106,23 +118,29 @@ impl Into<Document> for NodeMetric {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct ServiceMetric {
-    service: Service,
-    utilization: Resource,
-}
+
 
 // function to return Node given a socket address
 fn get_node_by_address(nodes: &[Node], address: &str) -> Option<Node> {
-    let ip_address = address.split(':').next().unwrap_or_default(); // Extracts only the IP part
+    // Split the address by ':' and take the first part (IP address)
+    let ip_address = address.split(':').next().unwrap_or_default();
+    
+    // Find the node with the matching IP address and return a cloned version of it
     nodes.iter().find(|node| node.ip == ip_address).cloned()
 }
 
 // function that takes PromqlResult and returns ip address strings
 fn get_ip_addresses(promql_result: &prometheus_http_query::response::PromqlResult) -> Vec<String> {
-    promql_result.data().as_vector().unwrap().iter().map(|vector| {
-        vector.metric().get("instance").unwrap().as_str().to_string()
-    }).collect()
+    // Ensure the result is a vector and iterate over it
+    if let Some(vector_data) = promql_result.data().as_vector() {
+        vector_data.iter().filter_map(|vector| {
+            // Extract the "instance" metric, which typically contains the IP address
+            vector.metric().get("instance").map(|value| value.as_str().to_string())
+        }).collect()
+    } else {
+        // Return an empty vector if the result data is not a vector
+        vec![]
+    }
 }
 
 // retrieve a list of services from prometheus
@@ -148,7 +166,7 @@ async fn get_services_prometheus(config: &Config, client: &Client, prometheus: &
 
             for service in services {
                 
-                // strip the stack from the service name
+                // strip the stack from the service name - to check if part of the config
                 let service_trimmed = service.trim_start_matches(prometheus.stack.as_str());
 
                 // check if the service is in the config
@@ -156,16 +174,18 @@ async fn get_services_prometheus(config: &Config, client: &Client, prometheus: &
                     continue;
                 }
 
-                let service_formatted = format!(r#""{}""#, service.as_str());
-                let q_a = prometheus.query.replace("\"_\"", &service_formatted);
+                let service_formatted = format!(r#""{}""#, service.as_str()); //hotelreservation_frontend
+                let q_a = prometheus.query.replace("\"_\"", &service_formatted); //"sum(rate(metric{container_label_com_docker_swarm_service_name=\"_\"}[2m])) by (instance)"
                 let q = q_a.replace("metric", prometheus.metric.as_str());
 
                 let result = prometheus_client.query(q).get().await?;
 
+                //println!("Query for service {}: {:?}", service, result.data().as_vector());
+
                 if result.data().as_vector().is_some() {
                     let ip_addresses = get_ip_addresses(&result);
 
-                    //println!("Address for service {:?}: {:?}", service, ip_addresses);
+                    println!("Address(es) for service {:?}: {:?}", service, ip_addresses);
 
                     let nodes = ip_addresses.iter().filter_map(|address| {
                         get_node_by_address(&config.cluster.nodes, address)
@@ -212,11 +232,11 @@ async fn get_service_metrics_prometheus(config: &Config, service: &ServicePromet
 
     for (key, query_template) in &queries {
         let query = query_template.replace("label", &config.cluster.prometheus.label).replace("\"{}\"", &service_formatted);
-        println!("Query for service {}: {}", service.name, query);
+        //println!("Query for service {}: {}", service.name, query);
         match prometheus_client.query(query).get().await {
             Ok(result) => metrics.insert(*key, result),
             Err(_) => {
-                //println!("Failed to get metrics for service {}", service.name);
+                println!("Failed to get metrics for service {}", service.name);
                 return Ok(None)
             },
         };
@@ -258,9 +278,8 @@ async fn get_service_metrics_prometheus(config: &Config, service: &ServicePromet
     Ok(Some(service_metric))
 }
 
-
-//Retrieve metrics from Node Exporter URL
-async fn get_node_exporter_metrics(client: &Client, node: Node) -> Result<Option<NodeMetric>, Box<dyn Error>> {
+// get node resource metric from node_exporter
+async fn get_node_resource(client: &Client, node: Node) -> Result<Option<Resource>, Box<dyn Error>> {
     let url = format!("http://{}:9100/metrics", node.ip);
 
     let response = client.get(&url).send().await?;
@@ -312,19 +331,118 @@ async fn get_node_exporter_metrics(client: &Client, node: Node) -> Result<Option
         let disk = disk_b / 1_073_741_824.0; // Convert bytes to GiB
         let network = network_b / 1_048_576.0; // Convert bytes to MiB
 
-        // Create a BSON UTC datetime
-        let timestamp = DateTime::from_chrono(Utc::now());
 
-        return Ok(Some(NodeMetric {
-            timestamp,
-            metadata: node,
-            resource: Resource { cpu, memory, disk, network },
-            environment: Vec::new(),
-            services: Vec::new(),
+        return Ok(Some(Resource {
+            cpu: cpu,
+            memory: memory,
+            disk: disk,
+            network: network,
         }));
     }
 
     Ok(None)
+}
+
+// get node environment metric from node_exporter
+async fn get_node_environment_metric(client: &Client, node: Node, config: &Config) -> Result<Option<Vec<EnvironmentMetric>>, Box<dyn Error>> {
+    let url = format!("http://{}:9100/metrics", node.ip);
+    let response = client.get(&url).send().await?;
+
+    if response.status().is_success() {
+        let body = response.text().await?;
+
+        let mut environment_metrics: Vec<EnvironmentMetric> = Vec::new();
+
+        for node_e in &config.cluster.nodes {
+            if node_e.name == node.name {
+                continue;
+            }
+
+            let mut network = Network {
+                available: false,
+                bandwidth: 0.0,
+                latency: 1000.0,
+                packet_loss: 100.0,
+            };
+
+            // Create regex patterns dynamically
+            let re_availability = Regex::new(&format!(r#"availability\{{ip="{}",metric="availability",timestamp="[^"]+"\}} ([01])"#, node_e.ip))?;
+            let re_bandwidth = Regex::new(&format!(r#"bandwidth\{{ip="{}",metric="bandwidth",timestamp="[^"]+"\}} ([0-9\.]+)"#, node_e.ip))?;
+            let re_packet_loss = Regex::new(&format!(r#"packet_loss\{{ip="{}",metric="packet_loss",timestamp="[^"]+"\}} ([0-9\.]+)"#, node_e.ip))?;
+            let re_latency = Regex::new(&format!(r#"latency\{{ip="{}",metric="latency",timestamp="[^"]+"\}} ([0-9\.]+)"#, node_e.ip))?;
+
+            for line in body.lines() {
+                if let Some(caps) = re_availability.captures(line) {
+                    network.available = &caps[1] == "1";
+                } else if let Some(caps) = re_bandwidth.captures(line) {
+                    network.bandwidth = caps[1].parse::<f64>()?;
+                } else if let Some(caps) = re_packet_loss.captures(line) {
+                    network.packet_loss = caps[1].parse::<f64>()?;
+                } else if let Some(caps) = re_latency.captures(line) {
+                    network.latency = caps[1].parse::<f64>()?;
+                }
+            }
+
+            environment_metrics.push(EnvironmentMetric {
+                node: node_e.clone(),
+                network: network,
+            });
+        }
+
+        return Ok(Some(environment_metrics));
+    }
+    Ok(None)
+}
+
+// function to determine if ServicePrometheus is in a node
+fn is_service_in_node(service: &ServicePrometheus, node: &Node) -> bool {
+    service.node.iter().any(|n| n.name == node.name)
+}
+
+async fn get_node_services_metrics(config: &Config, node: Node, services: Vec<ServicePrometheus>) -> Result<Vec<ServiceMetric>, Box<dyn Error>> {
+    let mut service_metrics: Vec<ServiceMetric> = Vec::new();
+
+    for service in services {
+        // check if service is in node - skip if not
+        if !is_service_in_node(&service, &node) {
+            continue;
+        }
+
+        // get service metrics
+        if let Some(service_metric) = get_service_metrics_prometheus(config, &service).await? {
+            service_metrics.push(service_metric);
+        }
+    }
+
+    Ok(service_metrics)
+}
+
+// get all the metrics
+async fn get_node_mongo_metrics(client: &Client, node: Node, config: &Config, services: Vec<ServicePrometheus>) -> Result<Option<NodeMongo>, Box<dyn Error>> {
+
+    let resource = get_node_resource(client, node.clone()).await?;
+    let environment = get_node_environment_metric(client, node.clone(), &config).await?;
+    let services = get_node_services_metrics(&config, node.clone(), services).await?;
+
+    //ToDo: When to return Ok(None)
+
+    if resource.is_none() || environment.is_none() {
+        return Ok(None);
+    }
+
+    // Create a BSON UTC datetime
+    let timestamp = DateTime::from_chrono(Utc::now());
+
+    let node_mongo = NodeMongo {
+        timestamp: timestamp,
+        metadata: node.clone(),
+        resource: resource.unwrap(),
+        environment: environment.unwrap(),
+        services: services,
+    };
+
+    Ok(Some(node_mongo))
+
 }
 
 
@@ -362,60 +480,66 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // get the services from prometheus
     let services = get_services_prometheus(&config, &client, &config.cluster.prometheus).await.unwrap();
 
-    for service in services {
-        // get metrics for the service
-        let service_metrics = get_service_metrics_prometheus(&config, &service).await.unwrap();
+    // print the number of services retrieved
+    println!("Number of services retrieved: {}", services.len());
 
-        // print the metrics
-        println!("{:?}", service_metrics);
+
+    // set up MongoDB client
+    let mongo_client_options = ClientOptions::parse(&config.database.uri).await.unwrap();
+    let mongo_client = MongoClient::with_options(mongo_client_options).unwrap();
+    let database = mongo_client.database(&config.database.db);
+    
+    //Use node names as collection names
+    let collections: Vec<Collection<Document>> = config.cluster.nodes.iter()
+    .map(|node| database.collection::<Document>(&node.name))
+    .collect();
+
+    //Create a vector of collection names from node names
+    let col_names: Vec<String> = config.cluster.nodes.iter()
+    .map(|node| node.name.clone())
+    .collect();
+
+    //iterate over each collection and match with names in the vector
+    for collection in collections {
+        let coll_name = collection.name().to_string();
+        match col_names.iter().find(|&x| x == &coll_name) {
+            Some(_) => {
+
+                // create config clone
+                let config = config.clone();
+
+                // create services clone
+                let services = services.clone();
+
+                // get the node in this collection
+                let node = config.cluster.nodes.iter().find(|node| node.name == coll_name).unwrap().clone();
+
+                print!("Node {} found in MongoDB - spawning a tokio thread \n", coll_name);
+
+                // spawn a background task to fetch metrics periodically and push to MongoDB
+                tokio::spawn(async move {
+                    let mut interval = time::interval(Duration::from_secs(60));
+                    let client = Client::new();
+                    loop {
+                        interval.tick().await;
+
+                        if let Some(metrics) = get_node_mongo_metrics(&client, node.clone(), &config, services.clone()).await.unwrap() {
+                            // println!("Node {}: pushing metrics {:?} to MongoDB", node.name, metrics);
+                            push_metrics_to_mongo(&collection, metrics.into()).await;
+                        }
+
+                    }
+                });
+            }
+            None => {
+                println!("Collection '{}' does not match any node name", coll_name);
+            }
+        }
     }
 
-
-    // // set up MongoDB client
-    // let mongo_client_options = ClientOptions::parse(&config.database.uri).await.unwrap();
-    // let mongo_client = MongoClient::with_options(mongo_client_options).unwrap();
-    // let database = mongo_client.database(&config.database.db);
-    
-    // //Use node names as collection names
-    // let collections: Vec<Collection<Document>> = config.cluster.nodes.iter()
-    // .map(|node| database.collection::<Document>(&node.name))
-    // .collect();
-
-    // //Create a vector of collection names from node names
-    // let col_names: Vec<String> = config.cluster.nodes.iter()
-    // .map(|node| node.name.clone())
-    // .collect();
-
-    // //iterate over each collection and match with names in the vector
-    // for collection in collections {
-    //     let coll_name = collection.name().to_string();
-    //     match col_names.iter().find(|&x| x == &coll_name) {
-    //         Some(_) => {
-    //             let client = Client::new();
-
-    //             // get the node in this collection
-    //             let node = config.cluster.nodes.iter().find(|node| node.name == coll_name).unwrap().clone();
-
-    //             // spawn a background task to fetch metrics periodically and push to MongoDB
-    //             tokio::spawn(async move {
-    //                 let mut interval = time::interval(Duration::from_secs(60));
-    //                 loop {
-    //                     interval.tick().await;
-    //                         if let Some(metrics) = get_node_exporter_metrics(&client, node.clone()).await.unwrap() {
-    //                             push_metrics_to_mongo(&collection, metrics.into()).await;
-    //                         }
-    //                 }
-    //             });
-    //         }
-    //         None => {
-    //             println!("Collection '{}' does not match any node name", coll_name);
-    //         }
-    //     }
-    // }
-
     // // Handle Ctrl+C signal
-    // tokio::signal::ctrl_c().await.expect("Failed to listen for ctrl+c");
-    // println!("Received Ctrl+C, shutting down.");
+    tokio::signal::ctrl_c().await.expect("Failed to listen for ctrl+c");
+    println!("Received Ctrl+C, shutting down.");
 
     Ok(())
 }
