@@ -33,6 +33,7 @@ measure_bandwidth_pl_latency() {
     id=$((idx+1))
 
     latency_output=$(tcp-latency -p 9100 $ip)
+    #latency_output=$(/home/ubuntu/.pyenv/shims/tcp-latency -p 9100 $ip)
     last_line_log=$(echo "$latency_output" | tail -n 1)
 
     if [[ "$last_line_log" == *"All 5 transmissions failed"* ]]; then
@@ -69,7 +70,7 @@ measure_bandwidth_pl_latency() {
     if [ -f "$json_file" ]; then
         cp "$json_file" "$temp_file"
     else
-        echo "{}" > "$temp_file"
+        echo "" > "$temp_file"
     fi
 
     # Append bandwidth, latency, packet loss and availability measurements to the temporary text file
@@ -79,7 +80,7 @@ measure_bandwidth_pl_latency() {
     echo "availability{ip=\"$ip\",timestamp=\"$timestamp\",metric=\"availability\"} $availability" >> "$temp_file"
 
     # Clear the original text file
-    echo "{}" > "$json_file"
+    echo "" > "$json_file"
 
     # Move the temporary text file to the original text file
     mv "$temp_file" "$json_file"
