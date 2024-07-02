@@ -14,14 +14,14 @@ struct DatabaseCollection {
 }
 
 #[derive(Debug, Deserialize, Clone)]
-struct Database {
-    uri: String,
-    db: String,
-    collections: Vec<DatabaseCollection>,
+pub struct Database {
+    pub uri: String,
+    pub db: String,
+    pub collections: Vec<DatabaseCollection>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-struct Service {
+pub struct Service {
     id: String,
     name: String,
     cache: String,
@@ -29,9 +29,9 @@ struct Service {
 }
 
 #[derive(Debug, Deserialize, Clone)]
-struct Config {
+pub struct Config {
     cluster: Cluster,
-    database: Database,
+    pub database: Database,
     services: Vec<Service>,
 }
 
@@ -53,11 +53,11 @@ struct Network {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
-struct Resource {
-    cpu: f64,
-    memory: f64,
-    disk: f64,
-    network: f64,
+pub struct Resource {
+    pub cpu: f64,
+    pub memory: f64,
+    pub disk: f64,
+    pub network: f64,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
