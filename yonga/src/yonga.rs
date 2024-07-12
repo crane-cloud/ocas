@@ -1,54 +1,56 @@
-// use std::process::Command;
-// use std::io::{self, BufRead, BufReader};
+use crate::stack::StackConfig;
+use crate::utility::Config;
+use crate::solver::Solver;
 
-// use clap::{App, Arg};
+#[derive(Debug)]
+pub struct Yonga {
+    pub stack_config: StackConfig,
+    pub cluster_config: Config,
+    pub running: bool,
+    pub revision: u32,
+    pub solver: Solver,
+}
 
-// fn main() -> io::Result<()> {
-//     let matches = App::new("Yonga")
-//         .version("0.1.0")
-//         .arg(Arg::with_name("service")
-//             .short('c')
-//             .long("service")
-//             .value_name("SERVICE")
-//             .help("Sets the name of the service")
-//             .takes_value(true)
-//             .required(true))
-//         .get_matches();
+impl Yonga {
+    pub fn new(stack_config: StackConfig, cluster_config: Config, solver: Solver) -> Self {
+        Yonga { 
+            stack_config,
+            cluster_config,
+            running: false,
+            revision: 0,
+            solver,
+        }
+    }
 
-//     let service = matches.value_of("service").unwrap();
+    pub async fn start(&mut self) {
+        println!("Starting Yonga placement strategy");
 
-//     let services = Command::new("docker")
-//         .arg("service")
-//         .arg("ls")
-//         .output()?;
+        loop { // consider the different modes of placement (0, 1, 2)
+            if self.running {
+                self.placement_n().await;
+            }
 
-//     if services.status.success() {
-//         let reader = BufReader::new(&services.stdout[..]);
+            else {
+                self.placement_0().await;
+            }
 
-//         let mut service_vec = Vec::new(); // Initialize an empty vector
+            tokio::time::sleep(tokio::time::Duration::from_secs(30)).await;
+        }
+    }
 
-//         println!("Services in stack '{}':", service);
-//         for line in reader.lines().skip(1) { // Skip the header line
-//             let line = line?;
-//             let parts: Vec<&str> = line.split_whitespace().collect();
-//             if parts.len() >= 2 {
-//                 service_vec.push(parts[1]); // Push the service name to the vector
-//             }
-//         }
+    pub async fn placement_0(&mut self) {
+        println!("Running the Yonga placement strategy - placement 0");
 
-//         // Print the collected service names
-//         for service_name in &service_vec {
-//             println!("{}", service_name);
-//         }
-//     } else {
-//         // If the command failed, print its stderr
-//         let stderr = String::from_utf8_lossy(&services.stderr);
-//         eprintln!("Error: {}", stderr);
-//     }
+        let _ = self.solver.solve_0().await;
 
-//     Ok(())
-// }
+        // update the run and revision
+        self.running = true;
+        self.revision += 1;
 
-fn main() {
-    println!("Hello, world!");
+    }
+
+    pub async fn placement_n(&mut self) {
+        println!("Evaluating the current state of the placements");
+    }
+
 }

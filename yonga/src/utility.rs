@@ -21,7 +21,7 @@ pub struct Database {
     pub collections: Vec<DatabaseCollection>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, Hash, PartialEq)]
 pub struct Service {
     pub id: String,
     pub name: String,
@@ -37,7 +37,7 @@ pub struct Config {
 }
 
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Eq, PartialEq, Hash)]
 pub struct Node {
     pub id: String,
     pub name: String,
@@ -47,7 +47,7 @@ pub struct Node {
 // Network metrics
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Network {
-    pub available: bool,
+    pub available: f64,
     pub bandwidth: f64,
     pub latency: f64,
     pub packet_loss: f64,
@@ -190,6 +190,8 @@ pub fn extract_environment_metrics(document: &Document) -> Vec<EnvironmentMetric
                     if let Ok(node) = bson::from_bson(bson::Bson::Document(node_doc.clone())) {
                         let network = env_doc.get_document("network").map(|network_doc| {
                             let available = network_doc.get_bool("available").unwrap_or(false);
+                            // convert available to f64: true = 1.0, false = 0.0
+                            let available = if available { 1.0 } else { 0.0 };
                             let bandwidth = extract_f64(network_doc, "bandwidth");
                             let latency = extract_f64(network_doc, "latency");
                             let packet_loss = extract_f64(network_doc, "packet_loss");
@@ -201,7 +203,7 @@ pub fn extract_environment_metrics(document: &Document) -> Vec<EnvironmentMetric
                                 packet_loss,
                             }
                         }).unwrap_or(Network {
-                            available: false,
+                            available: 0.0,
                             bandwidth: 0.0,
                             latency: 0.0,
                             packet_loss: 0.0,

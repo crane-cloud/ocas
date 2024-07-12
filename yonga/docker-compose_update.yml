@@ -1,0 +1,307 @@
+version: '3'
+services:
+  consul:
+    image: consul:1.12
+    ports:
+    - 8300:8300
+    - 8400:8400
+    - 8500:8500
+    - 8600:53/udp
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+      placement: {}
+  recommendation:
+    image: hotel_reserv_recommend_single_node:latest
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: recommendation
+    container_name: hotel_reserv_recommendation
+    depends_on:
+    - mongodb-recommendation
+    - consul
+    logging:
+      driver: fluentd
+      options:
+        tag: recommendation
+  mongodb-reservation:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    container_name: hotel_reserv_reservation_mongo
+    logging:
+      driver: fluentd
+      options:
+        tag: mongodb-reservation
+    volumes:
+    - reservation:/data/db
+  mongodb-recommendation:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    container_name: hotel_reserv_recommendation_mongo
+    logging:
+      driver: fluentd
+      options:
+        tag: mongodb-recommendation
+    volumes:
+    - recommendation:/data/db
+  mongodb-profile:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    container_name: hotel_reserv_profile_mongo
+    logging:
+      driver: fluentd
+      options:
+        tag: mongodb-profile
+    volumes:
+    - profile:/data/db
+  profile:
+    image: hotel_reserv_profile_single_node:latest
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - MEMC_TIMEOUT
+    - LOG_LEVEL
+    entrypoint: profile
+    container_name: hotel_reserv_profile
+    depends_on:
+    - mongodb-profile
+    - memcached-profile
+    - consul
+    logging:
+      driver: fluentd
+      options:
+        tag: profile
+  frontend:
+    image: hotel_reserv_frontend_single_node:latest
+    ports:
+    - 5000:5000
+    deploy:
+      replicas: 6
+      restart_policy:
+        condition: any
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: frontend
+    container_name: hotel_reserv_frontend
+    depends_on:
+    - consul
+    logging:
+      driver: fluentd
+      options:
+        tag: frontend
+  search:
+    image: hotel_reserv_search_single_node:latest
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: search
+    container_name: hotel_reserv_search
+    depends_on:
+    - consul
+    logging:
+      driver: fluentd
+      options:
+        tag: search
+  reservation:
+    image: hotel_reserv_rsv_single_node:latest
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    - MEMC_TIMEOUT
+    entrypoint: reservation
+    container_name: hotel_reserv_reservation
+    depends_on:
+    - mongodb-reservation
+    - memcached-reserve
+    - consul
+    logging:
+      driver: fluentd
+      options:
+        tag: reservation
+  memcached-rate:
+    image: memcached
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - MEMCACHED_CACHE_SIZE=128
+    - MEMCACHED_THREADS=2
+    container_name: hotel_reserv_rate_mmc
+    logging:
+      driver: fluentd
+      options:
+        tag: memcached-rate
+  memcached-profile:
+    image: memcached
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - MEMCACHED_CACHE_SIZE=128
+    - MEMCACHED_THREADS=2
+    container_name: hotel_reserv_profile_mmc
+    logging:
+      driver: fluentd
+      options:
+        tag: memcached-profile
+  mongodb-geo:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    container_name: hotel_reserv_geo_mongo
+    logging:
+      driver: fluentd
+      options:
+        tag: mongodb-geo
+    volumes:
+    - geo:/data/db
+  geo:
+    image: hotel_reserv_geo_single_node:latest
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: geo
+    container_name: hotel_reserv_geo
+    depends_on:
+    - mongodb-geo
+    - consul
+    logging:
+      driver: fluentd
+      options:
+        tag: geo
+  user:
+    image: hotel_reserv_user_single_node:latest
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: user
+    container_name: hotel_reserv_user
+    depends_on:
+    - mongodb-user
+    - consul
+    logging:
+      driver: fluentd
+      options:
+        tag: user
+  mongodb-user:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    container_name: hotel_reserv_user_mongo
+    logging:
+      driver: fluentd
+      options:
+        tag: mongodb-user
+    volumes:
+    - user:/data/db
+  memcached-reserve:
+    image: memcached
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - MEMCACHED_CACHE_SIZE=128
+    - MEMCACHED_THREADS=2
+    container_name: hotel_reserv_reservation_mmc
+    logging:
+      driver: fluentd
+      options:
+        tag: memcached-reserve
+  mongodb-rate:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    container_name: hotel_reserv_rate_mongo
+    logging:
+      driver: fluentd
+      options:
+        tag: mongodb-rate
+    volumes:
+    - rate:/data/db
+  rate:
+    image: hotel_reserv_rate_single_node:latest
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    - MEMC_TIMEOUT
+    entrypoint: rate
+    container_name: hotel_reserv_rate
+    depends_on:
+    - mongodb-rate
+    - memcached-rate
+    - consul
+    logging:
+      driver: fluentd
+      options:
+        tag: rate
+volumes:
+  geo: {}
+  reservation: {}
+  recommendation: {}
+  profile: {}
+  user: {}
+  rate: {}

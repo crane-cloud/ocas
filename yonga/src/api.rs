@@ -12,6 +12,29 @@ struct AppState {
     config: Config,
 }
 
+#[derive(Debug)]
+struct Environment {
+    environment: Vec<EnvironmentMetric>,
+}
+
+impl Environment {
+    fn new(environment: Vec<EnvironmentMetric>) -> Self {
+        Self {
+            environment,
+        }
+    }
+
+    // function get Network by node name
+    fn get_network_by_node_name(&self, node: Node) -> Option<Network> {
+        for env in &self.environment {
+            if env.node == node {
+                return Some(env.network.clone());
+            }
+        }
+        None
+    }
+}
+
 // get - welcome message at /
 #[get("/")]
 async fn welcome() -> impl Responder {
@@ -58,7 +81,7 @@ async fn get_node_utilization(state: web::Data<Arc<AppState>>, node: web::Path<S
     // check that the node is part of the config
     if !yonga::utility::is_node_in_config(&node, &state.config) {
         println!("Node not found in the configuration\n");
-        return HttpResponse::NotFound().body("Node not found in the configuration \n");
+        return HttpResponse::NotFound().body("Node not found in the configuration. \n");
     }
 
     //println!("retrieving resource utilization for node: {}", node);
@@ -183,21 +206,71 @@ async fn get_node_environment(state: web::Data<Arc<AppState>>, node: web::Path<S
         return HttpResponse::NotFound().body("Node not found in the configuration\n");
     }
 
-    //println!("Retrieving environment metrics for node: {}", node);
-    let collection: mongodb::Collection<mongodb::bson::Document> = state.database.collection(&node);
+    // go through all the nodes except the {node} for metrics & get the average
+    let mut total_available = 0.0;
+    let mut total_bandwidth = 0.0;
+    let mut total_packet_loss = 0.0;
+    let mut total_latency = 0.0;
 
-    // Get the latest document
-    match yonga::utility::get_latest_document(&collection).await {
-        Ok(latest_document) => {
-            // Extract environment metrics from the latest document
-            let metrics = yonga::utility::extract_environment_metrics(&latest_document);
-            HttpResponse::Ok().json(metrics)
+    let mut node_count = 0;
+
+    for n in &state.config.cluster.nodes {
+        if n.name == node {
+            continue;
         }
-        Err(_) => {
-            println!("Failed to retrieve the latest document for node: {}", node);
-            HttpResponse::InternalServerError().body("Failed to retrieve the latest document\n")
+
+        // get node in state by name
+        let real_node = state.config.cluster.nodes.iter().find(|n| n.name == node).unwrap();
+
+        let collection: mongodb::Collection<mongodb::bson::Document> = state.database.collection(&n.name);
+
+        // get the latest document
+        match yonga::utility::get_latest_document(&collection).await {
+            Ok(latest_document) => {
+
+                // Extract environment metrics from the latest document
+                let metrics = yonga::utility::extract_environment_metrics(&latest_document);
+                let environment = Environment::new(metrics);
+                let network = environment.get_network_by_node_name(real_node.clone()).unwrap();
+
+                total_available += network.available as f64;
+                total_bandwidth += network.bandwidth as f64;
+                total_packet_loss += network.packet_loss as f64;
+                total_latency += network.latency as f64;
+
+                // set the node count
+                node_count += 1;
+
+            }
+            Err(_) => {
+                println!("Failed to retrieve the latest document for node: {}", n.name);
+                return HttpResponse::InternalServerError().body("Failed to retrieve the latest document\n");
+            }
         }
+
+        
+
+        // let environment_metrics = EnvironmentMetric {
+        //     node: node,
+        //     network: average_network,
+        // };
+
+        // let environment = Environment {
+        //     environment: vec![environment_metrics],
+        // };
+
+        
     }
+    // get the average network metrics
+    let average_network = Network {
+        available: total_available / node_count as f64,
+        bandwidth: total_bandwidth / node_count as f64,
+        packet_loss: total_packet_loss / node_count as f64,
+        latency: total_latency / node_count as f64,
+    };
+
+    return HttpResponse::Ok().json(average_network);
+
 }
 
 

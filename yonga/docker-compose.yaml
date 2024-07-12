@@ -1,0 +1,324 @@
+version: "3"
+services:
+  consul:
+    image: consul:1.12
+    ports:
+      - "8300:8300"
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:53/udp"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  frontend:
+    environment:
+      - TLS
+      - GC
+      - JAEGER_SAMPLE_RATIO
+      - LOG_LEVEL
+    image: hotel_reserv_frontend_single_node:latest
+    entrypoint: frontend
+    container_name: 'hotel_reserv_frontend'
+    ports:
+      - "5000:5000"
+    depends_on:
+      - consul
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "frontend"
+
+  profile:
+    environment:
+      - TLS
+      - GC
+      - JAEGER_SAMPLE_RATIO
+      - MEMC_TIMEOUT
+      - LOG_LEVEL
+    image: hotel_reserv_profile_single_node:latest
+    entrypoint: profile
+    container_name: 'hotel_reserv_profile'
+    depends_on:
+      - mongodb-profile
+      - memcached-profile
+      - consul
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "profile"
+
+  search:
+    image: hotel_reserv_search_single_node:latest
+    entrypoint: search
+    container_name: 'hotel_reserv_search'
+    depends_on:
+      - consul
+    environment:
+      - TLS
+      - GC
+      - JAEGER_SAMPLE_RATIO
+      - LOG_LEVEL
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "search"
+
+  geo:
+    environment:
+      - TLS
+      - GC
+      - JAEGER_SAMPLE_RATIO
+      - LOG_LEVEL
+    image: hotel_reserv_geo_single_node:latest
+    entrypoint: geo
+    container_name: 'hotel_reserv_geo'
+    depends_on:
+      - mongodb-geo
+      - consul
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "geo"
+
+  rate:
+    environment:
+      - TLS
+      - GC
+      - JAEGER_SAMPLE_RATIO
+      - LOG_LEVEL
+      - MEMC_TIMEOUT      
+    image: hotel_reserv_rate_single_node:latest
+    entrypoint: rate
+    container_name: 'hotel_reserv_rate'
+    depends_on:
+      - mongodb-rate
+      - memcached-rate
+      - consul
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "rate"
+
+  recommendation:
+    environment:
+      - TLS
+      - GC
+      - JAEGER_SAMPLE_RATIO
+      - LOG_LEVEL
+    image: hotel_reserv_recommend_single_node:latest
+    entrypoint: recommendation
+    container_name: 'hotel_reserv_recommendation'
+    depends_on:
+      - mongodb-recommendation
+      - consul
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "recommendation"
+
+  user:
+    environment:
+      - TLS
+      - GC
+      - JAEGER_SAMPLE_RATIO
+      - LOG_LEVEL
+    image: hotel_reserv_user_single_node:latest
+    entrypoint: user
+    container_name: 'hotel_reserv_user'
+    depends_on:
+      - mongodb-user
+      - consul
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "user"
+
+  reservation:
+    environment:
+      - TLS
+      - GC
+      - JAEGER_SAMPLE_RATIO
+      - LOG_LEVEL
+      - MEMC_TIMEOUT
+    image: hotel_reserv_rsv_single_node:latest
+    entrypoint: reservation
+    container_name: 'hotel_reserv_reservation'
+    depends_on:
+      - mongodb-reservation
+      - memcached-reserve
+      - consul
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "reservation"
+
+  memcached-rate:
+    image: memcached
+    container_name: 'hotel_reserv_rate_mmc'
+    environment:
+      - MEMCACHED_CACHE_SIZE=128
+      - MEMCACHED_THREADS=2
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "memcached-rate"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  memcached-profile:
+    image: memcached
+    container_name: 'hotel_reserv_profile_mmc'
+    environment:
+      - MEMCACHED_CACHE_SIZE=128
+      - MEMCACHED_THREADS=2
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "memcached-profile"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  memcached-reserve:
+    image: memcached
+    container_name: 'hotel_reserv_reservation_mmc'
+    environment:
+      - MEMCACHED_CACHE_SIZE=128
+      - MEMCACHED_THREADS=2
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "memcached-reserve"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  mongodb-geo:
+    image: mongo:4.4.6
+    container_name: 'hotel_reserv_geo_mongo'
+    volumes:
+      - geo:/data/db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "mongodb-geo"
+
+  mongodb-profile:
+    image: mongo:4.4.6
+    container_name: 'hotel_reserv_profile_mongo'
+    volumes:
+      - profile:/data/db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "mongodb-profile"
+
+  mongodb-rate:
+    image: mongo:4.4.6
+    container_name: 'hotel_reserv_rate_mongo'
+    volumes:
+      - rate:/data/db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "mongodb-rate"
+
+  mongodb-recommendation:
+    image: mongo:4.4.6
+    container_name: 'hotel_reserv_recommendation_mongo'
+    volumes:
+      - recommendation:/data/db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "mongodb-recommendation"
+
+  mongodb-reservation:
+    image: mongo:4.4.6
+    container_name: 'hotel_reserv_reservation_mongo'
+    volumes:
+      - reservation:/data/db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "mongodb-reservation"
+
+  mongodb-user:
+    image: mongo:4.4.6
+    container_name: 'hotel_reserv_user_mongo'
+    volumes:
+      - user:/data/db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    logging:
+      driver: "fluentd"
+      options:
+        tag: "mongodb-user"
+
+volumes:
+  geo:
+  profile:
+  rate:
+  recommendation:
+  reservation:
+  user:
