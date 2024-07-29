@@ -247,18 +247,6 @@ async fn get_node_environment(state: web::Data<Arc<AppState>>, node: web::Path<S
                 return HttpResponse::InternalServerError().body("Failed to retrieve the latest document\n");
             }
         }
-
-        
-
-        // let environment_metrics = EnvironmentMetric {
-        //     node: node,
-        //     network: average_network,
-        // };
-
-        // let environment = Environment {
-        //     environment: vec![environment_metrics],
-        // };
-
         
     }
     // get the average network metrics

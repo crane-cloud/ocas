@@ -16,19 +16,16 @@ cluster:
       name: "cr-bun"
       ip: "196.43.171.248"
   prometheus:
-    url: "http://cr.cranecloud.africa:9090"
+    url: "http://196.32.213.62:9090"
     label: "container_label_com_docker_swarm_service_name"
     stack: "hotelreservation_"
     query: "sum(rate(metric{container_label_com_docker_swarm_service_name=\"_\"}[2m])) by (instance)" # query to get nodes
     metric: "container_cpu_usage_seconds_total" # metric to determine service node
 
 database:
-  uri: "mongodb://mongoadmin:949cad0977fb8daf334e@cr.cranecloud.africa:27017/"
+  uri: "mongodb://mongoadmin:949cad0977fb8daf334e@196.32.213.62:27017/"
   db: "yonga"
   collections:
-    # - name: "host"
-    # - name: "environment"
-    # - name: "service"
     # - name: "trace"
     - name: "cr-jhb"
     - name: "cr-dar"
@@ -105,3 +102,21 @@ services:
     id: "17"
     cache: ""
     db: ""
+
+weights:
+  - name: "cpu"
+    value: 0.4
+  - name: "memory"
+    value: 0.3
+  - name: "disk"
+    value: 0.2
+  - name: "network"
+    value: 0.1
+  - name: "latency"
+    value: 0.4
+  - name: "available"
+    value: 0.2
+  - name: "bandwidth"
+    value: 0.3
+  - name: "packet_loss"
+    value: 0.1

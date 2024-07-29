@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use bson::DateTime;
 use actix_web::HttpResponse;
-use mongodb::{bson::doc, bson::Document, options::{FindOptions, FindOneOptions}};
+use mongodb::{bson::doc, bson::Document, options::FindOneOptions};
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Cluster {
@@ -10,8 +11,8 @@ pub struct Cluster {
 }
 
 #[derive(Debug, Deserialize, Clone)]
-struct DatabaseCollection {
-    name: String,
+pub struct DatabaseCollection {
+    pub name: String,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -25,8 +26,14 @@ pub struct Database {
 pub struct Service {
     pub id: String,
     pub name: String,
-    pub cache: String,
-    pub db: String
+    pub cache: Option<String>,
+    pub db: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Weight {
+    pub name: String,
+    pub value: f64,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -34,8 +41,89 @@ pub struct Config {
     pub cluster: Cluster,
     pub database: Database,
     pub services: Vec<Service>,
+    pub weights: Vec<Weight>,
 }
 
+// implement a function to return value of the weight when given name
+impl Config {
+    pub fn get_weight(&self, name: &str) -> f64 {
+        for weight in &self.weights {
+            if weight.name == name {
+                return weight.value;
+            }
+        }
+        0.0
+    }
+
+    // a function to group services based on their relationships db, cache
+    pub fn group_services(&self) -> (usize, Vec<Vec<Service>>) {
+        let mut groups: Vec<HashSet<String>> = Vec::new();
+        let mut service_to_group: HashMap<String, usize> = HashMap::new();
+        
+        for service in &self.services {
+            let mut current_group = HashSet::new();
+            current_group.insert(service.name.clone());
+            
+            if let Some(cache) = &service.cache {
+                if !cache.is_empty() {
+                    current_group.insert(cache.clone());
+                }
+            }
+            if let Some(db) = &service.db {
+                if !db.is_empty() {
+                    current_group.insert(db.clone());
+                }
+            }
+            
+            let mut merged_groups: Vec<usize> = Vec::new();
+            for name in &current_group {
+                if let Some(group_index) = service_to_group.get(name) {
+                    merged_groups.push(*group_index);
+                }
+            }
+            
+            if merged_groups.is_empty() {
+                let new_group_index = groups.len();
+                for name in &current_group {
+                    service_to_group.insert(name.clone(), new_group_index);
+                }
+                groups.push(current_group);
+            } else {
+                let mut merged_group = HashSet::new();
+                for index in &merged_groups {
+                    merged_group.extend(groups[*index].clone());
+                }
+                for name in &current_group {
+                    merged_group.insert(name.clone());
+                }
+                let main_group_index = merged_groups[0];
+                groups[main_group_index] = merged_group.clone();
+                for name in &merged_group {
+                    service_to_group.insert(name.clone(), main_group_index);
+                }
+                for &index in merged_groups.iter().skip(1) {
+                    groups[index].clear();
+                }
+            }
+        }
+        
+        let mut grouped_services: Vec<Vec<Service>> = Vec::new();
+        for group in groups {
+            if !group.is_empty() {
+                let mut group_services = Vec::new();
+                for service_name in group {
+                    if let Some(service) = self.services.iter().find(|s| s.name == service_name) {
+                        group_services.push(service.clone());
+                    }
+                }
+                grouped_services.push(group_services);
+            }
+        }
+        
+        (grouped_services.len(), grouped_services)
+    }                                                                                                                                                 
+
+}
 
 #[derive(Debug, Deserialize, Serialize, Clone, Eq, PartialEq, Hash)]
 pub struct Node {

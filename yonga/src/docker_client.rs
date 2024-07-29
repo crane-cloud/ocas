@@ -1,6 +1,8 @@
 use std::process::Command;
 use std::str;
 
+use crate::stack::StackConfig;
+
 pub struct DockerClient;
 
 impl DockerClient {
@@ -68,6 +70,12 @@ impl DockerClient {
         Ok(str::from_utf8(&output.stdout)
             .unwrap_or("Failed to parse output")
             .to_string())
+    }
+
+    pub fn deploy_stack_config(&self, stack_name: &str, stack_config: &StackConfig) -> Result<String, String> {
+        let stack_yaml = serde_yaml::to_string(stack_config).unwrap();
+
+        self.deploy_stack(stack_name, &stack_yaml)
     }
 
     // docker list stack services

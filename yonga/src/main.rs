@@ -29,12 +29,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .short('u')
             .required(false)
             .action(ArgAction::Set))
+        .arg(Arg::new("stack")
+            .long("stack")
+            .short('s')
+            .required(false)
+            .action(ArgAction::Set))
         .get_matches();
 
     let yaml_config = matches.get_one::<String>("compose").unwrap();
     let strategy = matches.get_one::<String>("placement").unwrap(); // this can either be spread, binpack or random or yonga
     let cluster_config = matches.get_one::<String>("config").unwrap();
     let url = matches.get_one::<String>("url").unwrap(); // the base URL for the API client
+    let stack_name = matches.get_one::<String>("stack").unwrap(); // the name of the stack  
 
     // Read the config file
     let yaml_str = fs::read_to_string(yaml_config).expect("Failed to read the YAML configuration file");
@@ -42,6 +48,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Parse the YAML file
     let stack_config: StackConfig = serde_yaml::from_str(&yaml_str)?;
+
+    // populate the volumes
+    //let stack_config_vol: StackConfig = stack_config.populate_volumes();
+
     let cluster_config: Config = serde_yaml::from_str(&cluster_str)?;
 
     // determine the strategy
@@ -67,7 +77,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let api_client = ApiClient::new(url);
             let solver = Solver::new(cluster_config.clone(), api_client);
 
-            let mut placement = Yonga::new(stack_config, cluster_config, solver);
+            let mut placement = Yonga::new(stack_name.to_string(), stack_config, solver);
             placement.start().await;
         }
         _ => {

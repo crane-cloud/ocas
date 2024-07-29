@@ -1,6 +1,9 @@
+## Deploy the Monitor Infrastructure
+```docker stack deploy --compose-file monitor.yaml monitor```
+
 
 ## Run OCAS
-```./target/debug/ocas -m docker-compose.yaml -p yonga -c ../evaluation/config.yaml -u http://127.0.0.1:30000```
+```./target/debug/ocas -m docker-compose.yaml -p yonga -c ../evaluation/config.yaml -u http://127.0.0.1:30000 -s hotelreservation```
 
 
 ## Start the API
@@ -32,3 +35,11 @@ Node: cr-jhb, Coordinate: (2309906.7480582893, 1.528965623961135), Distance: 230
 Node: cr-bun, Coordinate: (505.67527784880565, 0.5848768955821101), Distance: 0.28471018214365024
 Node: cr-kla, Coordinate: (574.7206340818933, 0.3001667279122005), Distance: 69.04544701657994
 Node: cr-dar, Coordinate: (505.67518706531337, 0.8703524271376406), Distance: 0.5701856992254402
+
+
+
+
+      # JAEGER_DISABLED: "true"
+      # SPAN_STORAGE_TYPE: "grpc-plugin"
+      # GRPC_STORAGE_PLUGIN_BINARY: "/app/jaeger-mongodb"
+      # GRPC_STORAGE_PLUGIN_CONFIGURATION_FILE: "/app/configs/config.yaml"

@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use crate::utility::{Config, Node, Service};
-use crate::api_client::{self, ApiClient};
+use crate::api_client::ApiClient;
 use crate::utility::{Network, Resource};
 
 #[derive(Debug, Clone)]
@@ -25,7 +25,7 @@ impl Solver {
         }
     }
 
-    pub async fn solve_0(&mut self) -> Result<Solver, Box<dyn std::error::Error>> {
+    pub async fn solve_0(&mut self) -> Result<HashMap<Service, Option<HashSet<Node>>>, Box<dyn std::error::Error>> {
         println!("Running the Solver for placement 0");
 
         self.placement = Some(HashMap::new());
@@ -50,8 +50,8 @@ impl Solver {
         // Use the resource map to populate the node_map
         for (node, (resource, network)) in &resource_map {
             node_map.insert(node.clone(), Coordinate{
-                x: compute_nr(resource, &resource_map),
-                y: compute_ne(network, &resource_map),
+                x: self.compute_nr(resource, &resource_map),
+                y: self.compute_ne(network, &resource_map),
             });
         }
 
@@ -82,96 +82,127 @@ impl Solver {
             proportion_map.insert(node.clone(), proportion);
         }
 
-        // Use the proportion map to create the placement map
+        // trial the service groups
+        let (num_groups, groups) = self.config.group_services();
+
+        // println!("Number of groups: {}", num_groups);
+        // for group in groups {
+        //     println!("Group: {:?}", group);
+        // }
+
+        let assignment_map = self.assign_services(&proportion_map, num_groups, groups);
+
+        for (service, node) in &assignment_map {
+            println!("Service: {}, Assigned Node: {}", service.name, node.name);
+        }
+
         let mut placement_map: HashMap<Service, Option<HashSet<Node>>> = HashMap::new();
 
-        for service in &self.config.services {
-            let mut nodes: HashSet<Node> = HashSet::new();
-            for (node, proportion) in &mut proportion_map {
-                if *proportion > 0 {
-                    nodes.insert(node.clone());
-                    *proportion -= 1;
+        for (service, node) in assignment_map {
+            placement_map.entry(service).or_insert_with(|| Some(HashSet::new())).as_mut().unwrap().insert(node);
+        }
+
+        Ok(placement_map)
+    }
+
+    fn assign_services(
+        &self,
+        proportion_map: &HashMap<Node, u32>,
+        num_groups: usize,
+        grouped_services: Vec<Vec<Service>>
+    ) -> HashMap<Service, Node> {
+        let mut assignment_map: HashMap<Service, Node> = HashMap::new();
+        let mut remaining_capacity: HashMap<Node, u32> = proportion_map.clone();
+    
+        let mut nodes: Vec<_> = remaining_capacity.iter_mut().collect();
+        nodes.sort_by(|a, b| b.1.cmp(&a.1));
+    
+        for group_index in (0..num_groups).rev() {
+            let group = &grouped_services[group_index];
+    
+            for service in group {
+                for (node, capacity) in nodes.iter_mut() {
+                    if **capacity > 0 {
+                        assignment_map.insert(service.clone(), (*node).clone());
+                        **capacity -= 1;
+                        break;
+                    }
                 }
             }
-            placement_map.insert(service.clone(), Some(nodes));
         }
-
-        // Print the services that have been assigned to each node
-        
-
-        Ok(Solver {
-            config: self.config.clone(),
-            placement: Some(placement_map),
-            api_client: self.api_client.clone(),
-        })
-    }
-}
-
-fn compute_nr(utilization: &Resource, resource_map: &HashMap<Node, (Resource, Network)>) -> f64 {
-    let mut max_cpu = 0.0;
-    let mut max_memory = 0.0;
-    let mut min_network = f64::MAX;
-    let mut max_disk = 0.0;
-
-    for (_, (resource, _)) in resource_map {
-        if resource.cpu > max_cpu {
-            max_cpu = resource.cpu;
-        }
-        if resource.memory > max_memory {
-            max_memory = resource.memory;
-        }
-        if resource.network < min_network {
-            min_network = resource.network;
-        }
-        if resource.disk > max_disk {
-            max_disk = resource.disk;
-        }
+    
+        assignment_map
     }
 
-    let cpu = utilization.cpu;
-    let memory = utilization.memory;
-    let network = utilization.network;
-    let disk = utilization.disk;
-
-    let nr = (cpu / max_cpu) * 0.4 +
-             (memory / max_memory) * 0.3 + 
-             (disk / max_disk) * 0.2 +
-             (min_network / network) * 0.1;
-    nr
-}
-
-fn compute_ne(network: &Network, resource_map: &HashMap<Node, (Resource, Network)>) -> f64 {
-    let mut max_bandwidth = 0.0;
-    let mut min_latency = f64::MAX;
-    let mut min_packet_loss = f64::MAX;
-    let mut max_available = 0.0;
-
-    for (_, (_, network)) in resource_map {
-        if network.bandwidth > max_bandwidth {
-            max_bandwidth = network.bandwidth;
+    fn compute_nr(&mut self, utilization: &Resource, resource_map: &HashMap<Node, (Resource, Network)>) -> f64 {
+        let mut max_cpu = 0.0;
+        let mut max_memory = 0.0;
+        let mut min_network = f64::MAX;
+        let mut max_disk = 0.0;
+    
+        for (_, (resource, _)) in resource_map {
+            if resource.cpu > max_cpu {
+                max_cpu = resource.cpu;
+            }
+            if resource.memory > max_memory {
+                max_memory = resource.memory;
+            }
+            if resource.network < min_network {
+                min_network = resource.network;
+            }
+            if resource.disk > max_disk {
+                max_disk = resource.disk;
+            }
         }
-        if network.latency < min_latency {
-            min_latency = network.latency;
+    
+        let cpu = utilization.cpu;
+        let memory = utilization.memory;
+        let network = utilization.network;
+        let disk = utilization.disk;
+    
+        let nr = (cpu / max_cpu) * self.config.get_weight("cpu") +
+                 (memory / max_memory) * self.config.get_weight("memory") + 
+                 (disk / max_disk) * self.config.get_weight("disk") +
+                 (min_network / network) * self.config.get_weight("network");
+        nr
+    }
+    
+    fn compute_ne(&mut self, network: &Network, resource_map: &HashMap<Node, (Resource, Network)>) -> f64 {
+        let mut max_bandwidth = 0.0;
+        let mut min_latency = f64::MAX;
+        let mut min_packet_loss = f64::MAX;
+        let mut max_available = 0.0;
+    
+        for (_, (_, network)) in resource_map {
+            if network.bandwidth > max_bandwidth {
+                max_bandwidth = network.bandwidth;
+            }
+            if network.latency < min_latency {
+                min_latency = network.latency;
+            }
+            if network.packet_loss < min_packet_loss {
+                min_packet_loss = network.packet_loss;
+            }
+            if network.available > max_available {
+                max_available = network.available;
+            }
         }
-        if network.packet_loss < min_packet_loss {
-            min_packet_loss = network.packet_loss;
-        }
-        if network.available > max_available {
-            max_available = network.available;
-        }
+    
+        let bandwidth = network.bandwidth;
+        let latency = network.latency;
+        let packet_loss = network.packet_loss;
+        let available = network.available as f64;
+    
+        let ne = (bandwidth / max_bandwidth) * self.config.get_weight("bandwidth") +
+                 (min_latency / latency) * self.config.get_weight("latency") +
+                 (min_packet_loss / packet_loss) * self.config.get_weight("packet_loss") +
+                 (available / max_available) * self.config.get_weight("available");
+        ne
     }
 
-    let bandwidth = network.bandwidth;
-    let latency = network.latency;
-    let packet_loss = network.packet_loss;
-    let available = network.available as f64;
-
-    let ne = (bandwidth / max_bandwidth) * 0.3 +
-             (min_latency / latency) * 0.4 +
-             (min_packet_loss / packet_loss) * 0.1 +
-             (available / max_available) * 0.2;
-    ne
 }
+
+
 
 fn get_lowest_coordinates(coordinates: &[Coordinate]) -> (f64, f64) {
     let mut lowest_x = coordinates[0].x;
