@@ -7,3 +7,5 @@ pub mod strategy;
 pub mod yonga;
 pub mod solver;
 pub mod spread;
+pub mod binpack;
+pub mod random;

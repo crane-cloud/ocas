@@ -1,5 +1,7 @@
 use clap::{Command, ArgAction, Arg};
 use yonga::spread::Spread;
+use yonga::binpack::Binpack;
+use yonga::random::Random;
 use std::fs;
 use yonga::stack::StackConfig;
 use yonga::yonga::Yonga;
@@ -59,7 +61,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match strategy.as_str() {
         "spread" => {
             println!("Spread strategy selected");
-            // spread the services across the nodes
 
             //let api_client = ApiClient::new(url);
             let mut spread = Spread::new(cluster_config.clone(), None, stack_name.to_string(), stack_config.clone());
@@ -76,21 +77,41 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
 
-
-            // deploy the placement
-            //let run = spread.run(placement).await;
-
-
         }
         "binpack" => {
             println!("Binpack strategy selected");
-            // binpack the services across the nodes
-            //placement_binpack(&mut config);
+
+            let api_client = ApiClient::new(url);
+            let mut binpack = Binpack::new(cluster_config.clone(), None, stack_name.to_string(), stack_config.clone(), api_client);
+
+            let placement = binpack.binpack_0().await;
+
+            match placement {
+                Ok(map) => {
+                    binpack.run(Some(map));
+                }
+                Err(_) => {
+                    println!("No placement solution found");
+                }
+            }
+
+
         }
         "random" => {
             println!("Random strategy selected");
-            // randomly assign services to nodes
-            //placement_binpack(&mut config);
+
+            let mut random = Random::new(cluster_config.clone(), None, stack_name.to_string(), stack_config.clone());
+
+            let placement = random.random_0().await;
+
+            match placement {
+                Ok(map) => {
+                    random.run(Some(map));
+                }
+                Err(_) => {
+                    println!("No placement solution found");
+                }
+            }
         }
         "yonga" => {
             // create the solver & API client
