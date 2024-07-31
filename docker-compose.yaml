@@ -18,7 +18,7 @@ services:
       - GC
       - JAEGER_SAMPLE_RATIO
       - LOG_LEVEL
-    image: hotel_reserv_frontend_single_node:latest
+    image: mwotila/hotel_reserv_frontend_single_node:latest
     entrypoint: frontend
     container_name: 'hotel_reserv_frontend'
     ports:
@@ -26,7 +26,7 @@ services:
     depends_on:
       - consul
     deploy:
-      replicas: 3
+      replicas: 1
       restart_policy:
         condition: any
     logging:
@@ -41,7 +41,7 @@ services:
       - JAEGER_SAMPLE_RATIO
       - MEMC_TIMEOUT
       - LOG_LEVEL
-    image: hotel_reserv_profile_single_node:latest
+    image: mwotila/hotel_reserv_profile_single_node:latest
     entrypoint: profile
     container_name: 'hotel_reserv_profile'
     depends_on:
@@ -58,7 +58,7 @@ services:
         tag: "profile"
 
   search:
-    image: hotel_reserv_search_single_node:latest
+    image: mwotila/hotel_reserv_search_single_node:latest
     entrypoint: search
     container_name: 'hotel_reserv_search'
     depends_on:
@@ -83,7 +83,7 @@ services:
       - GC
       - JAEGER_SAMPLE_RATIO
       - LOG_LEVEL
-    image: hotel_reserv_geo_single_node:latest
+    image: mwotila/hotel_reserv_geo_single_node:latest
     entrypoint: geo
     container_name: 'hotel_reserv_geo'
     depends_on:
@@ -105,7 +105,7 @@ services:
       - JAEGER_SAMPLE_RATIO
       - LOG_LEVEL
       - MEMC_TIMEOUT      
-    image: hotel_reserv_rate_single_node:latest
+    image: mwotila/hotel_reserv_rate_single_node:latest
     entrypoint: rate
     container_name: 'hotel_reserv_rate'
     depends_on:
@@ -127,7 +127,7 @@ services:
       - GC
       - JAEGER_SAMPLE_RATIO
       - LOG_LEVEL
-    image: hotel_reserv_recommend_single_node:latest
+    image: mwotila/hotel_reserv_recommend_single_node:latest
     entrypoint: recommendation
     container_name: 'hotel_reserv_recommendation'
     depends_on:
@@ -148,7 +148,7 @@ services:
       - GC
       - JAEGER_SAMPLE_RATIO
       - LOG_LEVEL
-    image: hotel_reserv_user_single_node:latest
+    image: mwotila/hotel_reserv_user_single_node:latest
     entrypoint: user
     container_name: 'hotel_reserv_user'
     depends_on:
@@ -170,7 +170,7 @@ services:
       - JAEGER_SAMPLE_RATIO
       - LOG_LEVEL
       - MEMC_TIMEOUT
-    image: hotel_reserv_rsv_single_node:latest
+    image: mwotila/hotel_reserv_rsv_single_node:latest
     entrypoint: reservation
     container_name: 'hotel_reserv_reservation'
     depends_on:
@@ -185,72 +185,6 @@ services:
       driver: "fluentd"
       options:
         tag: "reservation"
-
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    container_name: 'hotel_reserv_jaeger'
-    ports:
-      - "14250:14250"
-      - "9411:9411"
-      - "14269"
-      - "5778:5778"
-      - "14268:14268"
-      - "14267"
-      - "16686:16686"
-      - "5775:5775/udp"
-      - "6831:6831/udp"
-      - "6832:6832/udp"  
-    environment:
-      JAEGER_DISABLED: "true"
-      SPAN_STORAGE_TYPE: "grpc-plugin"
-      GRPC_STORAGE_PLUGIN_BINARY: "/app/jaeger-mongodb"
-      GRPC_STORAGE_PLUGIN_CONFIGURATION_FILE: "/app/configs/config.yaml"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-      placement:
-        constraints: [node.role == manager]
-    volumes:
-      - /home/ubuntu/ocas/jaeger-mongodb:/app
-
-  mongo:
-    #image: mongo:4.4.6
-    image: mongo:5.0.25
-    restart: always
-    container_name: 'mongo'
-    ports:
-      - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: mongoadmin
-      MONGO_INITDB_ROOT_PASSWORD: 949cad0977fb8daf334e
-    volumes:
-      - /var/mongodb:/data/db
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-      placement:
-        constraints: [node.role == manager]
-
-  mongo-express:
-    image: mongo-express:latest
-    restart: always
-    container_name: 'mongo-express'
-    ports:
-      - 8084:8081
-    depends_on:
-      - mongo
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: mongoadmin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: 949cad0977fb8daf334e
-      ME_CONFIG_MONGODB_URL: mongodb://mongoadmin:949cad0977fb8daf334e@mongo:27017/
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-      placement:
-        constraints: [node.role == manager]
 
   memcached-rate:
     image: memcached
@@ -381,99 +315,33 @@ services:
       options:
         tag: "mongodb-user"
 
-
-  prometheus:
-    image: prom/prometheus:v2.36.2
-    volumes:
-      - ./prometheus/prometheus/:/etc/prometheus/
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-      - '--web.enable-lifecycle'
-      - '--web.enable-admin-api'
+  jaeger:
+    image: jaegertracing/all-in-one:1.25
+    container_name: 'hotel_reserv_jaeger'
     ports:
-      - 9090:9090
-    depends_on:
-      - cadvisor
+      - "14250:14250"
+      - "9411:9411"
+      - "14269"
+      - "5778:5778"
+      - "14268:14268"
+      - "14267"
+      - "16686:16686"
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"  
+    environment:
+      - JAEGER_DISABLED=true
+      - SPAN_STORAGE_TYPE=grpc-plugin
+      - GRPC_STORAGE_PLUGIN_BINARY=/app/jaeger-mongodb
+      - GRPC_STORAGE_PLUGIN_CONFIGURATION_FILE=/app/configs/config.yaml
     deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
       placement:
-        constraints:
-          - node.role==manager
-      restart_policy:
-        condition: on-failure
-
-  node-exporter:
-    image: quay.io/prometheus/node-exporter:latest
+        constraints: [node.role == manager]
     volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-      - /var/lib/node_exporter:/var/lib/node_exporter:ro
-    command: 
-      - '--path.procfs=/host/proc' 
-      - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-      - '--collector.textfile.directory=/var/lib/node_exporter'
-    ports:
-      - 9100:9100
-    deploy:
-      mode: global
-      restart_policy:
-          condition: on-failure
-
-  alertmanager:
-    image: prom/alertmanager
-    ports:
-      - 9093:9093
-    volumes:
-      - "./prometheus/alertmanager/:/etc/alertmanager/"
-    command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--storage.path=/alertmanager'
-    deploy:
-      placement:
-        constraints:
-           - node.role==manager
-      restart_policy:
-        condition: on-failure    
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    ports:
-      - 8080:8080
-    deploy:
-      mode: global
-      restart_policy:
-          condition: on-failure
-
-  grafana:
-    image: grafana/grafana
-    depends_on:
-      - prometheus
-    ports:
-      - 3000:3000
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./prometheus/grafana/provisioning/:/etc/grafana/provisioning/
-    env_file:
-      - ./prometheus/grafana/config.monitoring
-    user: "472"
-    deploy:
-      placement:
-        constraints:
-          - node.role==manager
-      restart_policy:
-        condition: on-failure
-
+      - /home/ubuntu/ocas/jaeger-mongodb:/app
 
 volumes:
   geo:
@@ -482,5 +350,3 @@ volumes:
   recommendation:
   reservation:
   user:
-  prometheus_data:
-  grafana_data:

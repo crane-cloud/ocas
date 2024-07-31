@@ -1,33 +1,110 @@
-use std::process::Command;
-use std::io::{self, BufRead, BufReader};
+use clap::{Command, ArgAction, Arg};
+use yonga::spread::Spread;
+use std::fs;
+use yonga::stack::StackConfig;
+use yonga::yonga::Yonga;
+use yonga::utility::Config;
+use yonga::solver::Solver;
+use yonga::api_client::ApiClient;   
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let matches = Command::new("OCAS")
+        .arg(Arg::new("compose") //docker-compose file
+            .long("compose")
+            .short('m')
+            .required(true)
+            .action(ArgAction::Set))
+        .arg(Arg::new("placement") //placement strategy
+            .long("placement")
+            .short('p')
+            .required(true)
+            .action(ArgAction::Set))
+        .arg(Arg::new("config") // configuration file
+            .long("config")
+            .short('c')
+            //.required(true)
+            .action(ArgAction::Set))
+        .arg(Arg::new("url")
+            .long("url")
+            .short('u')
+            .required(false)
+            .action(ArgAction::Set))
+        .arg(Arg::new("stack")
+            .long("stack")
+            .short('s')
+            .required(false)
+            .action(ArgAction::Set))
+        .get_matches();
 
-    // Execute the command and capture its output
-    let output = Command::new("ls")
-        //.arg("-l")
-        .output()?;
-    
-    // Check if the command was successful
-    if output.status.success() {
+    let yaml_config = matches.get_one::<String>("compose").unwrap();
+    let strategy = matches.get_one::<String>("placement").unwrap(); // this can either be spread, binpack or random or yonga
+    let cluster_config = matches.get_one::<String>("config").unwrap();
+    let url = matches.get_one::<String>("url").unwrap(); // the base URL for the API client
+    let stack_name = matches.get_one::<String>("stack").unwrap(); // the name of the stack  
 
-        println!("Command was a success!!!");
+    // Read the config file
+    let yaml_str = fs::read_to_string(yaml_config).expect("Failed to read the YAML configuration file");
+    let cluster_str = fs::read_to_string(cluster_config).expect("Failed to read the cluster configuration file");
 
-        // If the command succeeded, process its output
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        let lines = stdout.lines();
+    // Parse the YAML file
+    let stack_config: StackConfig = serde_yaml::from_str(&yaml_str)?;
 
-        // Filter the output (for example, keep only lines containing ".txt")
-        let filtered_lines = lines.filter(|line| line.contains(".txt"));
+    // populate the volumes
+    //let stack_config_vol: StackConfig = stack_config.populate_volumes();
 
-        // Print the filtered lines
-        for line in filtered_lines {
-            println!("{}", line);
+    let cluster_config: Config = serde_yaml::from_str(&cluster_str)?;
+
+    // determine the strategy
+    match strategy.as_str() {
+        "spread" => {
+            println!("Spread strategy selected");
+            // spread the services across the nodes
+
+            //let api_client = ApiClient::new(url);
+            let mut spread = Spread::new(cluster_config.clone(), None, stack_name.to_string(), stack_config.clone());
+
+           // get the placement
+            let placement = spread.spread_0().await;
+
+            match placement {
+                Ok(map) => {
+                    spread.run(Some(map));
+                }
+                Err(_) => {
+                    println!("No placement solution found");
+                }
+            }
+
+
+            // deploy the placement
+            //let run = spread.run(placement).await;
+
+
         }
-    } else {
-        // If the command failed, print its stderr
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        eprintln!("Error: {}", stderr);
+        "binpack" => {
+            println!("Binpack strategy selected");
+            // binpack the services across the nodes
+            //placement_binpack(&mut config);
+        }
+        "random" => {
+            println!("Random strategy selected");
+            // randomly assign services to nodes
+            //placement_binpack(&mut config);
+        }
+        "yonga" => {
+            // create the solver & API client
+            let api_client = ApiClient::new(url);
+            let solver = Solver::new(cluster_config.clone(), api_client);
+
+            let mut placement = Yonga::new(stack_name.to_string(), stack_config, solver);
+            placement.start().await;
+        }
+        _ => {
+            println!("No strategy selected - exiting");
+
+            return Ok(());
+        }
     }
 
     Ok(())

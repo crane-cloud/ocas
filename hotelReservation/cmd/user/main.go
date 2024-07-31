@@ -38,6 +38,9 @@ func main() {
 	mongoClient, mongoClose := initializeDatabase(result["UserMongoAddress"])
 	defer mongoClose()
 
+	// Query and print the user with username "Cornell_0".
+	queryUser(mongoClient, "Cornell_0")
+
 	servPort, _ := strconv.Atoi(result["UserPort"])
 	servIP := result["UserIP"]
 

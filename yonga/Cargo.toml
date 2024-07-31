@@ -18,10 +18,12 @@ serde_json = "1.0"
 regex = "1.5"
 prometheus-http-query= "0.8.3"
 actix-web = "4"
+futures = "0.3"
+rand = "0.8"
 
 [[bin]]
-name = "yonga"
-path = "src/yonga.rs"
+name = "ocas"
+path = "src/main.rs"
 
 [[bin]]
 name = "monitor"
@@ -30,3 +32,11 @@ path = "src/monitor.rs"
 [[bin]]
 name = "api"
 path = "src/api.rs"
+
+[[bin]]
+name = "reactor"
+path = "src/reactor.rs"
+
+[[bin]]
+name = "deploy"
+path = "src/deploy.rs"

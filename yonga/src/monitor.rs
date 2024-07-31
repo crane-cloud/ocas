@@ -463,9 +463,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .short('c')
         .required(true)
         .action(ArgAction::Set))
-    // .arg(Arg::new("cfg")
-    //     .short('c')
-    //     .action(ArgAction::Set))
     .get_matches();
 
     let config = matches.get_one::<String>("config").unwrap();    
