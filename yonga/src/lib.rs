@@ -6,3 +6,4 @@ pub mod stack;
 pub mod strategy;
 pub mod yonga;
 pub mod solver;
+pub mod spread;

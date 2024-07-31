@@ -122,7 +122,7 @@ pub fn populate_volumes(config: &mut StackConfig) {
                 if let Some(index) = volume.find(':') {
                     let volume_name = &volume[..index];
                     volumes_map.entry(volume_name.to_string()).or_insert_with(|| {
-                        println!("Adding volume {} for service {}", volume_name, service_name);
+                        //println!("Adding volume {} for service {}", volume_name, service_name);
                         Volume {}
                     });
                 }

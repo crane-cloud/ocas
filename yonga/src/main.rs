@@ -1,4 +1,5 @@
 use clap::{Command, ArgAction, Arg};
+use yonga::spread::Spread;
 use std::fs;
 use yonga::stack::StackConfig;
 use yonga::yonga::Yonga;
@@ -59,7 +60,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "spread" => {
             println!("Spread strategy selected");
             // spread the services across the nodes
-            //placement_spread(&mut config);
+
+            //let api_client = ApiClient::new(url);
+            let mut spread = Spread::new(cluster_config.clone(), None, stack_name.to_string(), stack_config.clone());
+
+           // get the placement
+            let placement = spread.spread_0().await;
+
+            match placement {
+                Ok(map) => {
+                    spread.run(Some(map));
+                }
+                Err(_) => {
+                    println!("No placement solution found");
+                }
+            }
+
+
+            // deploy the placement
+            //let run = spread.run(placement).await;
+
 
         }
         "binpack" => {

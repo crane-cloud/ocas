@@ -2870,6 +2870,7 @@ dependencies = [
  "futures",
  "mongodb",
  "prometheus-http-query",
+ "rand",
  "regex",
  "reqwest",
  "serde",

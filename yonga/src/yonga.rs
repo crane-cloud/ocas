@@ -85,7 +85,7 @@ impl Yonga {
                     println!("Failed to deploy: {}", e);
 
                     // Clean up the file
-                    //std::fs::remove_file(&compose_file).expect("Failed to remove the YAML configuration file");
+                    std::fs::remove_file(&compose_file).expect("Failed to remove the YAML configuration file");
                 }
 
                 else {
@@ -96,7 +96,7 @@ impl Yonga {
                     self.revision += 1;
 
                     // Clean up the file
-                    // std::fs::remove_file(&compose_file).expect("Failed to remove the YAML configuration file");
+                    std::fs::remove_file(&compose_file).expect("Failed to remove the YAML configuration file");
                 }
 
                 None
