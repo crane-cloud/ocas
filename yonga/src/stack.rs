@@ -150,6 +150,9 @@ pub fn update_node_constraints(config: &mut StackConfig, placement_map: HashMap<
                     if let Some(placement) = &mut deploy.placement {
                         if let Some(constraints) = &mut placement.constraints {
                             for node in nodes {
+                                // delete the constraints
+                                constraints.clear();
+
                                 constraints.push(format!("node.labels.name == {}", node.name));
                                 //[node.role == manager]
                             }
@@ -174,6 +177,7 @@ pub fn update_node_constraints(config: &mut StackConfig, placement_map: HashMap<
         }
     }
 }
+
 
 pub fn delete_null_placement(config: &mut StackConfig) {
     // print the number of services

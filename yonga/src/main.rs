@@ -114,11 +114,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         "yonga" => {
+            // print the nodes and attributes
+            println!("Yonga strategy selected");
+
             // create the solver & API client
             let api_client = ApiClient::new(url);
             let solver = Solver::new(cluster_config.clone(), api_client);
 
-            let mut placement = Yonga::new(stack_name.to_string(), stack_config, solver);
+            let mut placement = Yonga::new(cluster_config, stack_name.to_string(), stack_config, solver);
             placement.start().await;
         }
         _ => {

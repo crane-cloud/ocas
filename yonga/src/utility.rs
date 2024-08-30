@@ -1,8 +1,10 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
+// use serde::de::Error as DeError;
 use bson::DateTime;
 use actix_web::HttpResponse;
-use mongodb::{bson::doc, bson::Document, options::FindOneOptions};
+use mongodb::{bson::doc, bson::Document, options::FindOneOptions, options::FindOptions};
 use std::collections::{HashMap, HashSet};
+use futures::stream::StreamExt; // For `next`
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Cluster {
@@ -28,6 +30,28 @@ pub struct Service {
     pub name: String,
     pub cache: Option<String>,
     pub db: Option<String>,
+}
+
+impl Service {
+    pub fn new(id: &str, name: &str, cache: Option<String>, db: Option<String>) -> Self {
+        Service {
+            id: id.to_string(),
+            name: name.to_string(),
+            cache,
+            db,
+        }
+    }
+
+    // function that takes a String service name and returns a Service object
+    pub fn get_service_by_name(name: String, services: &Vec<Service>) -> Option<Service> {
+        for service in services {
+            if service.name == name {
+                return Some(service.clone());
+            }
+        }
+        None
+    }
+
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -121,24 +145,114 @@ impl Config {
         }
         
         (grouped_services.len(), grouped_services)
-    }                                                                                                                                                 
+    }
+    
+    // A function to retrieve the Resource of a node from the config
+    
+
 
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Deserialize, Serialize, Clone, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub struct Node {
     pub id: String,
     pub name: String,
     pub ip: String,
+    pub resource: ResourceInt,
 }
+
+impl Node {
+    pub fn new(id: &str, name: &str, ip: &str, resource: ResourceInt) -> Self {
+        Node {
+            id: id.to_string(),
+            name: name.to_string(),
+            ip: ip.to_string(),
+            resource: resource,
+        }
+    }
+
+    // a function to return Resource of a node from resource
+    // pub fn get_resource(&self, resource: String) -> Option<Resource> {
+    //     if self.resource == resource {
+    //         Some(Resource::default())
+    //     } else {
+    //         None
+    //     }
+    // }
+}
+
 
 // Network metrics
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Network {
+    #[serde(deserialize_with = "deserialize_available")]
     pub available: f64,
     pub bandwidth: f64,
     pub latency: f64,
     pub packet_loss: f64,
+}
+
+impl Network {
+    pub fn new(available: f64, bandwidth: f64, latency: f64, packet_loss: f64) -> Self {
+        Network {
+            available,
+            bandwidth,
+            latency,
+            packet_loss,
+        }
+    }
+
+    pub fn default() -> Self {
+        Network {
+            available: 0.0,
+            bandwidth: 0.0,
+            latency: 0.0,
+            packet_loss: 0.0,
+        }
+    }
+
+    pub fn aggregate_network(config: Config, net: &Vec<Network>) -> f64 {
+        let mut available_values: Vec<f64> = net.iter().map(|n| n.available).collect();
+        let mut bandwidth_values: Vec<f64> = net.iter().map(|n| n.bandwidth).collect();
+        let mut latency_values: Vec<f64> = net.iter().map(|n| n.latency).collect();
+        let mut packet_loss_values: Vec<f64> = net.iter().map(|n| n.packet_loss).collect();
+
+        available_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        bandwidth_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        latency_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        packet_loss_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
+
+        let percentile_index = (net.len() as f64 * 0.99).ceil() as usize - 1;
+
+        let p99_available = available_values[percentile_index];
+        let p99_bandwidth = bandwidth_values[percentile_index];
+        let p99_latency = latency_values[percentile_index];
+        let p99_packet_loss = packet_loss_values[percentile_index];
+
+        // Using weights from Config to compute the weighted value
+        let weighted_value = config.get_weight("available") * p99_available/1.0
+            + config.get_weight("bandwidth") * p99_bandwidth/10.0
+            + config.get_weight("latency") * 50.0/p99_latency
+            + config.get_weight("packet_loss") * 0.000000001/p99_packet_loss;
+
+        weighted_value
+    }
+}
+
+
+// Custom deserializer for the `available` field
+fn deserialize_available<'de, D>(deserializer: D) -> Result<f64, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = bson::Bson::deserialize(deserializer)?;
+    match value {
+        bson::Bson::Boolean(available) => Ok(if available { 1.0 } else { 0.0 }),
+        bson::Bson::Double(v) => Ok(v),
+        bson::Bson::Int32(v) => Ok(v as f64),
+        bson::Bson::Int64(v) => Ok(v as f64),
+        _ => Err(serde::de::Error::custom("Invalid type for available field")),
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -148,6 +262,37 @@ pub struct Resource {
     pub disk: f64,
     pub network: f64,
 }
+
+impl Resource {
+    pub fn new(cpu: f64, memory: f64, disk: f64, network: f64) -> Self {
+        Resource {
+            cpu,
+            memory,
+            disk,
+            network,
+        }
+    }
+
+    pub fn default() -> Self {
+        Resource {
+            cpu: 0.0,
+            memory: 0.0,
+            disk: 0.0,
+            network: 0.0,
+        }
+    }
+}
+
+
+#[derive(Debug, Deserialize, Serialize, Clone, Eq, Hash, PartialEq, PartialOrd, Ord)]
+pub struct ResourceInt {
+    pub cpu: u32,
+    pub memory: u32,
+    pub disk: u32,
+    pub network: u32,
+}
+
+
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct EnvironmentMetric {
@@ -165,25 +310,25 @@ pub struct Prometheus {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-struct ServicePrometheus {
-    name: String,
-    node: Vec<Node>
+pub struct ServicePrometheus {
+    pub name: String,
+    pub node: Vec<Node>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct ServiceMetric {
-    service: Service,
-    utilization: Resource,
+pub struct ServiceMetric {
+    pub service: Service,
+    pub utilization: Resource,
 }
 
 
 #[derive(Debug, Serialize, Deserialize)]
-struct NodeMongo {
-    timestamp: DateTime,
-    metadata: Node,
-    resource: Resource,
-    environment: Vec<EnvironmentMetric>,
-    services: Vec<ServiceMetric>,
+pub struct NodeMongo {
+    pub timestamp: DateTime,
+    pub metadata: Node,
+    pub resource: Resource,
+    pub environment: Vec<EnvironmentMetric>,
+    pub services: Vec<ServiceMetric>,
 }
 
 // convert NodeMongo to BSON Document
@@ -219,7 +364,6 @@ pub fn is_service_in_config(service: &str, config: &Config) -> bool {
     }
     false
 }
-
 
 // Function to extract resource metrics from a BSON document
 pub fn extract_resource_metrics(kind: &str, document: &mongodb::bson::Document) -> Result<Resource, &'static str> {
@@ -277,9 +421,10 @@ pub fn extract_environment_metrics(document: &Document) -> Vec<EnvironmentMetric
                 if let Ok(node_doc) = env_doc.get_document("node") {
                     if let Ok(node) = bson::from_bson(bson::Bson::Document(node_doc.clone())) {
                         let network = env_doc.get_document("network").map(|network_doc| {
-                            let available = network_doc.get_bool("available").unwrap_or(false);
+                            // let available = network_doc.get_bool("available").unwrap_or(false);
                             // convert available to f64: true = 1.0, false = 0.0
-                            let available = if available { 1.0 } else { 0.0 };
+                            // let available = if available { 1.0 } else { 0.0 };
+                            let available = extract_f64(network_doc, "available");
                             let bandwidth = extract_f64(network_doc, "bandwidth");
                             let latency = extract_f64(network_doc, "latency");
                             let packet_loss = extract_f64(network_doc, "packet_loss");
@@ -339,6 +484,35 @@ pub async fn get_latest_document(collection: &mongodb::Collection<Document>) -> 
     }
 }
 
+// Helper function to retrieve the latest 10 documents from a collection
+pub async fn get_latest_documents(collection: &mongodb::Collection<Document>) -> Result<Vec<Document>, HttpResponse> {
+    let query = doc! {};
+    let options = FindOptions::builder()
+        .sort(doc! { "_id": -1 })
+        .limit(10)
+        .build();
+
+    match collection.find(query, options).await {
+        Ok(mut cursor) => {
+            let mut documents = Vec::new();
+            while let Some(result) = cursor.next().await {
+                match result {
+                    Ok(document) => documents.push(document),
+                    Err(e) => {
+                        println!("Failed to retrieve a document: {}", e);
+                        return Err(HttpResponse::InternalServerError().body("Failed to retrieve a document."));
+                    }
+                }
+            }
+            Ok(documents)
+        }
+        Err(e) => {
+            println!("Failed to retrieve documents: {}", e);
+            Err(HttpResponse::InternalServerError().body("Failed to retrieve documents."))
+        }
+    }
+}
+
 // Helper function to determine if a service is in a node's services. ToDo - should be part of node/service state
 pub async fn is_service_in_node(service: &str, collection: &mongodb::Collection<Document>) -> bool {
     // Get the latest document
@@ -374,4 +548,15 @@ pub async fn is_service_in_node(service: &str, collection: &mongodb::Collection<
     }
 
     false
+}
+
+
+// a function that takes ResourceInt and Resource and returns the difference as a Resource
+pub fn resource_diff(resource_int: ResourceInt, resource: Resource) -> Resource {
+    Resource {
+        cpu: resource_int.cpu as f64 - resource.cpu,
+        memory: (resource_int.memory *1000) as f64 - resource.memory,
+        disk: (resource_int.disk * 1000) as f64 - resource.disk,
+        network: (resource_int.network * 1000) as f64 - resource.network,
+    }
 }

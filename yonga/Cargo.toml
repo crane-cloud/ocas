@@ -9,7 +9,7 @@ edition = "2021"
 mongodb = "2.8"
 bson = { version = "2.9", features = ["chrono-0_4"] } # Needed for using chrono datetime in doc
 tokio = { version = "1.36", features = ["full"] }
-chrono = "0.4" # Used for setting DateTimes
+chrono = { version = "0.4", features = ["serde"] }
 serde = "1" # Used in the Map Data into Structs section
 clap = "4.5.7"
 serde_yaml = "0.9"
@@ -20,6 +20,9 @@ prometheus-http-query= "0.8.3"
 actix-web = "4"
 futures = "0.3"
 rand = "0.8"
+anyhow = "1.0"
+log = "0.4"
+env_logger = "0.11"
 
 [[bin]]
 name = "ocas"

@@ -3,24 +3,50 @@ cluster:
     - id: "1"
       name: "cr-jhb"
       ip: "129.232.230.130"
+      resource: 
+        cpu: 16
+        memory: 64317
+        disk: 1800000
+        network: 1000
     - id: "2"
       name: "cr-dar"
       ip: "196.32.212.213"
+      resource: 
+        cpu: 2
+        memory: 16000
+        disk: 245000
+        network: 1000
     - id: "3"
       name: "cr-kla"
       ip: "102.134.147.244"
+      resource: 
+        cpu: 2
+        memory: 16000
+        disk: 47000
+        network: 1000
     - id: "4"
       name: "cr-lsk"
       ip: "196.32.215.213"
+      resource: 
+        cpu: 2
+        memory: 16000
+        disk: 245000
+        network: 1000
     - id: "5"
       name: "cr-bun"
       ip: "196.43.171.248"
+      resource: 
+        cpu: 2
+        memory: 16000
+        disk: 194000
+        network: 1000
   prometheus:
     url: "http://196.32.213.62:9090"
     label: "container_label_com_docker_swarm_service_name"
     stack: "hotelreservation_"
     query: "sum(rate(metric{container_label_com_docker_swarm_service_name=\"_\"}[2m])) by (instance)" # query to get nodes
     metric: "container_cpu_usage_seconds_total" # metric to determine service node
+
 
 database:
   uri: "mongodb://mongoadmin:949cad0977fb8daf334e@196.32.213.62:27017/"

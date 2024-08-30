@@ -1,6 +1,6 @@
 use tokio::time::{self, Duration};
 use reqwest::Client;
-use serde::{Deserialize, Serialize};
+//use serde::{Deserialize, Serialize};
 use mongodb::{options::ClientOptions, Client as MongoClient, Collection};
 use mongodb::bson::{doc, Document};
 use std::{fs, error::Error};
@@ -9,114 +9,116 @@ use regex::Regex;
 use bson::DateTime;
 use chrono::Utc;
 use serde_json::Value;
-
-#[derive(Debug, Deserialize, Clone)]
-struct Cluster {
-    nodes: Vec<Node>,
-    prometheus: Prometheus,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-struct DatabaseCollection {
-    name: String,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-struct Database {
-    uri: String,
-    db: String,
-    collections: Vec<DatabaseCollection>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct Service {
-    id: String,
-    name: String,
-    cache: String,
-    db: String
-}
-
-#[derive(Debug, Deserialize, Clone)]
-struct Config {
-    cluster: Cluster,
-    database: Database,
-    services: Vec<Service>,
-}
+use yonga::utility::{Config, Node, Resource, EnvironmentMetric, ServiceMetric, Service, Prometheus, ServicePrometheus, NodeMongo, Network};
 
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct Node {
-    id: String,
-    name: String,
-    ip: String,
-}
+// #[derive(Debug, Deserialize, Clone)]
+// struct Cluster {
+//     nodes: Vec<Node>,
+//     prometheus: Prometheus,
+// }
 
-// Network metrics
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct Network {
-    available: bool,
-    bandwidth: f64,
-    latency: f64,
-    packet_loss: f64,
-}
+// #[derive(Debug, Deserialize, Clone)]
+// struct DatabaseCollection {
+//     name: String,
+// }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct Resource {
-    cpu: f64,
-    memory: f64,
-    disk: f64,
-    network: f64,
-}
+// #[derive(Debug, Deserialize, Clone)]
+// struct Database {
+//     uri: String,
+//     db: String,
+//     collections: Vec<DatabaseCollection>,
+// }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct EnvironmentMetric {
-    node: Node,
-    network: Network,
-}
+// #[derive(Debug, Serialize, Deserialize, Clone)]
+// struct Service {
+//     id: String,
+//     name: String,
+//     cache: String,
+//     db: String
+// }
 
-#[derive(Debug, Deserialize, Clone)]
-struct Prometheus {
-    url: String,
-    label: String,
-    stack: String,
-    query: String,
-    metric: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct ServicePrometheus {
-    name: String,
-    node: Vec<Node>
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct ServiceMetric {
-    service: Service,
-    utilization: Resource,
-}
+// #[derive(Debug, Deserialize, Clone)]
+// struct Config {
+//     cluster: Cluster,
+//     database: Database,
+//     services: Vec<Service>,
+// }
 
 
-#[derive(Debug, Serialize, Deserialize)]
-struct NodeMongo {
-    timestamp: DateTime,
-    metadata: Node,
-    resource: Resource,
-    environment: Vec<EnvironmentMetric>,
-    services: Vec<ServiceMetric>,
-}
+// #[derive(Debug, Deserialize, Serialize, Clone)]
+// struct Node {
+//     id: String,
+//     name: String,
+//     ip: String,
+// }
 
-// convert NodeMongo to BSON Document
-impl Into<Document> for NodeMongo {
-    fn into(self) -> Document {
-        doc! {
-            "timestamp": self.timestamp,
-            "metadata": bson::to_bson(&self.metadata).unwrap(),
-            "resource": bson::to_bson(&self.resource).unwrap(),
-            "environment": bson::to_bson(&self.environment).unwrap(),
-            "services": bson::to_bson(&self.services).unwrap(),
-        }
-    }
-}
+// // Network metrics
+// #[derive(Debug, Serialize, Deserialize, Clone)]
+// struct Network {
+//     available: bool,
+//     bandwidth: f64,
+//     latency: f64,
+//     packet_loss: f64,
+// }
+
+// #[derive(Debug, Deserialize, Serialize, Clone)]
+// struct Resource {
+//     cpu: f64,
+//     memory: f64,
+//     disk: f64,
+//     network: f64,
+// }
+
+// #[derive(Debug, Deserialize, Serialize, Clone)]
+// struct EnvironmentMetric {
+//     node: Node,
+//     network: Network,
+// }
+
+// #[derive(Debug, Deserialize, Clone)]
+// struct Prometheus {
+//     url: String,
+//     label: String,
+//     stack: String,
+//     query: String,
+//     metric: String,
+// }
+
+// #[derive(Debug, Serialize, Deserialize, Clone)]
+// struct ServicePrometheus {
+//     name: String,
+//     node: Vec<Node>
+// }
+
+// #[derive(Debug, Serialize, Deserialize)]
+// struct ServiceMetric {
+//     service: Service,
+//     utilization: Resource,
+// }
+
+
+// #[derive(Debug, Serialize, Deserialize)]
+// struct NodeMongo {
+//     timestamp: DateTime,
+//     metadata: Node,
+//     resource: Resource,
+//     environment: Vec<EnvironmentMetric>,
+//     services: Vec<ServiceMetric>,
+// }
+
+// // convert NodeMongo to BSON Document
+// impl Into<Document> for NodeMongo {
+//     fn into(self) -> Document {
+//         doc! {
+//             "timestamp": self.timestamp,
+//             "metadata": bson::to_bson(&self.metadata).unwrap(),
+//             "resource": bson::to_bson(&self.resource).unwrap(),
+//             "environment": bson::to_bson(&self.environment).unwrap(),
+//             "services": bson::to_bson(&self.services).unwrap(),
+//         }
+//     }
+// }
 
 
 
@@ -264,8 +266,10 @@ async fn get_service_metrics_prometheus(config: &Config, service: &ServicePromet
         service: Service {
             id: service.name.clone(),
             name: service.name.clone(),
-            cache: "".to_string(),
-            db: "".to_string(),
+            cache: Some("".to_string()),
+            db: Some("".to_string()),
+            // cache: "".to_string(),
+            // db: "".to_string(),
         },
         utilization: Resource {
             cpu: cpu_utilization,
@@ -282,6 +286,8 @@ async fn get_service_metrics_prometheus(config: &Config, service: &ServicePromet
 async fn get_node_resource(client: &Client, node: Node) -> Result<Option<Resource>, Box<dyn Error>> {
     let url = format!("http://{}:9100/metrics", node.ip);
 
+    // print the action
+    println!("Retrieving the resource metrics for node: {} on the URL: {}", node.name, url);
     let response = client.get(&url).send().await?;
 
     if response.status().is_success() {
@@ -331,6 +337,9 @@ async fn get_node_resource(client: &Client, node: Node) -> Result<Option<Resourc
         let disk = disk_b / 1_073_741_824.0; // Convert bytes to GiB
         let network = network_b / 1_048_576.0; // Convert bytes to MiB
 
+        // print the node resource
+        println!("Node {}: CPU: {:.2} Cores, Memory: {:.2} MiB, Disk: {:.2} GiB, Network: {:.2} MiB", node.name, cpu, memory, disk, network);
+
 
         return Ok(Some(Resource {
             cpu: cpu,
@@ -359,7 +368,7 @@ async fn get_node_environment_metric(client: &Client, node: Node, config: &Confi
             }
 
             let mut network = Network {
-                available: false,
+                available: 0.0,
                 bandwidth: 0.0,
                 latency: 1000.0,
                 packet_loss: 100.0,
@@ -373,7 +382,8 @@ async fn get_node_environment_metric(client: &Client, node: Node, config: &Confi
 
             for line in body.lines() {
                 if let Some(caps) = re_availability.captures(line) {
-                    network.available = &caps[1] == "1";
+                    //network.available = &caps[1] == "1";
+                    network.available = caps[1].parse::<f64>()?;
                 } else if let Some(caps) = re_bandwidth.captures(line) {
                     network.bandwidth = caps[1].parse::<f64>()?;
                 } else if let Some(caps) = re_packet_loss.captures(line) {
