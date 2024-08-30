@@ -87,17 +87,51 @@ async fn get_node_utilization(state: web::Data<Arc<AppState>>, node: web::Path<S
     //println!("retrieving resource utilization for node: {}", node);
     let collection: mongodb::Collection<mongodb::bson::Document> = state.database.collection(&node);
 
-    // get the latest document
-    match yonga::utility::get_latest_document(&collection).await {
-        Ok(latest_document) => {
-            // Extract resource metrics from the latest document
-            match yonga::utility::extract_resource_metrics("resource", &latest_document) {
-                Ok(metrics) => HttpResponse::Ok().json(metrics),
-                Err(_) => HttpResponse::InternalServerError().body("Failed to extract node resource metrics. \n"),
+    // get the latest documents (10)
+    match yonga::utility::get_latest_documents(&collection).await {
+        Ok(latest_documents) => {
+            let mut total_cpu = 0.0;
+            let mut total_memory = 0.0;
+            let mut total_disk = 0.0;
+            let mut total_network = 0.0;
+
+            // get the length
+            let len = latest_documents.len() as f64;
+
+            for document in latest_documents {
+                // Extract resource metrics from the document
+                let metrics = yonga::utility::extract_resource_metrics("resource", &document);
+
+                total_cpu += metrics.clone().unwrap().cpu;
+                total_memory += metrics.clone().unwrap().memory;
+                total_disk += metrics.clone().unwrap().disk;
+                total_network += metrics.clone().unwrap().network;
             }
+
+            // get the average resource utilization metrics
+            let average_metrics = Resource {
+                cpu: total_cpu / len,
+                memory: total_memory / len,
+                disk: total_disk / len,
+                network: total_network / len,
+            };
+
+            HttpResponse::Ok().json(average_metrics)
         }
         Err(response) => response,
     }
+
+    // get the latest document
+    // match yonga::utility::get_latest_document(&collection).await {
+    //     Ok(latest_document) => {
+    //         // Extract resource metrics from the latest document
+    //         match yonga::utility::extract_resource_metrics("resource", &latest_document) {
+    //             Ok(metrics) => HttpResponse::Ok().json(metrics),
+    //             Err(_) => HttpResponse::InternalServerError().body("Failed to extract node resource metrics. \n"),
+    //         }
+    //     }
+    //     Err(response) => response,
+    // }
 
 }
 
@@ -148,6 +182,8 @@ async fn get_service_utilization(state: web::Data<Arc<AppState>>, service: web::
     let mut total_disk = 0.0;
     let mut total_network = 0.0;
 
+    let mut node_count = 0;
+
     // initialize replica count
     // let mut replica_count = 0;
     let service = format!("{}{}", state.config.cluster.prometheus.stack, service);
@@ -162,38 +198,98 @@ async fn get_service_utilization(state: web::Data<Arc<AppState>>, service: web::
             continue;
         }
 
+        let mut node_cpu = 0.0;
+        let mut node_memory = 0.0;
+        let mut node_disk = 0.0;
+        let mut node_network = 0.0;
+
+        // increment the node count if the service is found
+        node_count += 1;
+
         //println!("[found] retrieving resource utilization for service: {} on node: {}", service, node.name);
 
-        // get the latest document
-        match get_latest_document(&collection).await {
-            Ok(latest_document) => {
-                //let service = format!("{}{}", state.config.cluster.prometheus.stack, service);
-                match extract_service_metrics(&service, &latest_document) {
-                    Ok(metrics) => {
-                        total_cpu += metrics.cpu;
-                        total_memory += metrics.memory;
-                        total_disk += metrics.disk;
-                        total_network += metrics.network;
+    //     // get the latest document
+    //     match get_latest_document(&collection).await {
+    //         Ok(latest_document) => {
+    //             //let service = format!("{}{}", state.config.cluster.prometheus.stack, service);
+    //             match extract_service_metrics(&service, &latest_document) {
+    //                 Ok(metrics) => {
+    //                     total_cpu += metrics.cpu;
+    //                     total_memory += metrics.memory;
+    //                     total_disk += metrics.disk;
+    //                     total_network += metrics.network;
+    //                 }
+    //                 Err(_) => {
+    //                     println!("Failed to extract service resource metrics \n");
+    //                     return HttpResponse::InternalServerError().body("Failed to extract service resource metrics \n");
+    //                 }
+    //             } 
+    //         }
+    //         Err(response) => return response,
+    //     }
+    // }
+
+    // // provide the total resource utilization metrics
+    // let total_metrics = Resource {
+    //     cpu: total_cpu,
+    //     memory: total_memory,
+    //     disk: total_disk,
+    //     network: total_network,
+    // };
+
+    // HttpResponse::Ok().json(total_metrics)
+
+
+        // get the latest documents (10)
+        match yonga::utility::get_latest_documents(&collection).await {
+            Ok(latest_documents) => {
+                // let mut node_cpu = 0.0;
+                // let mut node_memory = 0.0;
+                // let mut node_disk = 0.0;
+                // let mut node_network = 0.0;
+
+                // get the length
+                let len = latest_documents.len() as f64;
+
+                for document in latest_documents {
+                    // Extract resource metrics from the document
+                    match yonga::utility::extract_service_metrics(&service, &document) {
+                        Ok(metrics) => {
+                            node_cpu += metrics.cpu;
+                            node_memory += metrics.memory;
+                            node_disk += metrics.disk;
+                            node_network += metrics.network;
+                        }
+                        Err(_) => {
+                            println!("Failed to extract service resource metrics \n");
+                            return HttpResponse::InternalServerError().body("Failed to extract service resource metrics \n");
+                        }
                     }
-                    Err(_) => {
-                        println!("Failed to extract service resource metrics \n");
-                        return HttpResponse::InternalServerError().body("Failed to extract service resource metrics \n");
-                    }
-                } 
+                }
+
+                // get the average resource utilization metrics
+                total_cpu = node_cpu / len;
+                total_memory = node_memory / len;
+                total_disk = node_disk / len;
+                total_network = node_network / len;
+
+                //HttpResponse::Ok().json(average_metrics)
             }
-            Err(response) => return response,
+            Err(_) => {
+                println!("Failed to retrieve the latest documents \n");
+                return HttpResponse::InternalServerError().body("Failed to retrieve the latest documents \n");
+            }
         }
     }
 
-    // provude the total resource utilization metrics
     let total_metrics = Resource {
-        cpu: total_cpu,
-        memory: total_memory,
-        disk: total_disk,
-        network: total_network,
+        cpu: total_cpu / node_count as f64,
+        memory: total_memory / node_count as f64,
+        disk: total_disk / node_count as f64,
+        network: total_network / node_count as f64,
     };
 
-    HttpResponse::Ok().json(total_metrics)
+    return HttpResponse::Ok().json(total_metrics);
 }
 
 // get the environment metrics for a node
@@ -206,61 +302,81 @@ async fn get_node_environment(state: web::Data<Arc<AppState>>, node: web::Path<S
         return HttpResponse::NotFound().body("Node not found in the configuration\n");
     }
 
-    // go through all the nodes except the {node} for metrics & get the average
+    println!("Retrieving the environment metrics for node: {}", node);
+
+    // Initialize accumulators
     let mut total_available = 0.0;
     let mut total_bandwidth = 0.0;
     let mut total_packet_loss = 0.0;
     let mut total_latency = 0.0;
 
-    let mut node_count = 0;
+    let mut node_count = 0.0;
+
+    // get node in state by name
+    let real_node = state.config.cluster.nodes.iter().find(|n| n.name == node).unwrap();
 
     for n in &state.config.cluster.nodes {
         if n.name == node {
             continue;
         }
 
-        // get node in state by name
-        let real_node = state.config.cluster.nodes.iter().find(|n| n.name == node).unwrap();
-
         let collection: mongodb::Collection<mongodb::bson::Document> = state.database.collection(&n.name);
 
-        // get the latest document
-        match yonga::utility::get_latest_document(&collection).await {
-            Ok(latest_document) => {
 
-                // Extract environment metrics from the latest document
-                let metrics = yonga::utility::extract_environment_metrics(&latest_document);
-                let environment = Environment::new(metrics);
-                let network = environment.get_network_by_node_name(real_node.clone()).unwrap();
 
-                total_available += network.available as f64;
-                total_bandwidth += network.bandwidth as f64;
-                total_packet_loss += network.packet_loss as f64;
-                total_latency += network.latency as f64;
+        match yonga::utility::get_latest_documents(&collection).await {
+            Ok(latest_documents) => {
+                let len = latest_documents.len() as f64;
 
-                // set the node count
-                node_count += 1;
+                if len == 0.0 {
+                    continue;
+                }
 
+                let mut node_total_available = 0.0;
+                let mut node_total_bandwidth = 0.0;
+                let mut node_total_packet_loss = 0.0;
+                let mut node_total_latency = 0.0;
+
+                for document in latest_documents {
+                    let metrics = yonga::utility::extract_environment_metrics(&document);
+                    let environment = Environment::new(metrics);
+
+                    if let Some(network) = environment.get_network_by_node_name(real_node.clone()) {
+                        node_total_available += network.available;
+                        node_total_bandwidth += network.bandwidth;
+                        node_total_packet_loss += network.packet_loss;
+                        node_total_latency += network.latency;
+                    }
+                }
+
+                total_available += node_total_available / len;
+                total_bandwidth += node_total_bandwidth / len;
+                total_packet_loss += node_total_packet_loss / len;
+                total_latency += node_total_latency / len;
+                node_count += 1.0;
             }
             Err(_) => {
-                println!("Failed to retrieve the latest document for node: {}", n.name);
-                return HttpResponse::InternalServerError().body("Failed to retrieve the latest document\n");
+                println!("Failed to retrieve the latest documents for node: {}", n.name);
+                return HttpResponse::InternalServerError().body("Failed to retrieve the latest documents\n");
             }
         }
-        
     }
-    // get the average network metrics
+
+    if node_count == 0.0 {
+        return HttpResponse::NotFound().body("No metrics found for other nodes\n");
+    }
+
     let average_network = Network {
-        available: total_available / node_count as f64,
-        bandwidth: total_bandwidth / node_count as f64,
-        packet_loss: total_packet_loss / node_count as f64,
-        latency: total_latency / node_count as f64,
+        available: total_available / node_count,
+        bandwidth: total_bandwidth / node_count,
+        packet_loss: total_packet_loss / node_count,
+        latency: total_latency / node_count,
     };
 
-    return HttpResponse::Ok().json(average_network);
+    println!("Average Network for node: {} - {:?}", node, average_network);
 
+    HttpResponse::Ok().json(average_network)
 }
-
 
 // get all collections in the database
 #[get("/collections")]

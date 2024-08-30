@@ -17,56 +17,52 @@ impl ApiClient {
         }
     }
 
-    // get - number of services in a node
+    // Helper function to handle GET requests and parse JSON responses
+    async fn get_json<T: serde::de::DeserializeOwned>(&self, url: &str) -> Result<T, reqwest::Error> {
+        let response = self.client.get(url).send().await?;
+        let json = response.json::<T>().await?;
+        Ok(json)
+    }
+
+    // Get the number of services in a node
     pub async fn get_service_count(&self, node: &str) -> Result<usize, reqwest::Error> {
         let url = format!("{}/node/{}/services/count", self.base_url, node);
-        let response = self.client.get(&url).send().await?;
-        let service_count = response.json::<usize>().await?;
-        Ok(service_count)
+        self.get_json(&url).await
     }
 
-    // get - services in a node
+    // Get the services in a node
     pub async fn get_node_services(&self, node: &str) -> Result<Vec<String>, reqwest::Error> {
         let url = format!("{}/node/{}/services", self.base_url, node);
-        let response = self.client.get(&url).send().await?;
-        let services = response.json::<Vec<String>>().await?;
-        Ok(services)
+        self.get_json(&url).await
     }
 
-    // get - node environment
+    // Get the network environment for a node
     pub async fn get_node_environment(&self, node: &str) -> Result<Network, reqwest::Error> {
         let url = format!("{}/node/{}/environment", self.base_url, node);
-        let response = self.client.get(&url).send().await?;
-        let environment = response.json::<Network>().await?;
-        // print environment for node
-        println!("Network for node {}: {:?}", node, environment);
+        let environment = self.get_json::<Network>(&url).await?;
+        // Print the environment for the node
+        println!("Network Environment for node {}: {:?}", node, environment);
         Ok(environment)
     }
 
-    // get - service utilization [total]
+    // Get the total utilization of a service
     pub async fn get_service_utilization(&self, service: &str) -> Result<Resource, reqwest::Error> {
         let url = format!("{}/service/{}/utilization", self.base_url, service);
-        let response = self.client.get(&url).send().await?;
-        let resource = response.json::<Resource>().await?;
-        Ok(resource)
+        self.get_json(&url).await
     }
 
-    // get - node utilization
+    // Get the utilization of a node
     pub async fn get_node_utilization(&self, node: &str) -> Result<Resource, reqwest::Error> {
         let url = format!("{}/node/{}/utilization", self.base_url, node);
-        let response = self.client.get(&url).send().await?;
-        let resource = response.json::<Resource>().await?;
-        // print resource for node
+        let resource = self.get_json::<Resource>(&url).await?;
+        // Print the resource for the node
         println!("Resource for node {}: {:?}", node, resource);
         Ok(resource)
     }
 
-    // get - node service utilization
+    // Get the utilization of a specific service on a node
     pub async fn get_node_service_utilization(&self, node: &str, service: &str) -> Result<Resource, reqwest::Error> {
         let url = format!("{}/node/{}/service/{}/utilization", self.base_url, node, service);
-        let response = self.client.get(&url).send().await?;
-        let resource = response.json::<Resource>().await?;
-        Ok(resource)
+        self.get_json(&url).await
     }
-
 }

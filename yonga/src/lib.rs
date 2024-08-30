@@ -9,3 +9,5 @@ pub mod solver;
 pub mod spread;
 pub mod binpack;
 pub mod random;
+pub mod trace;
+pub mod node;

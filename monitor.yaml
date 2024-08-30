@@ -57,7 +57,10 @@ services:
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
       - '--collector.textfile.directory=/var/lib/node_exporter'
     ports:
-      - 9100:9100
+      - target: 9100
+        published: 9100
+        protocol: tcp
+        mode: host
     deploy:
       mode: global
       restart_policy:
