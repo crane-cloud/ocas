@@ -23,6 +23,7 @@ rand = "0.8"
 anyhow = "1.0"
 log = "0.4"
 env_logger = "0.11"
+optirustic = "*"
 
 [[bin]]
 name = "ocas"
@@ -43,3 +44,7 @@ path = "src/reactor.rs"
 [[bin]]
 name = "deploy"
 path = "src/deploy.rs"
+
+[[bin]]
+name = "lpsolver"
+path = "src/lpsolver.rs"

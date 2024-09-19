@@ -5,6 +5,13 @@ use crate::utility::{Network, Resource, resource_diff};
 use crate::node::NodeTree;
 use crate::trace::ServiceGraph;
 
+// use std::path::PathBuf;
+// use std::error::Error;
+// use log::LevelFilter;
+// use optirustic::algorithms::{Algorithm, MaxGeneration, NSGA2Arg, StoppingConditionType, NSGA2};
+// use optirustic::core::{OError, BoundedNumber, EvaluationResult, Evaluator, Individual, 
+//     Objective, ObjectiveDirection, Problem, VariableType};
+
 #[derive(Debug, Clone)]
 pub struct Coordinate {
     pub x: f64,
@@ -130,15 +137,32 @@ impl Solver {
     
         // Find the longest service paths
         let (longest_paths, max_length) = service_tree.longest_paths();
+
+        // Find the most popular services
+        let (most_popular_services, _) = service_tree.most_popular_services();
+
+
+        if longest_paths.len() as u32 == 0 || most_popular_services.len() == 0 || max_length == 0 {
+            return Err("No microservices running or communicating".into());
+        }
+
+        else {
+            println!("Longest Paths: {:?}", longest_paths);
+            println!("Most Popular Services: {:?}", most_popular_services);
+            println!("Max Length of the longest path/paths: {}", max_length);
+        }
+
+
         // convert longest_paths to a Vec of Services
         let longest_paths: Vec<Vec<Service>> = longest_paths.iter().map(|path| {
             path.iter().map(|service| {
                 get_services_by_names(service.clone(), &self.config.services).unwrap()
             }).collect()
         }).collect();
-    
-        // Find the most popular services
-        let (most_popular_services, _) = service_tree.most_popular_services();
+
+
+
+
         // convert most_popular_services to a Vec of Services
         let most_popular_services: Vec<Service> = most_popular_services.iter().map(|service| {
             get_services_by_names(service.clone(), &self.config.services).unwrap()
@@ -255,6 +279,24 @@ impl Solver {
     
         Ok(placement_map)
     }
+
+    pub async fn solve_lp(
+        &mut self,
+        service_tree: ServiceGraph,
+        node_tree: NodeTree,
+    ) -> Result<HashMap<Service, Option<HashSet<Node>>>, Box<dyn std::error::Error>> {
+
+        let all_services = &self.config.services;
+        let all_nodes = &self.config.cluster.nodes;
+
+        // variables required for the LP solver | c_ij, x_ij, y_ij, alpha, mean utilization, service_tree latencies, node_tree latencies
+        
+
+        // let mut model = SolverModel::default();
+
+        Ok(HashMap::new())
+    }
+
 
 
 

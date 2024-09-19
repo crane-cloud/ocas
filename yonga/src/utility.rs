@@ -155,16 +155,16 @@ impl Config {
 
 #[derive(Debug, Deserialize, Serialize, Clone, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub struct Node {
-    pub id: String,
+    pub id: i64,
     pub name: String,
     pub ip: String,
     pub resource: ResourceInt,
 }
 
 impl Node {
-    pub fn new(id: &str, name: &str, ip: &str, resource: ResourceInt) -> Self {
+    pub fn new(id: i64, name: &str, ip: &str, resource: ResourceInt) -> Self {
         Node {
-            id: id.to_string(),
+            id: id,
             name: name.to_string(),
             ip: ip.to_string(),
             resource: resource,
@@ -281,6 +281,20 @@ impl Resource {
             network: 0.0,
         }
     }
+
+    pub fn add(&mut self, other: &Resource) {
+        self.cpu += other.cpu;
+        self.memory += other.memory;
+        self.disk += other.disk;
+        self.network += other.network;
+    }
+
+    pub fn sub(&mut self, other: &Resource) {
+        self.cpu -= other.cpu;
+        self.memory -= other.memory;
+        self.disk -= other.disk;
+        self.network -= other.network;
+    }
 }
 
 
@@ -290,6 +304,26 @@ pub struct ResourceInt {
     pub memory: u32,
     pub disk: u32,
     pub network: u32,
+}
+
+impl ResourceInt {
+    pub fn new(cpu: u32, memory: u32, disk: u32, network: u32) -> Self {
+        ResourceInt {
+            cpu,
+            memory,
+            disk,
+            network,
+        }
+    }
+
+    pub fn default(node: Node) -> Self {
+        ResourceInt {
+            cpu: node.resource.cpu as u32,
+            memory: node.resource.memory as u32,
+            disk: node.resource.disk as u32,
+            network: node.resource.network as u32,
+        }
+    }
 }
 
 
