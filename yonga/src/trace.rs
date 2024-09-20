@@ -7,7 +7,9 @@ use mongodb::bson::doc;
 // use tokio;
 use futures::stream::StreamExt;
 use anyhow::Result;
-use std::collections::{HashMap, HashSet};
+use std::{collections::{HashMap, HashSet}, hash::Hash};
+
+use crate::utility::{self, Service};
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -278,6 +280,22 @@ impl ServiceGraph {
             services.push(service.clone());
         }
         services
+    }
+
+    // get service pairs from the Service Graph
+    pub fn get_service_pairs(&self, services: Vec<Service>) -> HashMap<(Service, Service), (u32, f64)> {
+        let mut service_pairs = HashMap::new();
+        for service in &services {
+            let service_name = service.name.clone();
+            if let Some(node) = self.nodes.get(&service_name) {
+                for (destination, params) in &node.edges {
+                    let destination_service = utility::get_service_by_name(destination.clone(), &services).unwrap();
+                    let (message_count, duration) = (params.message_count, Self::calculate_percentile(&params.durations, 99.0));
+                    service_pairs.insert((service.clone(), destination_service), (message_count as u32, duration));
+                }
+            }
+        }
+        service_pairs
     }
 }
 

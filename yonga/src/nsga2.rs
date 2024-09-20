@@ -1,22 +1,22 @@
-use std::path::PathBuf;
+// use std::path::PathBuf;
 use std::collections::HashMap;
 use std::error::Error;
-use log::LevelFilter;
-use std::fs;
-use clap::{Command, Arg, ArgAction};
-use rand::Rng;
-use rand::prelude::IteratorRandom;
+// use log::LevelFilter;
+// use std::fs;
+// use clap::{Command, Arg, ArgAction};
+// use rand::Rng;
+// use rand::prelude::IteratorRandom;
 
-use optirustic::algorithms::{
-    Algorithm, MaxGeneration, NSGA2Arg, StoppingConditionType, NSGA2
-};
+// use optirustic::algorithms::{
+//     Algorithm, MaxGeneration, NSGA2Arg, StoppingConditionType, NSGA2
+// };
 use optirustic::core::{BoundedNumber, Choice, Constraint, EvaluationResult, Evaluator, Individual, OError, Objective, ObjectiveDirection, Problem, RelationalOperator, VariableType, VariableValue
 };
 
-use optirustic::operators::{PolynomialMutationArgs, SimulatedBinaryCrossoverArgs};
+//use optirustic::operators::{PolynomialMutationArgs, SimulatedBinaryCrossoverArgs};
 
-use yonga::node::{self, AggLinkEdge};
-use yonga::utility::{Node, Service, Config, Resource, resource_diff};
+use crate::node::AggLinkEdge;
+use crate::utility::{Node, Service, Config, Resource};
 
 
 // Define the structure for the multi-objective problem
@@ -296,211 +296,4 @@ impl Evaluator for MicroservicePlacementProblem {
             objectives,
         })
     }
-}
-
-
-pub fn generate_service_comms(config: &Config) -> HashMap<(Service, Service), (u32, f64)> {
-    let mut service_comms: HashMap<(Service, Service), (u32, f64)> = HashMap::new();
-    for service in &config.services {
-        for other_service in &config.services {
-            if service != other_service {
-                let message_count = rand::random::<u32>() % 1000;
-                let latency = rand::random::<f64>() * 100.0;
-                service_comms.insert((service.clone(), other_service.clone()), (message_count, latency));
-            }
-        }
-    }
-    service_comms
-}
-
-pub fn generate_node_comms(config: &Config) -> HashMap<Node, Vec<AggLinkEdge>> {
-    let mut node_comms: HashMap<Node, Vec<AggLinkEdge>> = HashMap::new();
-    for node in &config.cluster.nodes {
-        let mut neighbours = vec![];
-        for other_node in &config.cluster.nodes {
-            if node != other_node {
-                let link = AggLinkEdge {
-                    destination: other_node.clone(),
-                    edge: rand::random::<f64>() * 100.0,
-                };
-                neighbours.push(link);
-            }
-        }
-        node_comms.insert(node.clone(), neighbours);
-    }
-    node_comms
-}
-
-pub fn generate_node_costs(config: &Config) -> HashMap<Node, f64> {
-    let mut node_costs: HashMap<Node, f64> = HashMap::new();
-    for node in &config.cluster.nodes {
-        let cost = rand::random::<f64>() * 100.0;
-        node_costs.insert(node.clone(), cost);
-    }
-    node_costs
-}
-
-pub fn generate_service_resources(config: &Config) -> HashMap<Service, Vec<Option<(Node, Resource)>>> {
-    let mut service_resources: HashMap<Service, Vec<Option<(Node, Resource)>>> = HashMap::new();
-    let mut rng = rand::thread_rng();
-
-    for service in &config.services {
-        let mut resources = Vec::new();
-
-        // Generate random assignments for each service
-        for _ in 0..2 { // Adjust the number of assignments per service as needed
-            // Safely get a random node from the cluster
-            let node = config.cluster.nodes.iter().choose(&mut rng);
-
-            // Optionally generate a resource if a node is selected
-            let resource_option = node.map(|node| {
-                let resource = Resource {
-                    cpu: rng.gen_range(0.0..=100.0),
-                    memory: rng.gen_range(0.0..=100.0),
-                    disk: rng.gen_range(0.0..=100.0),
-                    network: rng.gen_range(0.0..=100.0),
-                };
-                (node.clone(), resource)
-            });
-
-            resources.push(resource_option);
-        }
-
-        service_resources.insert(service.clone(), resources);
-    }
-
-    service_resources
-}
-
-pub fn generate_node_resources(config: &Config) -> HashMap<Node, Resource> {
-    let mut node_resources: HashMap<Node, Resource> = HashMap::new();
-    for node in &config.cluster.nodes {
-        let resource = Resource {
-            cpu: rand::random::<f64>() % 100.0,
-            memory: rand::random::<f64>() % 100.0,
-            disk: rand::random::<f64>() % 100.0,
-            network: rand::random::<f64>() % 100.0,
-        };
-        node_resources.insert(node.clone(), resource);
-    }
-    node_resources
-}
-
-fn main() -> Result<(), Box<dyn Error>> {
-    // Add log
-    env_logger::builder().filter_level(LevelFilter::Info).init();
-
-    let matches = Command::new("MILP_Solver")
-    .arg(Arg::new("config")
-        .long("config")
-        .short('c')
-        .required(true)
-        .action(ArgAction::Set))
-    .get_matches();
-
-    let config = matches.get_one::<String>("config").unwrap();    
-    
-    // parse the config file
-    let config_str = fs::read_to_string(config).expect("Failed to read configuration file");
-    let config: Config = serde_yaml::from_str(&config_str).expect("Failed to parse configuration file");
-
-    // Add sample random service_comms, node_comms, node_costs, service_resources, node_resources | usually dynamic data
-    let service_comms = generate_service_comms(&config);
-    let node_comms = generate_node_comms(&config);
-    let node_costs = generate_node_costs(&config);
-    let service_resources = generate_service_resources(&config);
-    let node_resources = generate_node_resources(&config);
-
-    // create a map with available resources per node
-    let mut available_resources: HashMap<Node, Resource> = HashMap::new();
-    for (node, resource) in &node_resources {
-        let resource_int = config.cluster.nodes.iter().find(|n| n.name == node.name).unwrap().resource.clone();
-        let available = resource_diff(resource_int, resource.clone());
-        available_resources.insert(node.clone(), available);
-    }
-
-    // print the random data
-    // println!("Service Comms: {:?}", service_comms);
-    // println!("Node Comms: {:?}", node_comms);
-    // println!("Node Costs: {:?}", node_costs);
-    // println!("Service Resources: {:?}", service_resources);
-    // println!("Node Resources: {:?}", node_resources);
-
-    println!("Available Resources: {:?}", available_resources);
-
-    // Create the problem
-    let problem = MicroservicePlacementProblem::create(
-        config.clone(),
-        service_comms,
-        node_comms,
-        node_costs,
-        service_resources,
-        available_resources,
-    )?;
-
-    //let mutation_operator_options = PolynomialMutationArgs::default(&problem);
-
-    let mutation_operator_options = PolynomialMutationArgs {
-        // ensure different variable value (with integers)
-        index_parameter: 1.0,
-        // always force mutation
-        variable_probability: 1.0,
-    };
-
-    // Customise the SBX and PM operators like in the paper
-    let crossover_operator_options = SimulatedBinaryCrossoverArgs {
-        distribution_index: 30.0,
-        crossover_probability: 1.0,
-        ..SimulatedBinaryCrossoverArgs::default()
-    };
-
-
-
-    // Setup the NSGA2 algorithm
-    let args = NSGA2Arg {
-        // use 100 individuals and stop the algorithm at 250 generations
-        number_of_individuals: 100,
-        stopping_condition: StoppingConditionType::MaxGeneration(MaxGeneration(10)),
-        // use default options for the SBX and PM operators
-        crossover_operator_options: Some(crossover_operator_options),
-        mutation_operator_options: Some(mutation_operator_options),
-        //mutation_operator_options: None,  
-        // no need to evaluate the objective in parallel
-        parallel: Some(false),
-        // do not export intermediate solutions
-        export_history: None,
-        resume_from_file: None,
-        // to reproduce results
-        seed: Some(10),
-    };
-
-    let mut algo = NSGA2::new(problem, args)?;
-
-    // run the algorithm
-    algo.run().unwrap();
-
-    for individual in algo.get_results().individuals {
-        let result = individual.serialise();
-
-        // print the result
-        // println!("Results: {:?}", result);
-
-        if result.evaluated && result.is_feasible {
-            // print the objective values
-            println!("Objectives: {:?}", result.objective_values);
-
-            // print the variable values
-            println!("Variables: {:?}\n", result.variable_values);
-
-        
-        }
-    }
-
-    // print the result
-    //println!("Results: {:?}", results);
-
-    // Export serialised results at last generation
-    // algo.save_to_json(&PathBuf::from("."), Some("MicroservicePlacement"))?;
-
-    Ok(())
 }

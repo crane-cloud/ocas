@@ -4,6 +4,16 @@ use crate::api_client::ApiClient;
 use crate::utility::{Network, Resource, resource_diff};
 use crate::node::NodeTree;
 use crate::trace::ServiceGraph;
+use crate::nsga2::MicroservicePlacementProblem;
+
+
+use optirustic::algorithms::{
+    Algorithm, MaxGeneration, NSGA2Arg, StoppingConditionType, NSGA2
+};
+use optirustic::core::{BoundedNumber, Choice, Constraint, EvaluationResult, Evaluator, Individual, OError, Objective, ObjectiveDirection, Problem, RelationalOperator, VariableType, VariableValue
+};
+
+use optirustic::operators::{PolynomialMutationArgs, SimulatedBinaryCrossoverArgs};
 
 // use std::path::PathBuf;
 // use std::error::Error;
@@ -290,9 +300,112 @@ impl Solver {
         let all_nodes = &self.config.cluster.nodes;
 
         // variables required for the LP solver | c_ij, x_ij, y_ij, alpha, mean utilization, service_tree latencies, node_tree latencies
-        
+        // // Add sample random service_comms, node_comms, node_costs, service_resources, node_resources | usually dynamic data
+        // let service_comms = generate_service_comms(&config);
+        // let node_comms = generate_node_comms(&config);
+        // let node_costs = generate_node_costs(&config);
+        // let service_resources = generate_service_resources(&config);
+        // let node_resources = generate_node_resources(&config);
 
-        // let mut model = SolverModel::default();
+        // create service-service mappings from the service tree
+        let service_comms = service_tree.get_service_pairs(all_services.clone());
+        let node_comms = node_tree.get_tree();
+        let service_resources = self.get_service_resources(&all_services.clone(), &all_nodes.clone()).await;
+
+
+        // Create an empty map to hold Node as key, and Resource & Network as tuple values
+        let mut resource_map: HashMap<Node, (Resource, Network)> = HashMap::new();
+
+        for node in &self.config.cluster.nodes {
+            let node_utilization = self.api_client.get_node_utilization(&node.name).await?;
+            let node_environment = self.api_client.get_node_environment(&node.name).await?;
+            resource_map.insert(node.clone(), (node_utilization, node_environment));
+        }
+
+        let mut node_costs: HashMap<Node, f64> = HashMap::new();
+
+        for (node, (_resource, network)) in &resource_map {
+            node_costs.insert(node.clone(), self.compute_ne(network, &resource_map));
+        }
+
+        let mut node_resources: HashMap<Node, Resource> = HashMap::new();
+        for node in &self.config.cluster.nodes {
+            let node_utilization = self.api_client.get_node_utilization(&node.name).await?;
+            node_resources.insert(node.clone(), node_utilization);
+        }
+
+        let mut available_resources: HashMap<Node, Resource> = HashMap::new();
+        for (node, resource) in &node_resources {
+            let resource_int = self.config.cluster.nodes.iter().find(|n| n.name == node.name).unwrap().resource.clone();
+            let available = resource_diff(resource_int, resource.clone());
+            available_resources.insert(node.clone(), available);
+        }
+
+        // Create the problem
+        let problem = MicroservicePlacementProblem::create(
+            self.config.clone(),
+            service_comms,
+            node_comms.clone(),
+            node_costs,
+            service_resources,
+            available_resources,
+        )?;
+
+            //let mutation_operator_options = PolynomialMutationArgs::default(&problem);
+
+        let mutation_operator_options = PolynomialMutationArgs {
+            // ensure different variable value (with integers)
+            index_parameter: 1.0,
+            // always force mutation
+            variable_probability: 1.0,
+        };
+
+        // Customise the SBX and PM operators like in the paper
+        let crossover_operator_options = SimulatedBinaryCrossoverArgs {
+            distribution_index: 30.0,
+            crossover_probability: 1.0,
+            ..SimulatedBinaryCrossoverArgs::default()
+        };
+
+        // Setup the NSGA2 algorithm
+        let args = NSGA2Arg {
+            // use 100 individuals and stop the algorithm at 250 generations
+            number_of_individuals: 100,
+            stopping_condition: StoppingConditionType::MaxGeneration(MaxGeneration(10)),
+            // use default options for the SBX and PM operators
+            crossover_operator_options: Some(crossover_operator_options),
+            mutation_operator_options: Some(mutation_operator_options),
+            //mutation_operator_options: None,  
+            // no need to evaluate the objective in parallel
+            parallel: Some(false),
+            // do not export intermediate solutions
+            export_history: None,
+            resume_from_file: None,
+            // to reproduce results
+            seed: Some(10),
+        };
+
+        let mut algo = NSGA2::new(problem, args)?;
+
+        // run the algorithm
+        algo.run().unwrap();
+
+        for individual in algo.get_results().individuals {
+            let result = individual.serialise();
+
+            // print the result
+            // println!("Results: {:?}", result);
+
+            if result.evaluated && result.is_feasible {
+                // print the objective values
+                println!("Objectives: {:?}", result.objective_values);
+
+                // print the variable values
+                println!("Variables: {:?}\n", result.variable_values);
+
+            
+            }
+        }
 
         Ok(HashMap::new())
     }
@@ -398,6 +511,27 @@ impl Solver {
                  (min_packet_loss / packet_loss) * self.config.get_weight("packet_loss") +
                  (available / max_available) * self.config.get_weight("available");
         ne
+    }
+
+    async fn get_service_resources(&self, services: &Vec<Service>, nodes: &Vec<Node>) -> HashMap<Service, Vec<Option<(Node, Resource)>>> {
+        let mut service_resources: HashMap<Service, Vec<Option<(Node, Resource)>>> = HashMap::new();
+
+        for service in services {
+            // determine the node for the service
+            for node in nodes {
+                let service_node_util = self.api_client.get_node_service_utilization(&node.name, &service.name);
+                match service_node_util.await {
+                    Ok(resource) => {
+                        service_resources.entry(service.clone()).or_insert_with(|| Vec::new()).push(Some((node.clone(), resource)));
+                    }
+                    Err(_) => {
+                        service_resources.entry(service.clone()).or_insert_with(|| Vec::new()).push(None);
+                    }
+                }
+            }
+        }
+
+        service_resources
     }
 
 }

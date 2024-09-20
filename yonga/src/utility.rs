@@ -41,17 +41,16 @@ impl Service {
             db,
         }
     }
+}
 
-    // function that takes a String service name and returns a Service object
-    pub fn get_service_by_name(name: String, services: &Vec<Service>) -> Option<Service> {
-        for service in services {
-            if service.name == name {
-                return Some(service.clone());
-            }
+// function that takes a String service name and returns a Service object
+pub fn get_service_by_name(name: String, services: &Vec<Service>) -> Option<Service> {
+    for service in services {
+        if service.name == name {
+            return Some(service.clone());
         }
-        None
     }
-
+    None
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

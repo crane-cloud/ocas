@@ -1,0 +1,3564 @@
+{
+  "options": {
+    "number_of_individuals": 100,
+    "crossover_operator_options": {
+      "distribution_index": 30.0,
+      "crossover_probability": 1.0,
+      "variable_probability": 0.5
+    },
+    "mutation_operator_options": {
+      "index_parameter": 1.0,
+      "variable_probability": 1.0
+    },
+    "resume_from_file": null,
+    "seed": 10,
+    "stopping_condition": {
+      "MaxGeneration": 250
+    },
+    "parallel": false,
+    "export_history": null
+  },
+  "problem": {
+    "objectives": {
+      "communication_cost": {
+        "name": "communication_cost",
+        "direction": "Minimise"
+      },
+      "resource_cost": {
+        "name": "resource_cost",
+        "direction": "Minimise"
+      },
+      "resource_imbalance": {
+        "name": "resource_imbalance",
+        "direction": "Minimise"
+      }
+    },
+    "constraints": {},
+    "variables": {
+      "rate": {
+        "name": "rate",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "reservation": {
+        "name": "reservation",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "frontend": {
+        "name": "frontend",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "mongodb-geo": {
+        "name": "mongodb-geo",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "user": {
+        "name": "user",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "memcached-reserve": {
+        "name": "memcached-reserve",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "profile": {
+        "name": "profile",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "search": {
+        "name": "search",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "mongodb-user": {
+        "name": "mongodb-user",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "mongodb-profile": {
+        "name": "mongodb-profile",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "geo": {
+        "name": "geo",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "recommendation": {
+        "name": "recommendation",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "mongodb-recommendation": {
+        "name": "mongodb-recommendation",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "memcached-rate": {
+        "name": "memcached-rate",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "mongodb-reservation": {
+        "name": "mongodb-reservation",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "memcached-profile": {
+        "name": "memcached-profile",
+        "min_value": 1,
+        "max_value": 5
+      },
+      "mongodb-rate": {
+        "name": "mongodb-rate",
+        "min_value": 1,
+        "max_value": 5
+      }
+    },
+    "constraint_names": [],
+    "variable_names": [
+      "frontend",
+      "profile",
+      "search",
+      "geo",
+      "rate",
+      "recommendation",
+      "user",
+      "reservation",
+      "memcached-rate",
+      "memcached-profile",
+      "memcached-reserve",
+      "mongodb-geo",
+      "mongodb-profile",
+      "mongodb-rate",
+      "mongodb-recommendation",
+      "mongodb-reservation",
+      "mongodb-user"
+    ],
+    "objective_names": [
+      "communication_cost",
+      "resource_cost",
+      "resource_imbalance"
+    ],
+    "number_of_objectives": 3,
+    "number_of_constraints": 0,
+    "number_of_variables": 17
+  },
+  "individuals": [
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 337790.82666601654,
+        "resource_imbalance": 0.0,
+        "resource_cost": 234.67476634101553
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-recommendation": 6,
+        "recommendation": 5,
+        "frontend": 6,
+        "memcached-profile": 5,
+        "mongodb-geo": 6,
+        "mongodb-profile": 6,
+        "mongodb-reservation": 5,
+        "user": 6,
+        "rate": 5,
+        "profile": 6,
+        "reservation": 6,
+        "mongodb-user": 5,
+        "search": 3,
+        "geo": 6,
+        "mongodb-rate": 5,
+        "memcached-reserve": 3,
+        "memcached-rate": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.04079663757626534,
+        "rank": 1
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 162.38646826727648,
+        "resource_imbalance": -5.684341886080802e-14,
+        "communication_cost": 1090243.5967944106
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "user": 4,
+        "mongodb-geo": 6,
+        "rate": 5,
+        "mongodb-user": 6,
+        "memcached-rate": 6,
+        "mongodb-reservation": 6,
+        "memcached-reserve": 4,
+        "reservation": 4,
+        "geo": 5,
+        "mongodb-recommendation": 6,
+        "search": 6,
+        "mongodb-profile": 5,
+        "mongodb-rate": 6,
+        "frontend": 5,
+        "profile": 5,
+        "memcached-profile": 5,
+        "recommendation": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 1,
+        "crowding_distance": 0.03231097925519005
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 220.7179278970123,
+        "resource_imbalance": -6.821210263296962e-14,
+        "communication_cost": 2474248.7907413244
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "reservation": 6,
+        "mongodb-reservation": 6,
+        "memcached-reserve": 5,
+        "mongodb-user": 5,
+        "mongodb-recommendation": 5,
+        "recommendation": 4,
+        "frontend": 5,
+        "rate": 1,
+        "mongodb-profile": 4,
+        "geo": 6,
+        "search": 5,
+        "user": 5,
+        "memcached-rate": 6,
+        "mongodb-geo": 4,
+        "mongodb-rate": 5,
+        "memcached-profile": 4,
+        "profile": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.07734001898751006,
+        "rank": 1
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 1565328.511413933,
+        "resource_cost": 289.58095939511384,
+        "resource_imbalance": -6.821210263296962e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-reservation": 5,
+        "geo": 5,
+        "rate": 6,
+        "mongodb-geo": 5,
+        "frontend": 5,
+        "memcached-rate": 5,
+        "reservation": 6,
+        "mongodb-recommendation": 6,
+        "profile": 6,
+        "mongodb-user": 4,
+        "mongodb-rate": 6,
+        "search": 5,
+        "recommendation": 5,
+        "memcached-profile": 2,
+        "mongodb-profile": 2,
+        "memcached-reserve": 5,
+        "user": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.018964554871483748,
+        "rank": 1
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2819983.438038584,
+        "resource_cost": 238.76626980587213,
+        "resource_imbalance": -7.389644451905042e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "geo": 6,
+        "mongodb-rate": 5,
+        "memcached-reserve": 5,
+        "search": 5,
+        "recommendation": 4,
+        "profile": 5,
+        "rate": 5,
+        "frontend": 6,
+        "reservation": 5,
+        "memcached-profile": 4,
+        "user": 4,
+        "mongodb-recommendation": 4,
+        "mongodb-user": 1,
+        "memcached-rate": 5,
+        "mongodb-geo": 6,
+        "mongodb-profile": 6,
+        "mongodb-reservation": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 1,
+        "crowding_distance": 0.08740084621575425
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 247.16830295966184,
+        "resource_imbalance": -9.094947017729283e-14,
+        "communication_cost": 2699561.3281486547
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "reservation": 4,
+        "rate": 1,
+        "mongodb-rate": 5,
+        "user": 1,
+        "memcached-profile": 5,
+        "recommendation": 6,
+        "geo": 4,
+        "memcached-rate": 6,
+        "profile": 5,
+        "mongodb-geo": 5,
+        "mongodb-profile": 5,
+        "mongodb-recommendation": 5,
+        "mongodb-reservation": 5,
+        "memcached-reserve": 5,
+        "search": 1,
+        "mongodb-user": 6,
+        "frontend": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 1.7976931348623157e308,
+        "rank": 1
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 461668.79518154875,
+        "resource_imbalance": -3.410605131648481e-14,
+        "resource_cost": 103.42800994565414
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-geo": 6,
+        "memcached-rate": 5,
+        "mongodb-recommendation": 5,
+        "frontend": 5,
+        "mongodb-profile": 6,
+        "mongodb-rate": 6,
+        "search": 6,
+        "recommendation": 1,
+        "geo": 5,
+        "rate": 5,
+        "user": 6,
+        "mongodb-reservation": 6,
+        "memcached-reserve": 5,
+        "memcached-profile": 6,
+        "profile": 6,
+        "reservation": 6,
+        "mongodb-user": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.07004359428789479,
+        "rank": 1
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 384165.8993316045,
+        "resource_cost": 171.4532435496099,
+        "resource_imbalance": 0.0
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "user": 5,
+        "rate": 5,
+        "recommendation": 6,
+        "reservation": 5,
+        "memcached-reserve": 3,
+        "geo": 5,
+        "mongodb-rate": 5,
+        "mongodb-reservation": 5,
+        "memcached-rate": 5,
+        "mongodb-user": 6,
+        "mongodb-recommendation": 6,
+        "mongodb-geo": 5,
+        "mongodb-profile": 6,
+        "memcached-profile": 6,
+        "profile": 6,
+        "search": 5,
+        "frontend": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.035048259395198074,
+        "rank": 1
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 247.8050234340409,
+        "resource_imbalance": -4.263256414560601e-14,
+        "communication_cost": 976715.5074466325
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-recommendation": 6,
+        "mongodb-reservation": 5,
+        "rate": 5,
+        "memcached-rate": 4,
+        "mongodb-user": 4,
+        "mongodb-geo": 4,
+        "memcached-profile": 6,
+        "mongodb-profile": 6,
+        "memcached-reserve": 6,
+        "recommendation": 1,
+        "mongodb-rate": 6,
+        "reservation": 4,
+        "geo": 4,
+        "search": 4,
+        "frontend": 6,
+        "user": 6,
+        "profile": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 1,
+        "crowding_distance": 0.0725804209936146
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2043101.7862832532,
+        "resource_cost": 279.06883109173305,
+        "resource_imbalance": -6.536993168992921e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 4,
+        "frontend": 4,
+        "mongodb-geo": 4,
+        "reservation": 4,
+        "mongodb-reservation": 6,
+        "mongodb-user": 5,
+        "mongodb-profile": 4,
+        "rate": 5,
+        "user": 5,
+        "geo": 6,
+        "mongodb-recommendation": 6,
+        "profile": 6,
+        "mongodb-rate": 1,
+        "memcached-profile": 4,
+        "recommendation": 6,
+        "memcached-rate": 1,
+        "memcached-reserve": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.05633110016467294,
+        "rank": 1
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": 1.1368683772161604e-14,
+        "resource_cost": 81.1835123511457,
+        "communication_cost": 273044.4409675055
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-geo": 6,
+        "rate": 4,
+        "recommendation": 6,
+        "frontend": 6,
+        "mongodb-recommendation": 5,
+        "search": 5,
+        "mongodb-profile": 5,
+        "profile": 6,
+        "mongodb-reservation": 5,
+        "reservation": 6,
+        "user": 6,
+        "memcached-profile": 6,
+        "geo": 5,
+        "memcached-reserve": 5,
+        "mongodb-rate": 6,
+        "memcached-rate": 6,
+        "mongodb-user": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 1.7976931348623157e308,
+        "rank": 1
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -4.5474735088646414e-14,
+        "communication_cost": 1281377.7213604324,
+        "resource_cost": 161.75946957538991
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "recommendation": 1,
+        "reservation": 6,
+        "mongodb-recommendation": 1,
+        "mongodb-geo": 5,
+        "mongodb-reservation": 5,
+        "memcached-reserve": 6,
+        "profile": 5,
+        "memcached-profile": 6,
+        "geo": 5,
+        "mongodb-user": 6,
+        "mongodb-rate": 5,
+        "search": 5,
+        "memcached-rate": 6,
+        "mongodb-profile": 5,
+        "frontend": 5,
+        "rate": 6,
+        "user": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 1,
+        "crowding_distance": 0.05488298774274899
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -6.821210263296962e-14,
+        "communication_cost": 2161837.8903839653,
+        "resource_cost": 265.8813869970655
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-reservation": 5,
+        "rate": 4,
+        "mongodb-geo": 5,
+        "profile": 5,
+        "mongodb-recommendation": 5,
+        "frontend": 6,
+        "user": 5,
+        "recommendation": 1,
+        "reservation": 3,
+        "memcached-rate": 5,
+        "memcached-profile": 5,
+        "geo": 4,
+        "memcached-reserve": 6,
+        "search": 6,
+        "mongodb-profile": 5,
+        "mongodb-rate": 6,
+        "mongodb-user": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 1,
+        "crowding_distance": 0.005065539329398259
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2317874.338575599,
+        "resource_imbalance": -5.684341886080802e-14,
+        "resource_cost": 242.97214727401325
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "rate": 6,
+        "memcached-profile": 6,
+        "memcached-rate": 6,
+        "mongodb-profile": 4,
+        "search": 1,
+        "frontend": 6,
+        "memcached-reserve": 4,
+        "geo": 5,
+        "mongodb-geo": 5,
+        "mongodb-recommendation": 4,
+        "mongodb-reservation": 5,
+        "mongodb-user": 5,
+        "recommendation": 5,
+        "user": 4,
+        "mongodb-rate": 6,
+        "profile": 5,
+        "reservation": 1
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.013896015023435754
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 270.7617283762428,
+        "resource_imbalance": -4.5474735088646414e-14,
+        "communication_cost": 1183362.5855218729
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "geo": 5,
+        "memcached-rate": 4,
+        "rate": 5,
+        "mongodb-geo": 6,
+        "mongodb-rate": 3,
+        "mongodb-user": 5,
+        "memcached-profile": 3,
+        "frontend": 5,
+        "recommendation": 6,
+        "mongodb-reservation": 5,
+        "profile": 6,
+        "memcached-reserve": 6,
+        "search": 6,
+        "user": 5,
+        "reservation": 6,
+        "mongodb-profile": 6,
+        "mongodb-recommendation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.024399554291582855
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 238.76626980587216,
+        "communication_cost": 2649714.439828053,
+        "resource_imbalance": -6.821210263296962e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-rate": 4,
+        "mongodb-user": 5,
+        "memcached-reserve": 6,
+        "memcached-profile": 6,
+        "mongodb-reservation": 5,
+        "reservation": 1,
+        "mongodb-rate": 4,
+        "frontend": 6,
+        "mongodb-geo": 5,
+        "recommendation": 6,
+        "rate": 5,
+        "search": 5,
+        "profile": 4,
+        "geo": 5,
+        "user": 4,
+        "mongodb-profile": 4,
+        "mongodb-recommendation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.01784067330394579,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 338.45533829626436,
+        "communication_cost": 3830030.9292063843,
+        "resource_imbalance": -9.094947017729283e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-user": 6,
+        "memcached-rate": 4,
+        "mongodb-recommendation": 5,
+        "rate": 4,
+        "frontend": 4,
+        "mongodb-profile": 5,
+        "memcached-reserve": 5,
+        "recommendation": 1,
+        "geo": 6,
+        "mongodb-geo": 5,
+        "memcached-profile": 5,
+        "mongodb-reservation": 5,
+        "search": 2,
+        "user": 4,
+        "profile": 5,
+        "mongodb-rate": 4,
+        "reservation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.03848060735051392
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 3174958.816694749,
+        "resource_imbalance": -7.958078640513122e-14,
+        "resource_cost": 320.41671816989685
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-rate": 5,
+        "mongodb-geo": 5,
+        "mongodb-profile": 4,
+        "user": 1,
+        "geo": 4,
+        "mongodb-reservation": 6,
+        "profile": 5,
+        "memcached-reserve": 4,
+        "mongodb-user": 5,
+        "mongodb-recommendation": 4,
+        "reservation": 5,
+        "mongodb-rate": 6,
+        "rate": 6,
+        "recommendation": 4,
+        "frontend": 5,
+        "memcached-profile": 6,
+        "search": 2
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.14568476518801446
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 649635.0342084869,
+        "resource_cost": 153.81465065198682,
+        "resource_imbalance": -3.410605131648481e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "frontend": 6,
+        "geo": 6,
+        "mongodb-reservation": 6,
+        "memcached-rate": 4,
+        "profile": 5,
+        "user": 6,
+        "search": 5,
+        "mongodb-profile": 5,
+        "memcached-reserve": 6,
+        "mongodb-recommendation": 6,
+        "memcached-profile": 6,
+        "rate": 6,
+        "mongodb-user": 2,
+        "reservation": 6,
+        "mongodb-rate": 6,
+        "mongodb-geo": 5,
+        "recommendation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.04924462118239559,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -3.410605131648481e-14,
+        "communication_cost": 1062741.544866179,
+        "resource_cost": 126.29950623204918
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-reserve": 5,
+        "memcached-rate": 4,
+        "memcached-profile": 6,
+        "mongodb-profile": 6,
+        "mongodb-recommendation": 6,
+        "mongodb-reservation": 6,
+        "geo": 5,
+        "profile": 5,
+        "recommendation": 6,
+        "frontend": 6,
+        "search": 4,
+        "rate": 6,
+        "reservation": 6,
+        "user": 6,
+        "mongodb-rate": 5,
+        "mongodb-user": 4,
+        "mongodb-geo": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.018110176424466495
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -2.2737367544323207e-14,
+        "communication_cost": 912372.7435968507,
+        "resource_cost": 117.27047438637297
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "recommendation": 6,
+        "memcached-profile": 5,
+        "mongodb-user": 6,
+        "memcached-rate": 6,
+        "profile": 5,
+        "mongodb-geo": 4,
+        "user": 6,
+        "mongodb-recommendation": 6,
+        "mongodb-profile": 5,
+        "frontend": 5,
+        "mongodb-reservation": 6,
+        "geo": 6,
+        "rate": 6,
+        "memcached-reserve": 5,
+        "mongodb-rate": 4,
+        "search": 5,
+        "reservation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.0809045869849316
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 126.29950623204918,
+        "resource_imbalance": 0.0,
+        "communication_cost": 911356.4207937415
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-reserve": 5,
+        "recommendation": 4,
+        "mongodb-geo": 5,
+        "mongodb-reservation": 6,
+        "user": 6,
+        "mongodb-rate": 6,
+        "profile": 4,
+        "reservation": 6,
+        "mongodb-profile": 4,
+        "memcached-profile": 6,
+        "mongodb-recommendation": 5,
+        "geo": 5,
+        "memcached-rate": 5,
+        "rate": 6,
+        "search": 6,
+        "mongodb-user": 6,
+        "frontend": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.012027531089527144,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 135.31881629523286,
+        "communication_cost": 1031252.7223772755,
+        "resource_imbalance": -3.410605131648481e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 5,
+        "memcached-reserve": 6,
+        "rate": 5,
+        "recommendation": 4,
+        "mongodb-geo": 5,
+        "mongodb-profile": 4,
+        "mongodb-recommendation": 6,
+        "mongodb-reservation": 5,
+        "geo": 5,
+        "profile": 6,
+        "user": 6,
+        "reservation": 6,
+        "memcached-rate": 4,
+        "memcached-profile": 6,
+        "mongodb-rate": 6,
+        "mongodb-user": 5,
+        "frontend": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.013327099333897717,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": 5.684341886080802e-15,
+        "communication_cost": 502359.5771705753,
+        "resource_cost": 306.91559919560484
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "user": 5,
+        "mongodb-recommendation": 5,
+        "memcached-profile": 6,
+        "profile": 3,
+        "frontend": 5,
+        "mongodb-rate": 3,
+        "rate": 6,
+        "recommendation": 3,
+        "memcached-rate": 6,
+        "geo": 6,
+        "mongodb-user": 6,
+        "reservation": 6,
+        "mongodb-geo": 6,
+        "mongodb-profile": 5,
+        "mongodb-reservation": 6,
+        "search": 6,
+        "memcached-reserve": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.10425825151454454,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2080598.7919352301,
+        "resource_cost": 776.4770747732082,
+        "resource_imbalance": -5.1159076974727215e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-profile": 3,
+        "recommendation": 6,
+        "mongodb-reservation": 1,
+        "mongodb-recommendation": 3,
+        "mongodb-rate": 6,
+        "memcached-reserve": 1,
+        "mongodb-user": 2,
+        "rate": 6,
+        "memcached-rate": 4,
+        "mongodb-geo": 3,
+        "user": 6,
+        "geo": 3,
+        "reservation": 2,
+        "memcached-profile": 5,
+        "frontend": 4,
+        "profile": 3,
+        "search": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.07836824830909586,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 324.89703232033,
+        "communication_cost": 2086530.9094407512,
+        "resource_imbalance": -5.684341886080802e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "profile": 6,
+        "search": 5,
+        "user": 5,
+        "recommendation": 5,
+        "mongodb-recommendation": 6,
+        "memcached-profile": 4,
+        "memcached-rate": 5,
+        "rate": 5,
+        "mongodb-rate": 6,
+        "reservation": 3,
+        "mongodb-profile": 3,
+        "mongodb-reservation": 5,
+        "geo": 6,
+        "frontend": 5,
+        "memcached-reserve": 6,
+        "mongodb-user": 4,
+        "mongodb-geo": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.004114780931877423,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 498405.4281465827,
+        "resource_cost": 162.82423893267799,
+        "resource_imbalance": 1.1368683772161604e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "geo": 6,
+        "frontend": 6,
+        "rate": 5,
+        "mongodb-recommendation": 5,
+        "recommendation": 2,
+        "mongodb-profile": 5,
+        "reservation": 5,
+        "mongodb-reservation": 6,
+        "user": 6,
+        "memcached-rate": 6,
+        "memcached-profile": 5,
+        "search": 5,
+        "mongodb-user": 6,
+        "profile": 6,
+        "memcached-reserve": 6,
+        "mongodb-rate": 5,
+        "mongodb-geo": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.013603411237895623
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 220.71792789701226,
+        "communication_cost": 2357218.3189136605,
+        "resource_imbalance": -4.5474735088646414e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "frontend": 4,
+        "rate": 5,
+        "recommendation": 1,
+        "reservation": 5,
+        "search": 5,
+        "geo": 4,
+        "mongodb-geo": 6,
+        "mongodb-rate": 5,
+        "memcached-profile": 5,
+        "mongodb-user": 6,
+        "mongodb-recommendation": 5,
+        "memcached-rate": 4,
+        "profile": 6,
+        "user": 6,
+        "mongodb-reservation": 5,
+        "memcached-reserve": 4,
+        "mongodb-profile": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.01211600999105462
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -4.5474735088646414e-14,
+        "communication_cost": 2107832.7664758116,
+        "resource_cost": 252.64647768324818
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-geo": 5,
+        "profile": 5,
+        "recommendation": 5,
+        "mongodb-rate": 6,
+        "mongodb-reservation": 6,
+        "reservation": 5,
+        "search": 3,
+        "mongodb-user": 5,
+        "memcached-reserve": 5,
+        "geo": 5,
+        "frontend": 5,
+        "memcached-rate": 4,
+        "rate": 4,
+        "user": 5,
+        "mongodb-recommendation": 5,
+        "mongodb-profile": 5,
+        "memcached-profile": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.016328095957480752,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2275465.707710102,
+        "resource_cost": 224.92380536515333,
+        "resource_imbalance": -3.979039320256561e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-recommendation": 5,
+        "geo": 1,
+        "rate": 5,
+        "frontend": 6,
+        "user": 5,
+        "reservation": 4,
+        "mongodb-geo": 6,
+        "memcached-rate": 5,
+        "recommendation": 1,
+        "profile": 5,
+        "memcached-reserve": 5,
+        "mongodb-profile": 4,
+        "mongodb-user": 6,
+        "search": 5,
+        "mongodb-rate": 4,
+        "mongodb-reservation": 6,
+        "memcached-profile": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.0390932889350825,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 1987980.6686753442,
+        "resource_cost": 261.6852313114169,
+        "resource_imbalance": -4.5474735088646414e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "frontend": 6,
+        "rate": 4,
+        "mongodb-recommendation": 6,
+        "memcached-rate": 5,
+        "reservation": 4,
+        "profile": 5,
+        "mongodb-reservation": 6,
+        "mongodb-rate": 5,
+        "geo": 5,
+        "mongodb-user": 6,
+        "memcached-profile": 6,
+        "recommendation": 4,
+        "user": 5,
+        "mongodb-profile": 3,
+        "memcached-reserve": 4,
+        "search": 5,
+        "mongodb-geo": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.023643254504279686
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 1469503.0740430877,
+        "resource_imbalance": -4.5474735088646414e-14,
+        "resource_cost": 265.891108779558
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "frontend": 6,
+        "user": 3,
+        "profile": 6,
+        "mongodb-recommendation": 6,
+        "mongodb-rate": 5,
+        "memcached-profile": 5,
+        "memcached-reserve": 4,
+        "rate": 6,
+        "memcached-rate": 6,
+        "recommendation": 5,
+        "mongodb-geo": 4,
+        "reservation": 5,
+        "mongodb-user": 4,
+        "search": 5,
+        "geo": 6,
+        "mongodb-profile": 1,
+        "mongodb-reservation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.044304899385053775
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 229.74695974268843,
+        "resource_imbalance": -4.5474735088646414e-14,
+        "communication_cost": 2144300.44127223
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "reservation": 4,
+        "user": 4,
+        "recommendation": 6,
+        "frontend": 6,
+        "profile": 4,
+        "rate": 5,
+        "mongodb-reservation": 4,
+        "mongodb-rate": 6,
+        "mongodb-user": 5,
+        "memcached-rate": 5,
+        "mongodb-recommendation": 6,
+        "search": 5,
+        "mongodb-geo": 6,
+        "memcached-reserve": 4,
+        "geo": 5,
+        "mongodb-profile": 1,
+        "memcached-profile": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.016047660324833415,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 216.51205042887116,
+        "resource_imbalance": -4.5474735088646414e-14,
+        "communication_cost": 2916702.1150573236
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-profile": 5,
+        "mongodb-recommendation": 5,
+        "mongodb-profile": 4,
+        "rate": 6,
+        "memcached-rate": 5,
+        "frontend": 6,
+        "mongodb-user": 5,
+        "mongodb-rate": 5,
+        "user": 4,
+        "geo": 5,
+        "memcached-reserve": 5,
+        "mongodb-reservation": 4,
+        "recommendation": 6,
+        "profile": 4,
+        "mongodb-geo": 5,
+        "search": 4,
+        "reservation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.024539147407737993
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 220.7179278970122,
+        "communication_cost": 2377319.9246798744,
+        "resource_imbalance": -4.5474735088646414e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-profile": 4,
+        "mongodb-recommendation": 4,
+        "rate": 6,
+        "mongodb-rate": 5,
+        "search": 5,
+        "geo": 5,
+        "profile": 5,
+        "memcached-profile": 4,
+        "memcached-rate": 6,
+        "frontend": 5,
+        "mongodb-user": 1,
+        "reservation": 4,
+        "user": 5,
+        "memcached-reserve": 6,
+        "recommendation": 6,
+        "mongodb-geo": 5,
+        "mongodb-reservation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 2,
+        "crowding_distance": 0.012087468091402185
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2421916.0742144976,
+        "resource_imbalance": -6.821210263296962e-14,
+        "resource_cost": 275.3007242889935
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "profile": 5,
+        "geo": 4,
+        "recommendation": 1,
+        "mongodb-profile": 5,
+        "memcached-rate": 4,
+        "mongodb-geo": 5,
+        "memcached-profile": 6,
+        "mongodb-user": 6,
+        "search": 6,
+        "rate": 5,
+        "memcached-reserve": 2,
+        "user": 6,
+        "mongodb-recommendation": 6,
+        "reservation": 5,
+        "frontend": 5,
+        "mongodb-rate": 4,
+        "mongodb-reservation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.011983514644735422,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 324.2322901917863,
+        "resource_imbalance": -5.1159076974727215e-14,
+        "communication_cost": 2207307.285113222
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "rate": 4,
+        "mongodb-profile": 5,
+        "reservation": 1,
+        "mongodb-recommendation": 6,
+        "recommendation": 4,
+        "geo": 6,
+        "mongodb-geo": 5,
+        "frontend": 1,
+        "search": 5,
+        "memcached-rate": 6,
+        "mongodb-rate": 5,
+        "mongodb-user": 6,
+        "user": 4,
+        "mongodb-reservation": 3,
+        "memcached-profile": 6,
+        "memcached-reserve": 5,
+        "profile": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.019167444512024834,
+        "rank": 2
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2561685.46329862,
+        "resource_cost": 243.5894241834073,
+        "resource_imbalance": -5.684341886080802e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-reserve": 6,
+        "mongodb-rate": 5,
+        "memcached-profile": 5,
+        "mongodb-user": 4,
+        "profile": 5,
+        "memcached-rate": 4,
+        "recommendation": 6,
+        "rate": 4,
+        "mongodb-reservation": 4,
+        "search": 4,
+        "frontend": 4,
+        "mongodb-profile": 6,
+        "user": 5,
+        "reservation": 6,
+        "mongodb-geo": 4,
+        "mongodb-recommendation": 5,
+        "geo": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.01816334179197632,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 1293813.189943476,
+        "resource_imbalance": -3.694822225952521e-14,
+        "resource_cost": 505.91315251263006
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "profile": 5,
+        "search": 6,
+        "memcached-rate": 6,
+        "reservation": 3,
+        "recommendation": 2,
+        "mongodb-reservation": 6,
+        "user": 6,
+        "rate": 4,
+        "memcached-reserve": 5,
+        "frontend": 6,
+        "mongodb-profile": 3,
+        "geo": 3,
+        "mongodb-rate": 3,
+        "mongodb-geo": 6,
+        "memcached-profile": 6,
+        "mongodb-recommendation": 6,
+        "mongodb-user": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.07955997880182522
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -3.979039320256561e-14,
+        "resource_cost": 416.4143104241769,
+        "communication_cost": 1315064.5737771704
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "rate": 6,
+        "mongodb-user": 5,
+        "memcached-profile": 6,
+        "mongodb-recommendation": 6,
+        "user": 2,
+        "mongodb-geo": 4,
+        "frontend": 2,
+        "mongodb-profile": 6,
+        "recommendation": 2,
+        "memcached-reserve": 6,
+        "profile": 6,
+        "search": 5,
+        "geo": 6,
+        "mongodb-reservation": 6,
+        "mongodb-rate": 5,
+        "memcached-rate": 3,
+        "reservation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.027162422487790824
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 3559583.976809287,
+        "resource_cost": 274.85323184109944,
+        "resource_imbalance": -6.821210263296962e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "user": 5,
+        "mongodb-profile": 5,
+        "profile": 5,
+        "search": 5,
+        "memcached-reserve": 4,
+        "frontend": 4,
+        "rate": 4,
+        "geo": 4,
+        "memcached-rate": 5,
+        "mongodb-rate": 4,
+        "reservation": 5,
+        "memcached-profile": 4,
+        "mongodb-reservation": 5,
+        "recommendation": 6,
+        "mongodb-user": 1,
+        "mongodb-geo": 6,
+        "mongodb-recommendation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.057839606226327486
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 3970687.5423454233,
+        "resource_cost": 537.1100513861873,
+        "resource_imbalance": -9.094947017729283e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 5,
+        "user": 3,
+        "mongodb-reservation": 5,
+        "memcached-rate": 5,
+        "mongodb-user": 6,
+        "profile": 1,
+        "reservation": 4,
+        "geo": 4,
+        "mongodb-geo": 5,
+        "mongodb-rate": 3,
+        "rate": 3,
+        "frontend": 5,
+        "recommendation": 2,
+        "mongodb-recommendation": 5,
+        "mongodb-profile": 5,
+        "memcached-reserve": 5,
+        "memcached-profile": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.16549321526913885,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 3715924.592230208,
+        "resource_imbalance": -7.958078640513122e-14,
+        "resource_cost": 464.48863486783887
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-rate": 4,
+        "mongodb-geo": 5,
+        "user": 3,
+        "reservation": 5,
+        "mongodb-profile": 6,
+        "recommendation": 5,
+        "frontend": 5,
+        "rate": 3,
+        "geo": 6,
+        "mongodb-reservation": 1,
+        "mongodb-user": 3,
+        "profile": 5,
+        "memcached-profile": 5,
+        "memcached-rate": 4,
+        "search": 4,
+        "memcached-reserve": 5,
+        "mongodb-recommendation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.06325472758755472,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 347.0843429131962,
+        "resource_imbalance": -7.958078640513122e-14,
+        "communication_cost": 3892371.757196665
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "profile": 4,
+        "geo": 5,
+        "mongodb-user": 6,
+        "mongodb-profile": 5,
+        "mongodb-rate": 3,
+        "mongodb-geo": 5,
+        "frontend": 5,
+        "reservation": 4,
+        "memcached-profile": 5,
+        "recommendation": 1,
+        "mongodb-recommendation": 5,
+        "rate": 5,
+        "memcached-rate": 5,
+        "user": 4,
+        "mongodb-reservation": 4,
+        "memcached-reserve": 4,
+        "search": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.04595492930009484,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -7.958078640513122e-14,
+        "communication_cost": 3767951.9461252713,
+        "resource_cost": 443.0247481658339
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 4,
+        "user": 5,
+        "frontend": 4,
+        "profile": 5,
+        "memcached-reserve": 6,
+        "mongodb-rate": 6,
+        "rate": 6,
+        "mongodb-geo": 4,
+        "geo": 5,
+        "mongodb-profile": 5,
+        "memcached-profile": 5,
+        "mongodb-reservation": 5,
+        "recommendation": 4,
+        "memcached-rate": 2,
+        "reservation": 5,
+        "mongodb-recommendation": 3,
+        "mongodb-user": 2
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.051645118266942715,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 710146.8925417314,
+        "resource_cost": 261.4777034132597,
+        "resource_imbalance": -4.263256414560601e-15
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-rate": 1,
+        "search": 4,
+        "profile": 6,
+        "reservation": 1,
+        "mongodb-rate": 6,
+        "mongodb-recommendation": 6,
+        "mongodb-user": 6,
+        "user": 4,
+        "recommendation": 6,
+        "mongodb-geo": 5,
+        "mongodb-reservation": 6,
+        "memcached-reserve": 6,
+        "memcached-profile": 6,
+        "geo": 6,
+        "mongodb-profile": 2,
+        "frontend": 6,
+        "rate": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.0882673837497925
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 171.85327077835422,
+        "communication_cost": 824042.6142839029,
+        "resource_imbalance": -3.410605131648481e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 5,
+        "mongodb-user": 5,
+        "rate": 5,
+        "mongodb-geo": 6,
+        "memcached-rate": 5,
+        "mongodb-recommendation": 6,
+        "memcached-profile": 6,
+        "user": 6,
+        "reservation": 4,
+        "mongodb-profile": 6,
+        "memcached-reserve": 6,
+        "frontend": 5,
+        "mongodb-rate": 2,
+        "geo": 5,
+        "mongodb-reservation": 6,
+        "recommendation": 6,
+        "profile": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.016831352843621628,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 787006.2755410201,
+        "resource_imbalance": -2.2737367544323207e-14,
+        "resource_cost": 253.10369191363472
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "rate": 6,
+        "mongodb-profile": 5,
+        "memcached-profile": 3,
+        "memcached-rate": 6,
+        "profile": 5,
+        "search": 6,
+        "geo": 5,
+        "recommendation": 5,
+        "mongodb-user": 5,
+        "mongodb-recommendation": 5,
+        "mongodb-geo": 6,
+        "memcached-reserve": 6,
+        "reservation": 6,
+        "mongodb-reservation": 2,
+        "user": 5,
+        "mongodb-rate": 5,
+        "frontend": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.0061437742896084824,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 193.05244258055967,
+        "communication_cost": 670856.3960565943,
+        "resource_imbalance": -2.1316282072803005e-15
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "reservation": 6,
+        "user": 6,
+        "mongodb-rate": 6,
+        "frontend": 4,
+        "memcached-rate": 5,
+        "search": 6,
+        "memcached-reserve": 6,
+        "mongodb-reservation": 6,
+        "profile": 1,
+        "rate": 6,
+        "mongodb-geo": 6,
+        "mongodb-profile": 6,
+        "mongodb-recommendation": 1,
+        "mongodb-user": 4,
+        "memcached-profile": 6,
+        "geo": 5,
+        "recommendation": 1
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.055412835237499375,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 324.95421932197223,
+        "communication_cost": 798751.5000150608,
+        "resource_imbalance": -3.410605131648481e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "reservation": 5,
+        "rate": 6,
+        "mongodb-user": 3,
+        "recommendation": 5,
+        "memcached-rate": 5,
+        "frontend": 6,
+        "memcached-profile": 3,
+        "mongodb-profile": 5,
+        "mongodb-rate": 6,
+        "geo": 6,
+        "user": 6,
+        "mongodb-recommendation": 6,
+        "search": 3,
+        "memcached-reserve": 5,
+        "profile": 5,
+        "mongodb-geo": 6,
+        "mongodb-reservation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.015602417471692179,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 1024685.5666419858,
+        "resource_cost": 166.59234573541755,
+        "resource_imbalance": -2.2737367544323207e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-rate": 6,
+        "user": 6,
+        "frontend": 5,
+        "mongodb-profile": 6,
+        "memcached-rate": 5,
+        "mongodb-geo": 6,
+        "search": 6,
+        "recommendation": 4,
+        "reservation": 1,
+        "profile": 5,
+        "memcached-profile": 5,
+        "memcached-reserve": 4,
+        "mongodb-user": 6,
+        "mongodb-recommendation": 6,
+        "geo": 6,
+        "mongodb-reservation": 4,
+        "rate": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.010050574322073784
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 135.30909451274033,
+        "resource_imbalance": 2.2737367544323207e-14,
+        "communication_cost": 1047785.6723498693
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-profile": 6,
+        "user": 5,
+        "geo": 6,
+        "profile": 5,
+        "frontend": 5,
+        "recommendation": 5,
+        "memcached-rate": 6,
+        "rate": 6,
+        "memcached-reserve": 6,
+        "reservation": 4,
+        "mongodb-profile": 4,
+        "mongodb-user": 5,
+        "mongodb-rate": 5,
+        "mongodb-recommendation": 5,
+        "mongodb-geo": 5,
+        "search": 5,
+        "mongodb-reservation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.10629253030535546
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 1204327.7679228499,
+        "resource_imbalance": -3.410605131648481e-14,
+        "resource_cost": 148.54400382655766
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "geo": 5,
+        "mongodb-reservation": 1,
+        "mongodb-recommendation": 4,
+        "memcached-profile": 4,
+        "memcached-rate": 5,
+        "user": 5,
+        "mongodb-geo": 6,
+        "frontend": 6,
+        "reservation": 6,
+        "profile": 6,
+        "rate": 5,
+        "mongodb-rate": 5,
+        "recommendation": 6,
+        "memcached-reserve": 6,
+        "search": 6,
+        "mongodb-profile": 6,
+        "mongodb-user": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.021534734448897225
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -1.1368683772161604e-14,
+        "communication_cost": 1238151.8915730445,
+        "resource_cost": 144.33812635841656
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 4,
+        "recommendation": 5,
+        "mongodb-profile": 6,
+        "memcached-profile": 6,
+        "memcached-reserve": 4,
+        "geo": 6,
+        "frontend": 5,
+        "memcached-rate": 5,
+        "mongodb-reservation": 6,
+        "reservation": 5,
+        "user": 5,
+        "mongodb-geo": 5,
+        "rate": 6,
+        "profile": 5,
+        "mongodb-rate": 6,
+        "mongodb-recommendation": 6,
+        "mongodb-user": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.04922152272278603
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2094786.3305998968,
+        "resource_cost": 333.9260641660062,
+        "resource_imbalance": -5.1159076974727215e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "frontend": 5,
+        "mongodb-user": 3,
+        "mongodb-geo": 6,
+        "mongodb-profile": 4,
+        "user": 4,
+        "geo": 6,
+        "mongodb-rate": 5,
+        "search": 5,
+        "rate": 4,
+        "memcached-rate": 5,
+        "recommendation": 6,
+        "memcached-profile": 6,
+        "mongodb-recommendation": 6,
+        "mongodb-reservation": 3,
+        "reservation": 4,
+        "memcached-reserve": 5,
+        "profile": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.01580637384870602,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 763.2518872418834,
+        "communication_cost": 2162249.0596637013,
+        "resource_imbalance": -5.684341886080802e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "profile": 2,
+        "mongodb-profile": 4,
+        "memcached-reserve": 5,
+        "memcached-rate": 6,
+        "rate": 6,
+        "reservation": 2,
+        "mongodb-recommendation": 1,
+        "mongodb-reservation": 6,
+        "mongodb-rate": 4,
+        "geo": 3,
+        "frontend": 4,
+        "search": 3,
+        "memcached-profile": 6,
+        "recommendation": 3,
+        "mongodb-geo": 6,
+        "user": 3,
+        "mongodb-user": 3
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.01597371818293813
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2406104.8832398737,
+        "resource_cost": 402.1146317530715,
+        "resource_imbalance": -5.684341886080802e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "geo": 5,
+        "reservation": 5,
+        "search": 3,
+        "mongodb-geo": 6,
+        "memcached-profile": 4,
+        "mongodb-reservation": 5,
+        "mongodb-user": 6,
+        "recommendation": 1,
+        "mongodb-recommendation": 6,
+        "mongodb-profile": 2,
+        "user": 5,
+        "frontend": 5,
+        "profile": 5,
+        "mongodb-rate": 5,
+        "memcached-reserve": 6,
+        "memcached-rate": 2,
+        "rate": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.05258405243269777
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -5.684341886080802e-14,
+        "communication_cost": 2288517.822563258,
+        "resource_cost": 478.3882863101998
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 5,
+        "memcached-rate": 5,
+        "mongodb-recommendation": 6,
+        "mongodb-reservation": 5,
+        "rate": 3,
+        "user": 5,
+        "recommendation": 3,
+        "profile": 3,
+        "mongodb-user": 4,
+        "mongodb-geo": 5,
+        "memcached-reserve": 4,
+        "geo": 6,
+        "memcached-profile": 3,
+        "reservation": 6,
+        "mongodb-profile": 6,
+        "mongodb-rate": 5,
+        "frontend": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.023252743646083207
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": 1.1368683772161604e-14,
+        "communication_cost": 782533.2278508994,
+        "resource_cost": 180.87258084153794
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "frontend": 5,
+        "memcached-profile": 5,
+        "mongodb-profile": 6,
+        "mongodb-reservation": 6,
+        "reservation": 5,
+        "recommendation": 2,
+        "rate": 5,
+        "user": 6,
+        "memcached-reserve": 4,
+        "mongodb-geo": 6,
+        "mongodb-recommendation": 6,
+        "search": 6,
+        "geo": 5,
+        "mongodb-user": 6,
+        "mongodb-rate": 5,
+        "memcached-rate": 5,
+        "profile": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.035020905699054694,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 1674273.0475950334,
+        "resource_cost": 297.8196585657939,
+        "resource_imbalance": -4.5474735088646414e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-rate": 5,
+        "search": 4,
+        "memcached-reserve": 6,
+        "geo": 5,
+        "mongodb-user": 3,
+        "mongodb-reservation": 5,
+        "user": 6,
+        "profile": 5,
+        "memcached-profile": 5,
+        "rate": 5,
+        "memcached-rate": 5,
+        "mongodb-geo": 6,
+        "mongodb-profile": 5,
+        "frontend": 3,
+        "recommendation": 5,
+        "reservation": 5,
+        "mongodb-recommendation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.037368705680327775,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -4.5474735088646414e-14,
+        "communication_cost": 1563294.4534819813,
+        "resource_cost": 1203.0423734019917
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-user": 2,
+        "memcached-reserve": 2,
+        "user": 3,
+        "mongodb-profile": 2,
+        "rate": 6,
+        "mongodb-geo": 2,
+        "geo": 3,
+        "frontend": 2,
+        "reservation": 3,
+        "mongodb-rate": 6,
+        "memcached-profile": 3,
+        "recommendation": 3,
+        "search": 6,
+        "mongodb-recommendation": 3,
+        "mongodb-reservation": 3,
+        "memcached-rate": 4,
+        "profile": 2
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.34042522189944585
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 1747448.8119885689,
+        "resource_cost": 280.5616493319301,
+        "resource_imbalance": -4.5474735088646414e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-reserve": 5,
+        "rate": 5,
+        "reservation": 5,
+        "memcached-rate": 2,
+        "frontend": 6,
+        "mongodb-geo": 5,
+        "geo": 6,
+        "memcached-profile": 6,
+        "search": 2,
+        "mongodb-recommendation": 5,
+        "recommendation": 5,
+        "user": 5,
+        "mongodb-reservation": 6,
+        "profile": 6,
+        "mongodb-profile": 6,
+        "mongodb-rate": 5,
+        "mongodb-user": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.06767901510287844,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2176482.572632214,
+        "resource_cost": 252.65619946574066,
+        "resource_imbalance": -4.5474735088646414e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "user": 4,
+        "mongodb-user": 5,
+        "memcached-rate": 3,
+        "rate": 5,
+        "reservation": 5,
+        "memcached-profile": 4,
+        "frontend": 6,
+        "mongodb-rate": 6,
+        "memcached-reserve": 6,
+        "mongodb-recommendation": 5,
+        "mongodb-reservation": 5,
+        "profile": 5,
+        "mongodb-profile": 5,
+        "search": 4,
+        "geo": 5,
+        "mongodb-geo": 6,
+        "recommendation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.010356628341969109,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 266.2814142258098,
+        "resource_imbalance": -3.979039320256561e-14,
+        "communication_cost": 2166953.9946588785
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "rate": 5,
+        "mongodb-reservation": 5,
+        "frontend": 5,
+        "user": 6,
+        "reservation": 5,
+        "memcached-profile": 5,
+        "mongodb-profile": 6,
+        "memcached-rate": 4,
+        "recommendation": 6,
+        "mongodb-user": 2,
+        "search": 5,
+        "memcached-reserve": 4,
+        "mongodb-recommendation": 6,
+        "mongodb-rate": 1,
+        "profile": 4,
+        "mongodb-geo": 6,
+        "geo": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.007627105414914308
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -4.5474735088646414e-14,
+        "resource_cost": 220.70820611451973,
+        "communication_cost": 2956130.880494197
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "reservation": 5,
+        "recommendation": 5,
+        "geo": 5,
+        "memcached-rate": 5,
+        "search": 4,
+        "memcached-reserve": 5,
+        "mongodb-recommendation": 4,
+        "frontend": 6,
+        "rate": 4,
+        "memcached-profile": 5,
+        "mongodb-geo": 5,
+        "mongodb-profile": 6,
+        "mongodb-user": 1,
+        "mongodb-rate": 5,
+        "profile": 5,
+        "mongodb-reservation": 5,
+        "user": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.04640801029672999,
+        "rank": 3
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -4.5474735088646414e-14,
+        "communication_cost": 2686775.3147154097,
+        "resource_cost": 224.9140835826608
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "frontend": 5,
+        "mongodb-rate": 4,
+        "geo": 5,
+        "rate": 5,
+        "mongodb-recommendation": 5,
+        "mongodb-user": 5,
+        "mongodb-reservation": 1,
+        "mongodb-profile": 4,
+        "memcached-rate": 5,
+        "memcached-reserve": 6,
+        "mongodb-geo": 5,
+        "recommendation": 5,
+        "memcached-profile": 6,
+        "user": 1,
+        "search": 5,
+        "profile": 6,
+        "reservation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.015865771632377172
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -6.394884621840902e-14,
+        "communication_cost": 2614361.1011781082,
+        "resource_cost": 432.56008508160284
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "recommendation": 5,
+        "search": 4,
+        "memcached-reserve": 6,
+        "mongodb-reservation": 6,
+        "memcached-rate": 1,
+        "geo": 5,
+        "memcached-profile": 3,
+        "mongodb-rate": 6,
+        "frontend": 6,
+        "rate": 5,
+        "mongodb-geo": 4,
+        "user": 4,
+        "profile": 4,
+        "reservation": 5,
+        "mongodb-profile": 4,
+        "mongodb-recommendation": 3,
+        "mongodb-user": 1
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.04601167747301513
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -6.394884621840902e-14,
+        "communication_cost": 2555182.4048451595,
+        "resource_cost": 545.7110343489545
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "user": 3,
+        "memcached-reserve": 4,
+        "mongodb-geo": 4,
+        "mongodb-reservation": 4,
+        "memcached-profile": 4,
+        "mongodb-user": 6,
+        "recommendation": 1,
+        "geo": 4,
+        "mongodb-recommendation": 6,
+        "mongodb-rate": 6,
+        "profile": 5,
+        "frontend": 3,
+        "reservation": 4,
+        "rate": 5,
+        "mongodb-profile": 3,
+        "search": 4,
+        "memcached-rate": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.06435113905309717
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2706545.6238960666,
+        "resource_cost": 311.39740810671327,
+        "resource_imbalance": -6.821210263296962e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "reservation": 4,
+        "memcached-rate": 5,
+        "memcached-profile": 5,
+        "mongodb-user": 5,
+        "memcached-reserve": 6,
+        "mongodb-geo": 5,
+        "recommendation": 1,
+        "frontend": 2,
+        "rate": 4,
+        "geo": 6,
+        "profile": 4,
+        "mongodb-rate": 4,
+        "mongodb-reservation": 6,
+        "search": 6,
+        "user": 5,
+        "mongodb-profile": 4,
+        "mongodb-recommendation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.012863143581110207
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 3094137.609661388,
+        "resource_cost": 293.33934441536087,
+        "resource_imbalance": -6.821210263296962e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-rate": 6,
+        "mongodb-profile": 5,
+        "profile": 5,
+        "recommendation": 1,
+        "mongodb-recommendation": 6,
+        "frontend": 4,
+        "search": 5,
+        "memcached-rate": 2,
+        "mongodb-reservation": 6,
+        "rate": 5,
+        "memcached-reserve": 4,
+        "reservation": 5,
+        "memcached-profile": 5,
+        "mongodb-geo": 5,
+        "user": 4,
+        "mongodb-user": 5,
+        "geo": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 3,
+        "crowding_distance": 0.06102208059248805
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 307.1915306385722,
+        "resource_imbalance": -5.684341886080802e-14,
+        "communication_cost": 2920681.7749071056
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-profile": 4,
+        "rate": 5,
+        "mongodb-profile": 6,
+        "recommendation": 4,
+        "mongodb-recommendation": 4,
+        "reservation": 4,
+        "profile": 6,
+        "mongodb-reservation": 5,
+        "mongodb-user": 5,
+        "memcached-reserve": 4,
+        "memcached-rate": 2,
+        "mongodb-rate": 4,
+        "frontend": 6,
+        "search": 5,
+        "geo": 6,
+        "mongodb-geo": 5,
+        "user": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.013524433479729365
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 460.3496661838324,
+        "communication_cost": 1625748.9799341247,
+        "resource_imbalance": -3.979039320256561e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-profile": 3,
+        "mongodb-recommendation": 6,
+        "mongodb-user": 4,
+        "geo": 5,
+        "memcached-rate": 6,
+        "profile": 6,
+        "reservation": 3,
+        "rate": 5,
+        "search": 5,
+        "mongodb-profile": 3,
+        "memcached-reserve": 3,
+        "recommendation": 5,
+        "mongodb-rate": 6,
+        "mongodb-reservation": 5,
+        "frontend": 6,
+        "user": 4,
+        "mongodb-geo": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.06771884137774126
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 4223184.395420992,
+        "resource_imbalance": -7.389644451905042e-14,
+        "resource_cost": 414.4545561711007
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 4,
+        "memcached-profile": 4,
+        "recommendation": 1,
+        "user": 5,
+        "reservation": 5,
+        "mongodb-rate": 6,
+        "mongodb-recommendation": 4,
+        "memcached-reserve": 5,
+        "mongodb-profile": 4,
+        "geo": 4,
+        "mongodb-geo": 5,
+        "mongodb-reservation": 4,
+        "mongodb-user": 1,
+        "frontend": 3,
+        "rate": 4,
+        "memcached-rate": 5,
+        "profile": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.07677638412999886
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 4320191.992661235,
+        "resource_cost": 464.441169648689,
+        "resource_imbalance": -7.958078640513122e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-rate": 4,
+        "geo": 4,
+        "memcached-reserve": 4,
+        "mongodb-recommendation": 5,
+        "mongodb-reservation": 5,
+        "search": 3,
+        "user": 5,
+        "frontend": 1,
+        "mongodb-rate": 3,
+        "rate": 5,
+        "mongodb-profile": 5,
+        "memcached-profile": 6,
+        "mongodb-user": 4,
+        "mongodb-geo": 5,
+        "profile": 4,
+        "recommendation": 4,
+        "reservation": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 1.7976931348623157e308
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -7.389644451905042e-14,
+        "communication_cost": 4058303.9805870443,
+        "resource_cost": 1266.1969874092622
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "geo": 4,
+        "memcached-rate": 2,
+        "mongodb-geo": 3,
+        "mongodb-reservation": 2,
+        "rate": 3,
+        "recommendation": 3,
+        "user": 5,
+        "search": 3,
+        "mongodb-profile": 2,
+        "frontend": 4,
+        "profile": 3,
+        "mongodb-recommendation": 2,
+        "mongodb-rate": 2,
+        "mongodb-user": 3,
+        "memcached-reserve": 3,
+        "reservation": 4,
+        "memcached-profile": 2
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 1.7976931348623157e308
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 261.74241831305915,
+        "communication_cost": 1003445.688162188,
+        "resource_imbalance": -2.2737367544323207e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "profile": 6,
+        "mongodb-geo": 5,
+        "mongodb-user": 6,
+        "rate": 5,
+        "reservation": 5,
+        "memcached-rate": 5,
+        "user": 5,
+        "mongodb-reservation": 4,
+        "mongodb-recommendation": 5,
+        "recommendation": 6,
+        "mongodb-profile": 6,
+        "mongodb-rate": 3,
+        "search": 6,
+        "memcached-profile": 6,
+        "geo": 6,
+        "frontend": 6,
+        "memcached-reserve": 3
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.015353771892447764,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 717672.5159892133,
+        "resource_cost": 235.45537723351913,
+        "resource_imbalance": 3.410605131648481e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "recommendation": 2,
+        "profile": 6,
+        "mongodb-user": 5,
+        "geo": 6,
+        "search": 6,
+        "rate": 5,
+        "user": 6,
+        "mongodb-geo": 5,
+        "memcached-reserve": 2,
+        "memcached-rate": 6,
+        "frontend": 5,
+        "mongodb-recommendation": 6,
+        "mongodb-rate": 6,
+        "memcached-profile": 5,
+        "mongodb-profile": 6,
+        "reservation": 5,
+        "mongodb-reservation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 1.7976931348623157e308,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -1.0658141036401502e-15,
+        "communication_cost": 713977.8838731386,
+        "resource_cost": 337.91469195349765
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 2,
+        "user": 1,
+        "memcached-rate": 6,
+        "mongodb-geo": 6,
+        "mongodb-reservation": 3,
+        "mongodb-recommendation": 6,
+        "memcached-profile": 5,
+        "recommendation": 6,
+        "mongodb-profile": 6,
+        "profile": 4,
+        "memcached-reserve": 1,
+        "frontend": 6,
+        "mongodb-user": 6,
+        "mongodb-rate": 1,
+        "geo": 6,
+        "reservation": 6,
+        "rate": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.019755213627517913
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 791733.96034532,
+        "resource_cost": 274.9298624077267,
+        "resource_imbalance": 7.815970093361103e-15
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "profile": 5,
+        "user": 6,
+        "memcached-profile": 1,
+        "memcached-reserve": 6,
+        "mongodb-geo": 6,
+        "rate": 4,
+        "mongodb-profile": 6,
+        "mongodb-rate": 3,
+        "mongodb-recommendation": 6,
+        "recommendation": 6,
+        "reservation": 4,
+        "geo": 4,
+        "mongodb-reservation": 6,
+        "memcached-rate": 4,
+        "search": 4,
+        "mongodb-user": 6,
+        "frontend": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.04873427131629797,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -2.842170943040401e-14,
+        "resource_cost": 479.62611143308993,
+        "communication_cost": 894465.777195268
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 6,
+        "memcached-profile": 5,
+        "mongodb-reservation": 6,
+        "recommendation": 2,
+        "memcached-rate": 6,
+        "mongodb-recommendation": 6,
+        "user": 6,
+        "memcached-reserve": 2,
+        "rate": 6,
+        "reservation": 3,
+        "geo": 3,
+        "profile": 2,
+        "mongodb-rate": 6,
+        "mongodb-profile": 5,
+        "frontend": 6,
+        "mongodb-geo": 6,
+        "mongodb-user": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.12628888797084487
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 419.83957699981437,
+        "communication_cost": 848677.2567500504,
+        "resource_imbalance": -1.4477308241112042e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "rate": 3,
+        "mongodb-user": 5,
+        "mongodb-recommendation": 5,
+        "user": 6,
+        "memcached-reserve": 6,
+        "frontend": 6,
+        "mongodb-profile": 6,
+        "geo": 3,
+        "memcached-rate": 3,
+        "memcached-profile": 6,
+        "mongodb-reservation": 6,
+        "recommendation": 2,
+        "search": 6,
+        "reservation": 6,
+        "mongodb-geo": 1,
+        "mongodb-rate": 6,
+        "profile": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.11132238118814715
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 1134260.8480518202,
+        "resource_cost": 166.59234573541758,
+        "resource_imbalance": -1.1368683772161604e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "user": 4,
+        "mongodb-geo": 6,
+        "search": 5,
+        "mongodb-reservation": 6,
+        "frontend": 4,
+        "mongodb-rate": 6,
+        "mongodb-recommendation": 6,
+        "recommendation": 5,
+        "mongodb-user": 5,
+        "memcached-rate": 5,
+        "rate": 5,
+        "mongodb-profile": 4,
+        "reservation": 6,
+        "memcached-profile": 1,
+        "geo": 6,
+        "memcached-reserve": 6,
+        "profile": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.07005314716719621,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 198.5208955216535,
+        "resource_imbalance": -2.2737367544323207e-14,
+        "communication_cost": 1097891.738520945
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-profile": 5,
+        "mongodb-user": 5,
+        "mongodb-geo": 5,
+        "geo": 5,
+        "rate": 5,
+        "recommendation": 5,
+        "memcached-profile": 6,
+        "frontend": 5,
+        "reservation": 5,
+        "mongodb-rate": 6,
+        "profile": 4,
+        "user": 6,
+        "memcached-rate": 3,
+        "memcached-reserve": 6,
+        "mongodb-recommendation": 6,
+        "search": 5,
+        "mongodb-reservation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.0891694828051661
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": 2.2737367544323207e-14,
+        "resource_cost": 135.30909451274033,
+        "communication_cost": 1134854.290658073
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "reservation": 5,
+        "mongodb-reservation": 6,
+        "profile": 5,
+        "memcached-reserve": 5,
+        "mongodb-geo": 5,
+        "geo": 6,
+        "user": 5,
+        "memcached-rate": 5,
+        "frontend": 5,
+        "rate": 5,
+        "mongodb-user": 4,
+        "memcached-profile": 5,
+        "mongodb-rate": 6,
+        "recommendation": 6,
+        "mongodb-profile": 4,
+        "search": 6,
+        "mongodb-recommendation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.012140634708406156,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -3.410605131648481e-14,
+        "resource_cost": 157.56331388974132,
+        "communication_cost": 1385352.1916227075
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-geo": 6,
+        "mongodb-rate": 5,
+        "user": 4,
+        "rate": 5,
+        "mongodb-user": 6,
+        "profile": 4,
+        "mongodb-profile": 1,
+        "geo": 6,
+        "mongodb-reservation": 5,
+        "reservation": 5,
+        "frontend": 6,
+        "memcached-reserve": 5,
+        "memcached-rate": 5,
+        "memcached-profile": 6,
+        "recommendation": 6,
+        "search": 5,
+        "mongodb-recommendation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.0903187970765059,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 144.33812635841656,
+        "resource_imbalance": 0.0,
+        "communication_cost": 1272127.2940558617
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-profile": 6,
+        "mongodb-reservation": 6,
+        "geo": 5,
+        "mongodb-user": 5,
+        "user": 6,
+        "search": 5,
+        "reservation": 6,
+        "profile": 4,
+        "memcached-rate": 5,
+        "rate": 6,
+        "memcached-reserve": 5,
+        "mongodb-geo": 4,
+        "recommendation": 4,
+        "frontend": 5,
+        "mongodb-recommendation": 6,
+        "mongodb-rate": 6,
+        "memcached-profile": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.05968433558423626
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 890.8464055984648,
+        "communication_cost": 2155916.9956971495,
+        "resource_imbalance": -5.1159076974727215e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-user": 2,
+        "mongodb-reservation": 6,
+        "reservation": 3,
+        "mongodb-rate": 3,
+        "rate": 1,
+        "profile": 4,
+        "geo": 6,
+        "user": 5,
+        "frontend": 2,
+        "memcached-rate": 6,
+        "mongodb-geo": 6,
+        "mongodb-profile": 2,
+        "recommendation": 6,
+        "memcached-reserve": 2,
+        "mongodb-recommendation": 3,
+        "search": 2,
+        "memcached-profile": 3
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.35327737327027037
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2328284.6445082813,
+        "resource_cost": 365.19959360619094,
+        "resource_imbalance": -5.1159076974727215e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "search": 4,
+        "user": 4,
+        "mongodb-reservation": 6,
+        "reservation": 6,
+        "memcached-reserve": 6,
+        "profile": 5,
+        "mongodb-geo": 5,
+        "mongodb-rate": 1,
+        "memcached-profile": 6,
+        "rate": 5,
+        "memcached-rate": 4,
+        "frontend": 4,
+        "geo": 3,
+        "mongodb-recommendation": 6,
+        "mongodb-user": 3,
+        "recommendation": 5,
+        "mongodb-profile": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.05224129831063004,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 789.5389283214231,
+        "resource_imbalance": -5.1159076974727215e-14,
+        "communication_cost": 2238754.541372215
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-user": 5,
+        "mongodb-profile": 4,
+        "recommendation": 6,
+        "memcached-rate": 6,
+        "memcached-profile": 1,
+        "mongodb-geo": 4,
+        "mongodb-rate": 3,
+        "geo": 6,
+        "user": 6,
+        "memcached-reserve": 3,
+        "search": 3,
+        "rate": 3,
+        "profile": 4,
+        "reservation": 3,
+        "frontend": 3,
+        "mongodb-recommendation": 3,
+        "mongodb-reservation": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.15880875267126676
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": 1.1368683772161604e-14,
+        "communication_cost": 862174.1643847788,
+        "resource_cost": 207.55964914982226
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-rate": 6,
+        "mongodb-user": 6,
+        "mongodb-profile": 3,
+        "mongodb-rate": 6,
+        "rate": 5,
+        "mongodb-reservation": 4,
+        "search": 5,
+        "geo": 6,
+        "recommendation": 4,
+        "reservation": 6,
+        "profile": 6,
+        "user": 4,
+        "frontend": 6,
+        "mongodb-recommendation": 6,
+        "memcached-profile": 5,
+        "memcached-reserve": 5,
+        "mongodb-geo": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.11740510337360896
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 834700.836086435,
+        "resource_cost": 261.7326965305666,
+        "resource_imbalance": 2.2737367544323207e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-profile": 6,
+        "profile": 5,
+        "rate": 5,
+        "search": 5,
+        "frontend": 5,
+        "mongodb-reservation": 6,
+        "mongodb-rate": 3,
+        "user": 6,
+        "recommendation": 3,
+        "memcached-rate": 5,
+        "mongodb-recommendation": 6,
+        "memcached-reserve": 5,
+        "reservation": 6,
+        "mongodb-user": 5,
+        "memcached-profile": 5,
+        "geo": 6,
+        "mongodb-geo": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.09704426426703562
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 301.9877925972777,
+        "resource_imbalance": -3.694822225952521e-14,
+        "communication_cost": 1913740.0979474464
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "reservation": 5,
+        "memcached-reserve": 5,
+        "memcached-profile": 6,
+        "mongodb-geo": 4,
+        "mongodb-rate": 6,
+        "mongodb-recommendation": 6,
+        "recommendation": 4,
+        "mongodb-user": 4,
+        "profile": 6,
+        "mongodb-reservation": 1,
+        "geo": 6,
+        "rate": 4,
+        "search": 3,
+        "user": 4,
+        "memcached-rate": 5,
+        "frontend": 6,
+        "mongodb-profile": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.07847188899958192
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2008556.9657687163,
+        "resource_imbalance": -3.552713678800501e-14,
+        "resource_cost": 289.1529105122048
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-profile": 4,
+        "reservation": 5,
+        "recommendation": 6,
+        "memcached-rate": 4,
+        "mongodb-geo": 6,
+        "memcached-profile": 4,
+        "mongodb-recommendation": 5,
+        "profile": 4,
+        "mongodb-reservation": 6,
+        "search": 5,
+        "memcached-reserve": 6,
+        "mongodb-rate": 6,
+        "geo": 4,
+        "user": 5,
+        "rate": 4,
+        "frontend": 2,
+        "mongodb-user": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.04395816329323405,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 257.2426605976411,
+        "resource_imbalance": -4.5474735088646414e-14,
+        "communication_cost": 2440468.216632651
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "rate": 5,
+        "search": 5,
+        "user": 5,
+        "mongodb-rate": 4,
+        "memcached-rate": 1,
+        "recommendation": 5,
+        "mongodb-geo": 5,
+        "profile": 5,
+        "reservation": 2,
+        "mongodb-recommendation": 5,
+        "mongodb-user": 6,
+        "memcached-profile": 5,
+        "mongodb-reservation": 5,
+        "frontend": 6,
+        "geo": 5,
+        "mongodb-profile": 6,
+        "memcached-reserve": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.019997361660475013,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 229.73723796019593,
+        "resource_imbalance": -4.5474735088646414e-14,
+        "communication_cost": 2866274.169717894
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "geo": 5,
+        "mongodb-rate": 4,
+        "frontend": 5,
+        "search": 4,
+        "rate": 6,
+        "mongodb-recommendation": 5,
+        "memcached-rate": 5,
+        "memcached-reserve": 5,
+        "memcached-profile": 5,
+        "mongodb-reservation": 6,
+        "reservation": 6,
+        "profile": 1,
+        "mongodb-user": 4,
+        "mongodb-profile": 5,
+        "mongodb-geo": 4,
+        "user": 5,
+        "recommendation": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.05069538528268064,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2622727.449763109,
+        "resource_imbalance": -5.968558980384842e-14,
+        "resource_cost": 759.0460097737422
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "memcached-reserve": 4,
+        "reservation": 4,
+        "mongodb-rate": 4,
+        "frontend": 6,
+        "search": 3,
+        "memcached-profile": 3,
+        "recommendation": 4,
+        "mongodb-user": 3,
+        "rate": 6,
+        "mongodb-geo": 6,
+        "geo": 2,
+        "mongodb-reservation": 5,
+        "mongodb-recommendation": 3,
+        "user": 3,
+        "memcached-rate": 6,
+        "profile": 5,
+        "mongodb-profile": 2
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.2425984968860016
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -5.684341886080802e-14,
+        "resource_cost": 547.3671865722613,
+        "communication_cost": 2628935.7079298836
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "rate": 6,
+        "geo": 5,
+        "mongodb-user": 2,
+        "frontend": 5,
+        "reservation": 6,
+        "profile": 6,
+        "mongodb-profile": 6,
+        "memcached-reserve": 5,
+        "mongodb-reservation": 2,
+        "search": 3,
+        "mongodb-recommendation": 5,
+        "user": 1,
+        "memcached-rate": 2,
+        "mongodb-geo": 5,
+        "memcached-profile": 6,
+        "mongodb-rate": 5,
+        "recommendation": 2
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.23215016419477782,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "communication_cost": 2707818.911751509,
+        "resource_cost": 351.7279910467389,
+        "resource_imbalance": -6.821210263296962e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "frontend": 5,
+        "mongodb-profile": 5,
+        "mongodb-reservation": 2,
+        "geo": 5,
+        "profile": 3,
+        "reservation": 5,
+        "memcached-rate": 6,
+        "user": 1,
+        "mongodb-geo": 5,
+        "mongodb-rate": 5,
+        "rate": 5,
+        "mongodb-recommendation": 5,
+        "recommendation": 5,
+        "memcached-reserve": 6,
+        "mongodb-user": 6,
+        "memcached-profile": 1,
+        "search": 5
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.04331603548844825
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_imbalance": -6.821210263296962e-14,
+        "resource_cost": 320.01669094115266,
+        "communication_cost": 3496074.4977609906
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-profile": 5,
+        "user": 5,
+        "mongodb-rate": 5,
+        "memcached-rate": 4,
+        "mongodb-recommendation": 6,
+        "search": 4,
+        "rate": 5,
+        "recommendation": 5,
+        "memcached-profile": 5,
+        "mongodb-reservation": 5,
+        "mongodb-user": 6,
+        "geo": 5,
+        "reservation": 1,
+        "mongodb-geo": 3,
+        "frontend": 4,
+        "memcached-reserve": 5,
+        "profile": 4
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "crowding_distance": 0.07139892717927598,
+        "rank": 4
+      }
+    },
+    {
+      "constraint_values": {},
+      "objective_values": {
+        "resource_cost": 337.44775594061855,
+        "communication_cost": 3301425.4126485195,
+        "resource_imbalance": -6.821210263296962e-14
+      },
+      "constraint_violation": 0.0,
+      "variable_values": {
+        "mongodb-recommendation": 5,
+        "frontend": 4,
+        "user": 6,
+        "search": 5,
+        "memcached-rate": 1,
+        "mongodb-profile": 5,
+        "mongodb-rate": 1,
+        "memcached-profile": 3,
+        "mongodb-user": 5,
+        "mongodb-geo": 5,
+        "recommendation": 5,
+        "geo": 5,
+        "rate": 5,
+        "mongodb-reservation": 1,
+        "memcached-reserve": 6,
+        "profile": 4,
+        "reservation": 6
+      },
+      "is_feasible": true,
+      "evaluated": true,
+      "data": {
+        "rank": 4,
+        "crowding_distance": 0.10543686998422853
+      }
+    }
+  ],
+  "generation": 250,
+  "algorithm": "NSGA2",
+  "additional_data": null,
+  "took": {
+    "hours": 0,
+    "minutes": 0,
+    "seconds": 59
+  },
+  "exported_on": "2024-09-19T11:08:52.978121223Z"
+}
