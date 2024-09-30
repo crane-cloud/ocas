@@ -158,7 +158,9 @@ impl Yonga {
         node_tree.aggregate_edges(&node_graph);
 
 
-        let placement_map = self.solver.solve_1(service_tree, node_tree).await;
+        //let placement_map = self.solver.solve_1(service_tree, node_tree).await;
+        let placement_map = self.solver.solve_lp(service_tree, node_tree).await;
+
 
         match placement_map {
             Ok(map) => {

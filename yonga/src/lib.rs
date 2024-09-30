@@ -11,3 +11,5 @@ pub mod binpack;
 pub mod random;
 pub mod trace;
 pub mod node;
+pub mod nsga2;
+// pub mod constraint;

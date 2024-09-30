@@ -1,6 +1,6 @@
 cluster:
   nodes:
-    - id: "1"
+    - id: 1
       name: "cr-jhb"
       ip: "129.232.230.130"
       resource: 
@@ -8,7 +8,7 @@ cluster:
         memory: 64317
         disk: 1800000
         network: 1000
-    - id: "2"
+    - id: 2
       name: "cr-dar"
       ip: "196.32.212.213"
       resource: 
@@ -16,7 +16,7 @@ cluster:
         memory: 16000
         disk: 245000
         network: 1000
-    - id: "3"
+    - id: 3
       name: "cr-kla"
       ip: "102.134.147.244"
       resource: 
@@ -24,7 +24,7 @@ cluster:
         memory: 16000
         disk: 47000
         network: 1000
-    - id: "4"
+    - id: 4
       name: "cr-lsk"
       ip: "196.32.215.213"
       resource: 
@@ -32,7 +32,7 @@ cluster:
         memory: 16000
         disk: 245000
         network: 1000
-    - id: "5"
+    - id: 5
       name: "cr-bun"
       ip: "196.43.171.248"
       resource: 

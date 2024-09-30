@@ -43,3 +43,25 @@ Node: cr-dar, Coordinate: (505.67518706531337, 0.8703524271376406), Distance: 0.
       # SPAN_STORAGE_TYPE: "grpc-plugin"
       # GRPC_STORAGE_PLUGIN_BINARY: "/app/jaeger-mongodb"
       # GRPC_STORAGE_PLUGIN_CONFIGURATION_FILE: "/app/configs/config.yaml"
+
+
+
+
+
+      ToDo - September 9 - 16
+
+      * Only deploy the stack if considerable changes
+            * Create a yaml file of ONLY services that need to be re-deployed
+            - Keep track of service/node assignments and only deploy if there are changes *** placement > compare
+      * Balance the node resource utilization
+            * Helps to distribute the services
+      * Placement | Service Tree, Node Tree, Resource Tree
+
+
+      ***** Optimization Problem? What are the objectives? What are the constraints? 
+      - In the a priori method, sufficient information must be provided before making any decision. This information can aggregate all the objectives into a single one by defining the single-objective function as a weighted sum of the normalized costs associated with each objective [35]. AKA - Weighted Sum Method / Scalarization method
+
+
+    \begin{equation}\label{eq:all}
+        \text{\textbf{\textit{Minimize}}} \sum_{i=1}^{k} \sum_{\substack{i=1 \\ j=1}}^m l_{ij}x_{ij} + \sum_{i=1}^{k} \sum_{j=1}^m y_{ij}S^{util}_{j}c_{i} + \sum_{i=1}^{k} \left( \sum_{j=1}^m y_{ij}\lambda_{i}S^{util}_{j} - \frac {(\frac{1}{k} \sum_{i=1}^{k} \sum_{j=1}^m y_{ij}S^{util}_{j})}{\alpha} \right)^2
+    \end{equation}

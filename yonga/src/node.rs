@@ -40,10 +40,10 @@ pub struct NodeGraph {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AggLinkEdge {
-    destination: Node,
-    edge: f64,
+    pub destination: Node,
+    pub edge: f64,
 }
 
 #[derive(Debug)]
@@ -205,6 +205,11 @@ impl NodeTree {
     // A function to get nodes in the tree
     pub fn get_nodes(&self) -> Vec<Node> {
         self.tree.keys().cloned().collect()
+    }
+
+
+    pub fn get_tree(&self) -> &HashMap<Node, Vec<AggLinkEdge>> {
+        &self.tree
     }
 
 }
