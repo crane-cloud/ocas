@@ -145,6 +145,83 @@ impl Config {
         
         (grouped_services.len(), grouped_services)
     }
+
+    pub fn grouped_services(&self) -> Vec<(String, Vec<Service>)> {
+        let mut groups: Vec<HashSet<String>> = Vec::new();
+        let mut service_to_group: HashMap<String, usize> = HashMap::new();
+    
+        for service in &self.services {
+            let mut current_group = HashSet::new();
+            current_group.insert(service.name.clone());
+    
+            if let Some(cache) = &service.cache {
+                if !cache.is_empty() {
+                    current_group.insert(cache.clone());
+                }
+            }
+            if let Some(db) = &service.db {
+                if !db.is_empty() {
+                    current_group.insert(db.clone());
+                }
+            }
+    
+            let mut merged_groups: Vec<usize> = Vec::new();
+            for name in &current_group {
+                if let Some(group_index) = service_to_group.get(name) {
+                    merged_groups.push(*group_index);
+                }
+            }
+    
+            if merged_groups.is_empty() {
+                let new_group_index = groups.len();
+                for name in &current_group {
+                    service_to_group.insert(name.clone(), new_group_index);
+                }
+                groups.push(current_group);
+            } else {
+                let mut merged_group = HashSet::new();
+                for index in &merged_groups {
+                    merged_group.extend(groups[*index].clone());
+                }
+                for name in &current_group {
+                    merged_group.insert(name.clone());
+                }
+                let main_group_index = merged_groups[0];
+                groups[main_group_index] = merged_group.clone();
+                for name in &merged_group {
+                    service_to_group.insert(name.clone(), main_group_index);
+                }
+                for &index in merged_groups.iter().skip(1) {
+                    groups[index].clear();
+                }
+            }
+        }
+    
+        let mut grouped_services: Vec<(String, Vec<Service>)> = Vec::new();
+        for group in groups {
+            if !group.is_empty() {
+                let mut group_services = Vec::new();
+                let mut group_name = String::new();
+                for service_name in &group {
+                    if let Some(service) = self.services.iter().find(|s| s.name == *service_name) {
+                        group_services.push(service.clone());
+    
+                        // Set the main service's name as the group name if it has a cache or db
+                        if group_name.is_empty() && (!service.cache.as_ref().unwrap_or(&"".to_string()).is_empty() || !service.db.as_ref().unwrap_or(&"".to_string()).is_empty()) {
+                            group_name = service.name.clone();
+                        }
+                    }
+                }
+                if group_name.is_empty() {
+                    // Fallback to the first service name if no cache/db is found
+                    group_name = group_services.first().unwrap().name.clone();
+                }
+                grouped_services.push((group_name, group_services));
+            }
+        }
+    
+        grouped_services
+    }
     
     // A function to retrieve the Resource of a node from the config
     
@@ -167,6 +244,20 @@ impl Node {
             name: name.to_string(),
             ip: ip.to_string(),
             resource: resource,
+        }
+    }
+
+    pub fn default() -> Self {
+        Node {
+            id: 0,
+            name: "".to_string(),
+            ip: "".to_string(),
+            resource: ResourceInt {
+                cpu: 0,
+                memory: 0,
+                disk: 0,
+                network: 0,
+            },
         }
     }
 

@@ -6,9 +6,11 @@ use crate::node::NodeTree;
 use crate::trace::ServiceGraph;
 use crate::nsga2::MicroservicePlacementProblem;
 
+//use crate::solver::StoppingConditionType::MaxGeneration
+
 
 use optirustic::algorithms::{
-    Algorithm, MaxGeneration, NSGA2Arg, StoppingConditionType, NSGA2
+    Algorithm, MaxGenerationValue, NSGA2Arg, StoppingConditionType, NSGA2
 };
 use optirustic::core::{BoundedNumber, Choice, Constraint, EvaluationResult, Evaluator, Individual, OError, Objective, ObjectiveDirection, Problem, RelationalOperator, VariableType, VariableValue
 };
@@ -341,6 +343,25 @@ impl Solver {
             available_resources.insert(node.clone(), available);
         }
 
+        // Find the most popular services
+        let (most_popular_services, _) = service_tree.most_popular_services();
+        // Find the least cost node
+        let lowest_cost_node_id = self.get_lowest_cost_node(&node_costs).id.clone() as u64;
+
+        // Create a constraint that places the most popular services on the least cost node
+        let mut constraints = Vec::new();
+        for service in &most_popular_services {
+           let constraint = Constraint::new(
+                service, 
+                RelationalOperator::EqualTo, 
+                Some(lowest_cost_node_id.clone()), 
+                None, 
+                None
+            );
+            constraints.push(constraint);
+        }
+
+
         // Create the problem
         let problem = MicroservicePlacementProblem::create(
             self.config.clone(),
@@ -349,6 +370,8 @@ impl Solver {
             node_costs,
             service_resources,
             available_resources,
+            Some(constraints),
+
         )?;
 
             //let mutation_operator_options = PolynomialMutationArgs::default(&problem);
@@ -371,7 +394,7 @@ impl Solver {
         let args = NSGA2Arg {
             // use 100 individuals and stop the algorithm at 250 generations
             number_of_individuals: 100,
-            stopping_condition: StoppingConditionType::MaxGeneration(MaxGeneration(10)),
+            stopping_condition: StoppingConditionType::MaxGeneration(MaxGenerationValue(250)),
             // use default options for the SBX and PM operators
             crossover_operator_options: Some(crossover_operator_options),
             mutation_operator_options: Some(mutation_operator_options),
@@ -532,6 +555,21 @@ impl Solver {
         }
 
         service_resources
+    }
+
+    // A function that takes node costs and returns the node with the lowest cost
+    fn get_lowest_cost_node(&self, node_costs: &HashMap<Node, f64>) -> Node {
+        let mut lowest_cost = f64::MAX;
+        let mut lowest_cost_node = Node::default();
+
+        for (node, cost) in node_costs {
+            if *cost < lowest_cost {
+                lowest_cost = *cost;
+                lowest_cost_node = node.clone();
+            }
+        }
+
+        lowest_cost_node
     }
 
 }

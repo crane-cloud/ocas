@@ -1,19 +1,10 @@
-// use std::path::PathBuf;
 use std::collections::HashMap;
 use std::error::Error;
-// use log::LevelFilter;
-// use std::fs;
-// use clap::{Command, Arg, ArgAction};
-// use rand::Rng;
-// use rand::prelude::IteratorRandom;
 
-// use optirustic::algorithms::{
-//     Algorithm, MaxGeneration, NSGA2Arg, StoppingConditionType, NSGA2
-// };
-use optirustic::core::{BoundedNumber, Choice, Constraint, EvaluationResult, Evaluator, Individual, OError, Objective, ObjectiveDirection, Problem, RelationalOperator, VariableType, VariableValue
+use optirustic::core::{
+    Choice, Constraint, EvaluationResult, Evaluator, Individual, 
+    OError, Objective, ObjectiveDirection, Problem, VariableType, VariableValue
 };
-
-//use optirustic::operators::{PolynomialMutationArgs, SimulatedBinaryCrossoverArgs};
 
 use crate::node::AggLinkEdge;
 use crate::utility::{Node, Service, Config, Resource};
@@ -28,7 +19,9 @@ pub struct MicroservicePlacementProblem {
     cost: HashMap<Node, f64>,
     utilization: HashMap<Service, Vec<Option<(Node, Resource)>>>, // Resource utilization per service
     node_resources: HashMap<Node, Resource>, // Available resources per node
+    constraints: Option<Vec<Constraint>>,
 }
+
 
 impl MicroservicePlacementProblem {
     // Create the problem with the three objectives
@@ -39,74 +32,23 @@ impl MicroservicePlacementProblem {
         cost: HashMap<Node, f64>,
         utilization: HashMap<Service, Vec<Option<(Node, Resource)>>>, // Resource utilization per service
         node_resources: HashMap<Node, Resource>, // Available resources per node
+        constraints: Option<Vec<Constraint>>,
     ) -> Result<Problem, OError> {
         let objectives = vec![
             Objective::new("communication_cost", ObjectiveDirection::Minimise),
             Objective::new("resource_cost", ObjectiveDirection::Minimise),
-            //Objective::new("latency", ObjectiveDirection::Minimise),
             Objective::new("resource_imbalance", ObjectiveDirection::Minimise),
         ];
 
 
-        //let choices: Vec<String> = config.cluster.nodes.iter().map(|node| node.name.clone()).collect();
+        let choices: Vec<u64> = config.cluster.nodes.iter().map(|node| node.id.clone() as u64).collect();
 
         let services = config.services.clone();
-        let nodes = config.cluster.nodes.clone();
+        //let nodes = config.cluster.nodes.clone();
 
-
-        // Get the min/max ids of the nodes
-        let min_node_id = nodes.iter().map(|node| node.id).min().unwrap();
-        let max_node_id = nodes.iter().map(|node| node.id).max().unwrap();
-
-        // print the min and max node ids
-        println!("Min Node ID: {}, Max Node ID: {}", min_node_id, max_node_id);
-
-        // Create the decision variables: service-to-node placements
         let variables: Vec<VariableType> = services.iter().map(|service| {
-            VariableType::Integer(BoundedNumber::new(&service.name, min_node_id as i64, max_node_id as i64).unwrap())
+            VariableType::Choice(Choice::new(&service.name, choices.clone()))
         }).collect();
-
-        // let variables: Vec<VariableType> = services.iter().map(|service| {
-        //     VariableType::Choice(Choice::new(&service.name, choices.clone()))
-        // }).collect();
-
-
-        //let constraints = None; // Add constraints if any
-
-        // let constraints: Vec<Constraint> = vec![Constraint::new(
-        //     "resource_imbalance",
-        //     RelationalOperator::LessOrEqualTo,
-        //     max_node_id as f64,
-        // )];
-
-        // create constraints for each service
-        // let _constraint_min: Vec<Constraint> = services.iter().map(|service| {
-        //     Constraint::new(
-        //         &service.name,
-        //         RelationalOperator::GreaterOrEqualTo,
-        //         min_node_id as f64,
-        //     )
-        // }).collect();
-
-        // let constraint_max: Vec<Constraint> = services.iter().map(|service| {
-        //     Constraint::new(
-        //         &service.name,
-        //         RelationalOperator::LessOrEqualTo,
-        //         max_node_id as f64,
-        //     )
-        // }).collect();
-
-        //let constraints: Vec<Constraint> = Some(constraint_min.iter().chain(constraint_max.iter()).cloned().collect());
-
-
-
-        // let constraints = {
-        //     let mut constraints = HashMap::new();
-        //     for service in &services {
-        //         constraints.insert(service.name.clone(), (min_node_id, max_node_id));
-        //     }
-        //     Some(constraints)
-        // };
 
         let e = Box::new(MicroservicePlacementProblem {
             config,
@@ -115,9 +57,10 @@ impl MicroservicePlacementProblem {
             cost,
             utilization,
             node_resources,
+            constraints: constraints.clone(),
         });
 
-        Problem::new(objectives, variables, None, e)
+        Problem::new(objectives, variables, constraints, e)
     }
 
     // Create the objective functions
@@ -228,18 +171,6 @@ impl MicroservicePlacementProblem {
         }
     }
 
-    // pub fn latency(&self, placements: &HashMap<Service, Node>) -> f64 {
-    //     let mut total_latency = 0.0;
-    //     for (s1, n1) in placements {
-    //         for (s2, n2) in placements {
-    //             if s1 != s2 && n1 != n2 {
-    //                 total_latency += *self.latency.get(&(s1.clone(), s2.clone())).unwrap_or(&0.0);
-    //             }
-    //         }
-    //     }
-    //     total_latency
-    // }
-
 }
 
 impl Evaluator for MicroservicePlacementProblem {
@@ -249,34 +180,25 @@ impl Evaluator for MicroservicePlacementProblem {
         // Decode variables from the individual into service-to-node mapping
         for (_index, service) in self.config.services.iter().enumerate() {
 
-            // let variable_value = i.get_variable_value(&service.name)?; // Use service name as the key?
+            let variable_value = i.get_variable_value(&service.name)?; // Use service name as the key?
 
-            // println!("Variable Value for service {:?}: {:?}", service.name, variable_value);
-
-            // // Ensure we handle the `VariableValue` appropriately
-            // match variable_value {
-            //     // Assuming `VariableValue::Choice` contains the selected node's name
-            //     VariableValue::Choice(node_name) => {
-            //         if let Some(node) = self.config.cluster.nodes.iter().find(|n| n.name == *node_name) {
-            //             placements.insert(service.clone(), node.clone());
-            //         } else {
-            //             return Err(format!("Node with name '{}' not found", node_name).into());
-            //         }
-            //     },
-            //     // Handle other possible cases if necessary
-            //     _ => {
-            //         return Err("Unexpected variable value type".into());
-            //     },
-            // }
-
-            let id_node = i.get_integer_value(&service.name)?; // Use service name as the key
-
-            if let Some(node) = self.config.cluster.nodes.iter().find(|n| n.id == id_node) {
-                placements.insert(service.clone(), node.clone());
+            // Ensure we handle the `VariableValue` appropriately
+            match variable_value {
+                // Assuming `VariableValue::Choice` contains the selected node's name
+                VariableValue::Choice(node_name) => {
+                    if let Some(node) = self.config.cluster.nodes.iter().find(|n| n.id as u64 == *node_name) {
+                        placements.insert(service.clone(), node.clone());
+                    } else {
+                        return Err(format!("Node with name '{}' not found", node_name).into());
+                    }
+                },
+                // Handle other possible cases if necessary
+                _ => {
+                    return Err("Unexpected variable value type".into());
+                },
             }
-        }
 
-        //println!("Placements before optimization: {:?}", placements);
+        }
 
         // Calculate each objective
         let mut objectives = HashMap::new();
@@ -286,10 +208,45 @@ impl Evaluator for MicroservicePlacementProblem {
         //objectives.insert("latency".to_string(), self.latency(&placements));
         objectives.insert("resource_imbalance".to_string(), self.resource_imbalance(&placements));
 
+        let mut constraints: HashMap<String, (Option<u64>, Option<Vec<HashMap<String, u64>>>, Option<HashMap<u64, (f64, f64, f64, f64)>>)> = HashMap::new();
 
-        let mut constraints: HashMap<String, f64> = HashMap::new();
-        constraints.insert("frontend".to_string(), 1.0);
-
+        for constraint in &self.constraints.clone().unwrap() {
+            let name = constraint.name();
+            if let Some(_value) = constraint.target() {
+                let v = placements.get(&self.config.services.iter().find(|s| s.name == name).unwrap()).unwrap().id as u64;
+                constraints.insert(name.to_string(), (Some(v), None, None));
+            } else if let Some(services) = constraint.services() {
+                let services:Vec<HashMap<String, u64>> = services.iter().map(|service| {
+                    let v = placements.get(&self.config.services.iter().find(|s| s.name == service.clone()).unwrap()).unwrap().id as u64;
+                    let mut map = HashMap::new();
+                    map.insert(service.to_string(), v);
+                    map
+                }).collect();
+                constraints.insert(name.to_string(), (None, Some(services.clone()), None));
+            } else if let Some(_resource) = constraint.resource() {
+                for node in &self.config.cluster.nodes {
+                    let mut resource_constraint: HashMap<u64, (f64, f64, f64, f64)> = HashMap::new();
+                    // initialize the resource requests for each node
+                    let mut r = Resource::default();
+                    // determine resource requests for each service placed on this node in placements
+                    for (service, _) in &placements {
+                        if let Some(service_util) = self.utilization.get(service){
+                            let service_util = service_util.clone();
+                            for util in service_util {
+                                if let Some((nodex, resource)) = util {
+                                    if node.clone() == nodex {
+                                        r.add(&resource);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    resource_constraint.insert(node.id as u64, (r.cpu, r.memory, r.disk, r.network));
+                    // add the constraint
+                    constraints.insert(node.name.clone(), (None, None, Some(resource_constraint)));
+                }
+            }
+        }
 
         Ok(EvaluationResult {
             constraints: Some(constraints),

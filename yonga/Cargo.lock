@@ -1163,8 +1163,6 @@ checksum = "9a3a5bfb195931eeb336b2a7b4d761daec841b97f947d34394601737a7bba5e4"
 [[package]]
 name = "hv-fonseca-et-al-2006-sys"
 version = "2.0.2-rc.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2dee4015aa0ec281f75f832bb109f8f4bf69dcd9f5436c6e036ab8d329ebceec"
 dependencies = [
  "bindgen",
  "cc",
@@ -1745,9 +1743,7 @@ dependencies = [
 
 [[package]]
 name = "optirustic"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17109560ca5c3d07564d3aa117b7da265551676215cc789015c66803ea5ed546"
+version = "1.1.0"
 dependencies = [
  "chrono",
  "env_logger",
@@ -1766,9 +1762,7 @@ dependencies = [
 
 [[package]]
 name = "optirustic-macros"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "160b439f5ff16320d4eba32ef9be0fb788d508bf7e45d39cf1cf7bb7a29ee972"
+version = "1.0.0"
 dependencies = [
  "proc-macro2",
  "quote",
