@@ -15,8 +15,6 @@ pub struct Yonga {
     pub running: bool,
     pub revision: u32,
     pub solver: Solver,
-    // pub service_graph: Option<ServiceGraph>,
-    // pub node_graph: Option<NodeGraph>,
 }
 
 impl Yonga {
@@ -28,8 +26,6 @@ impl Yonga {
             running: false,
             revision: 0,
             solver,
-            // service_graph: None,
-            // node_graph: None,
         }
     }
 
@@ -56,12 +52,12 @@ impl Yonga {
 
         loop {
             if self.running {
-                self.placement_1().await;
+                self.placement_lp().await;
             } else {
                 self.placement_0().await;
             }
 
-            tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
+            tokio::time::sleep(tokio::time::Duration::from_secs(300)).await;
         }
     }
 
@@ -118,10 +114,10 @@ impl Yonga {
         }
     }
 
-    pub async fn placement_1(&mut self) -> Result<(), Box<dyn std::error::Error>> { 
+    pub async fn placement_lp(&mut self) -> Option<StackConfig> { 
         println!("Evaluating the current state of the placements - revision {}", self.revision);
 
-        let client = Client::with_uri_str(&self.config.database.uri).await?;
+        let client = Client::with_uri_str(&self.config.database.uri).await.unwrap();
         let database = client.database(&self.config.database.db);
         let collection_trace = database.collection::<TraceEntry>("trace");
 
@@ -149,7 +145,7 @@ impl Yonga {
         let mut node_graph = NodeGraph::new(nodes.clone());
 
         // Build the graph with the collections and limit
-        node_graph.build(collection_nodes,limit).await?;
+        node_graph.build(collection_nodes,limit).await;
 
         // Create a NodeTree instance
         let mut node_tree = NodeTree::new(self.config.clone());
@@ -203,13 +199,13 @@ impl Yonga {
                     // Clean up the file
                     std::fs::remove_file(&compose_file).expect("Failed to remove the YAML configuration file");
                 }
+                None
             }
             Err(_) => {
                 println!("No solution found");
+                None
             }
         }
-
-        Ok(())
 
     }
 }

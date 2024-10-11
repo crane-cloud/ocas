@@ -271,6 +271,16 @@ impl Node {
     // }
 }
 
+// a function that takes node id and returns a Node object
+pub fn get_node_by_id(id: i64, nodes: &Vec<Node>) -> Option<Node> {
+    for node in nodes {
+        if node.id == id {
+            return Some(node.clone());
+        }
+    }
+    None
+}
+
 
 // Network metrics
 #[derive(Debug, Serialize, Deserialize, Clone)]
