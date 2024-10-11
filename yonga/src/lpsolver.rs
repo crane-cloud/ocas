@@ -444,6 +444,7 @@ pub fn generate_node_resources(config: &Config) -> HashMap<Node, Resource> {
     node_resources
 }
 
+
 // pub fn generate_service_constraints(service: &Service, nodes: &Vec<Node>) -> Vec<Constraint> {
 //     let mut constraints = vec![];
 //     for node in nodes {

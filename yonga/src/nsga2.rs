@@ -254,3 +254,35 @@ impl Evaluator for MicroservicePlacementProblem {
         })
     }
 }
+
+// a function that takes individuals, and the direction (max/min) and returns the best individual
+pub fn get_best_individual(individuals: &Vec<Individual>, direction: ObjectiveDirection) -> (Individual, f64) {
+    let mut best_individual = individuals[0].clone();
+
+    for individual in individuals {
+
+        let a = sum_objective_values(individual);
+        let b = sum_objective_values(&best_individual);
+
+        if direction == ObjectiveDirection::Minimise {
+            if a < b {
+                best_individual = individual.clone();
+            }
+        } else if direction == ObjectiveDirection::Maximise {
+            if a > b {
+                best_individual = individual.clone();
+            }
+        }
+    }
+
+    (best_individual.clone(), sum_objective_values(&best_individual))
+}
+
+// a function that takes an individual and returns a sum of its objective values
+pub fn sum_objective_values(individual: &Individual) -> f64 {
+    let mut sum = 0.0;
+    for value in individual.get_objective_values().unwrap() {
+        sum += value;
+    }
+    sum
+}

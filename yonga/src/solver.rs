@@ -1,28 +1,23 @@
 use std::collections::{HashMap, HashSet};
+use std::f64::consts::E;
+use std::result::Result::Ok;
 use crate::utility::{Config, Node, Service};
 use crate::api_client::ApiClient;
-use crate::utility::{Network, Resource, resource_diff};
+use crate::utility::{Network, Resource, resource_diff, get_node_by_id};
 use crate::node::NodeTree;
 use crate::trace::ServiceGraph;
-use crate::nsga2::MicroservicePlacementProblem;
+use crate::nsga2::{MicroservicePlacementProblem, get_best_individual};
 
 //use crate::solver::StoppingConditionType::MaxGeneration
 
 
+//use anyhow::Ok;
 use optirustic::algorithms::{
     Algorithm, MaxGenerationValue, NSGA2Arg, StoppingConditionType, NSGA2
 };
-use optirustic::core::{BoundedNumber, Choice, Constraint, EvaluationResult, Evaluator, Individual, OError, Objective, ObjectiveDirection, Problem, RelationalOperator, VariableType, VariableValue
+use optirustic::core::{Constraint, ObjectiveDirection, RelationalOperator, VariableType, VariableValue
 };
-
 use optirustic::operators::{PolynomialMutationArgs, SimulatedBinaryCrossoverArgs};
-
-// use std::path::PathBuf;
-// use std::error::Error;
-// use log::LevelFilter;
-// use optirustic::algorithms::{Algorithm, MaxGeneration, NSGA2Arg, StoppingConditionType, NSGA2};
-// use optirustic::core::{OError, BoundedNumber, EvaluationResult, Evaluator, Individual, 
-//     Objective, ObjectiveDirection, Problem, VariableType};
 
 #[derive(Debug, Clone)]
 pub struct Coordinate {
@@ -35,6 +30,9 @@ pub struct Solver {
     pub config: Config,
     pub placement: Option<HashMap<Service, Option<HashSet<Node>>>>,
     pub api_client: ApiClient,
+    // need to add solver value - f64
+    pub obj_value: Option<f64>,
+    pub revision: u32,
 }
 
 impl Solver {
@@ -43,6 +41,8 @@ impl Solver {
             config,
             placement: None,
             api_client,
+            obj_value: None,
+            revision: 0,
         }
     }
 
@@ -129,6 +129,12 @@ impl Solver {
         for (service, node) in assignment_map {
             placement_map.entry(service).or_insert_with(|| Some(HashSet::new())).as_mut().unwrap().insert(node);
         }
+
+        // update the Solver placement map
+        self.placement = Some(placement_map.clone());
+
+        // update the revision
+        self.revision += 1;
 
         Ok(placement_map)
     }
@@ -301,14 +307,6 @@ impl Solver {
         let all_services = &self.config.services;
         let all_nodes = &self.config.cluster.nodes;
 
-        // variables required for the LP solver | c_ij, x_ij, y_ij, alpha, mean utilization, service_tree latencies, node_tree latencies
-        // // Add sample random service_comms, node_comms, node_costs, service_resources, node_resources | usually dynamic data
-        // let service_comms = generate_service_comms(&config);
-        // let node_comms = generate_node_comms(&config);
-        // let node_costs = generate_node_costs(&config);
-        // let service_resources = generate_service_resources(&config);
-        // let node_resources = generate_node_resources(&config);
-
         // create service-service mappings from the service tree
         let service_comms = service_tree.get_service_pairs(all_services.clone());
         let node_comms = node_tree.get_tree();
@@ -348,18 +346,51 @@ impl Solver {
         // Find the least cost node
         let lowest_cost_node_id = self.get_lowest_cost_node(&node_costs).id.clone() as u64;
 
+
+        // print the most popular services
+        println!("Most Popular Services: {:?}", most_popular_services);
+
+        // print the least cost node
+        println!("Lowest Cost Node: {:?}", lowest_cost_node_id);
+
         // Create a constraint that places the most popular services on the least cost node
         let mut constraints = Vec::new();
-        for service in &most_popular_services {
-           let constraint = Constraint::new(
-                service, 
-                RelationalOperator::EqualTo, 
-                Some(lowest_cost_node_id.clone()), 
-                None, 
-                None
-            );
-            constraints.push(constraint);
+        // for service in &most_popular_services {
+        //    let constraint = Constraint::new(
+        //         service, 
+        //         RelationalOperator::EqualTo, 
+        //         Some(lowest_cost_node_id.clone()), 
+        //         None, 
+        //         None
+        //     );
+        //     constraints.push(constraint);
+        // }
+
+        // Create the group constraints (similar services on the same node)
+        let service_groups = self.config.grouped_services();
+        for group in &service_groups {
+            let len = group.1.len() as u64;
+            if len > 1 {
+                // create a name for the group
+                let group_name = format!("{}_group", group.0);
+                let services = Some(group.1.iter().map(|service| service.name.clone()).collect());
+                let constraint = Constraint::new(&group_name, RelationalOperator::EqualTo, None, services, None);
+                constraints.push(constraint);
+            }
         }
+
+
+        // create node resource constraints
+        // for node in &available_resources {
+        //     let (cpu, memory, disk, network) = (node.1.cpu, node.1.memory, node.1.disk, node.1.network);
+        //     let mut resource_constraint: HashMap<u64, (f64, f64, f64, f64)> = HashMap::new();   
+        //     resource_constraint.insert(node.0.id as u64, (cpu, memory, disk, network));
+        //     let constraint = Constraint::new(&node.0.name, RelationalOperator::LessOrEqualTo, None, None, Some(resource_constraint));
+        //     constraints.push(constraint);
+        // }
+
+        // print all the constraints
+        println!("Constraints: {:?}", constraints);
 
 
         // Create the problem
@@ -375,12 +406,11 @@ impl Solver {
         )?;
 
             //let mutation_operator_options = PolynomialMutationArgs::default(&problem);
-
         let mutation_operator_options = PolynomialMutationArgs {
             // ensure different variable value (with integers)
             index_parameter: 1.0,
             // always force mutation
-            variable_probability: 1.0,
+            variable_probability: 0.7,
         };
 
         // Customise the SBX and PM operators like in the paper
@@ -413,24 +443,64 @@ impl Solver {
         // run the algorithm
         algo.run().unwrap();
 
-        for individual in algo.get_results().individuals {
-            let result = individual.serialise();
+        let (best, value) = get_best_individual(&algo.get_results().individuals, ObjectiveDirection::Minimise);
 
-            // print the result
-            // println!("Results: {:?}", result);
+        // get the best individual
+        let best_individual = best.serialise();
 
-            if result.evaluated && result.is_feasible {
-                // print the objective values
-                println!("Objectives: {:?}", result.objective_values);
+        // get values of the best individual
+        let best_values = best_individual.variable_values;
 
-                // print the variable values
-                println!("Variables: {:?}\n", result.variable_values);
+        // print the best values
+        // println!("Objective solution value: {:?}", value);
 
-            
+        // create the placement map
+        let mut placement_map: HashMap<Service, Option<HashSet<Node>>> = HashMap::new();
+
+        for (service, var) in best_values {
+            // get Service from service
+            let service = get_services_by_names(service, &self.config.services).unwrap();
+            match var {
+                VariableValue::Choice(id) => {
+                    let node = get_node_by_id(id as i64, &self.config.cluster.nodes).unwrap();
+                    placement_map.entry(service.clone()).or_insert_with(|| Some(HashSet::new())).as_mut().unwrap().insert(node);
+                }
+                // ignore the rest
+                _ => {}
             }
         }
 
-        Ok(HashMap::new())
+        // compute the placement difference
+        let diff = self.compute_placement_diff(&placement_map, &self.placement.as_ref().unwrap());
+
+        if self.revision <= 1 {
+            println!("First run of solve_lp");
+            self.obj_value = Some(value);
+            self.revision += 1;
+            self.placement = Some(placement_map.clone());
+
+            // print the placement map
+            println!("Placement Map: {:?}", placement_map);
+            Ok(placement_map)
+        }
+
+        else {
+            if diff > (0.5 * self.config.services.len() as f64) && value > self.obj_value.unwrap() {
+                println!("Placement difference {} > 50% or objectives value {} > current value {}", diff, value, self.obj_value.unwrap());
+                Err("No solution found".into())
+            }
+
+            else {
+                println!("Placement difference {} or objectives value {} is less than the current value - to deployment", diff, value);
+                self.obj_value = Some(value);
+                self.revision += 1;
+                self.placement = Some(placement_map.clone());
+
+                // print the placement map  
+                println!("Placement Map: {:?}", placement_map);
+                Ok(placement_map)
+            }
+        }
     }
 
 
@@ -570,6 +640,23 @@ impl Solver {
         }
 
         lowest_cost_node
+    }
+
+    // A function that takes two placements and computes the difference
+    fn compute_placement_diff(&self, placement1: &HashMap<Service, Option<HashSet<Node>>>, placement2: &HashMap<Service, Option<HashSet<Node>>>) -> f64 {
+        let mut diff = 0.0;
+
+        for (service, node) in placement1 {
+            if let Some(nodes) = placement2.get(service) {
+                if nodes.is_some() {
+                    if nodes != node {
+                        diff += 1.0;
+                    }
+                }
+            }
+        }
+
+        diff
     }
 
 }
