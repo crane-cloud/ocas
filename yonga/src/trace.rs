@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use chrono::{DateTime, Utc};
+use mongodb::options::FindOptions;
 use mongodb::Collection;
 use mongodb::bson::doc;
 // use mongodb::Client;
@@ -50,17 +51,20 @@ where
     Ok(bson_date.to_chrono())
 }
 
-// Function to get trace entries from MongoDB
-pub async fn get_trace_entries(collection: &Collection<TraceEntry>, limit: i64) -> Result<Vec<TraceEntry>> {
-    let cursor = collection.find(None, None).await?;
-    let mut trace_entries = Vec::new();
-    
-    let mut cursor = cursor.take(limit as usize);
+pub async fn get_latest_trace_entries(collection: &Collection<TraceEntry>, limit: i64) -> Result<Vec<TraceEntry>, mongodb::error::Error> {
+    let find_options = FindOptions::builder()
+        .sort(Some(doc! { "timestamp": -1 })) // Sort by 'timestamp' field in descending order
+        .limit(Some(limit))
+        .allow_disk_use(Some(true)) // Allow disk use for large sorts
+        .build();
 
-    while let Some(doc) = cursor.next().await {
-        match doc {
+    let mut cursor = collection.find(None, find_options).await?;
+    let mut trace_entries = Vec::new();
+
+    while let Some(result) = cursor.next().await {
+        match result {
             Ok(entry) => trace_entries.push(entry),
-            Err(e) => eprintln!("Error reading document: {}", e),
+            Err(e) => return Err(e), // Return error instead of logging it
         }
     }
 
@@ -104,6 +108,8 @@ pub fn build_trees(entries: Vec<TraceEntry>) -> HashMap<String, TreeNode> {
             }
         }
     }
+    // print the roots
+    // println!("Roots: {:?}", roots);
 
     roots
 }
@@ -146,6 +152,8 @@ impl ServiceGraph {
     }
 
     pub fn extract_edges(&mut self, node: &TreeNode, path: Vec<String>) {
+        // print the action
+        // println!("Now extracting edges of the Node: {:?}", node.entry.process.serviceName);
         let mut current_path = path.clone();
         current_path.push(node.entry.process.serviceName.clone());
 
@@ -191,6 +199,8 @@ impl ServiceGraph {
 
     pub fn build_from_traces(&mut self, trees: &HashMap<String, TreeNode>) {
         for root in trees.values() {
+            // print the root
+            // println!("Now extracting edges of the Root: {:?}", root.entry.process.serviceName);
             self.extract_edges(root, vec![]);
         }
     }
@@ -296,6 +306,17 @@ impl ServiceGraph {
             }
         }
         service_pairs
+    }
+
+    // a function to return the highest message count from the Service Graph service pairs
+    pub fn get_highest_message_count(&self, pairs: &HashMap<(Service, Service), (u32, f64)>) -> u32 {
+        let mut highest_message_count = 0;
+        for (_, (message_count, _)) in pairs {
+            if *message_count > highest_message_count {
+                highest_message_count = *message_count;
+            }
+        }
+        highest_message_count
     }
 }
 

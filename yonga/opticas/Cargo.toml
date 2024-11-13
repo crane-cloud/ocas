@@ -1,0 +1,47 @@
+[package]
+name = "opticas"
+version = "0.0.1"
+authors = ["Stefano Simoncelli <16114781+s-simoncelli@users.noreply.github.com>"]
+edition = "2021"
+rust-version = "1.80"
+description = "A multi-objective optimisation framework for Rust"
+repository = "https://github.com/s-simoncelli/opticas"
+keywords = ["genetic-algorithm", "optimisation", "multiobjective", "nsga2", "nsga3"]
+categories = ["science", "algorithms"]
+license = "MIT"
+
+[workspace]
+resolver = "2"
+members = ["libs/opticas-macros", "libs/hv-fonseca-et-al-2006-sys-ocas"]
+default-members = ["libs/opticas-macros", "libs/hv-fonseca-et-al-2006-sys-ocas"]
+exclude = ["opticas-py"]
+
+[lib]
+name = "opticas"
+
+[dependencies]
+log = "0.4.21"
+serde_json = "1.0"
+serde = { version = "1.0.200", features = ["derive"] }
+rand = "0.8.5"
+rand_chacha = "0.3.1"
+thiserror = "1.0.60"
+rayon = "1.10.0"
+env_logger = "0.11.3"
+chrono = { version = "0.4.38", features = ["serde"] }
+ordered-float = "4.2.0"
+opticas-macros = { path = "libs/opticas-macros", version = "1.0.0" }
+hv-fonseca-et-al-2006-sys-ocas = { path = "libs/hv-fonseca-et-al-2006-sys-ocas", version = "2.0.2-rc.2" }
+nalgebra = "0.33.0"
+
+[dev-dependencies]
+float-cmp = "0.9.0"
+
+[package.metadata.docs.rs]
+all-features = true
+cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
+rustdoc-args = ["--html-in-header", "src/katex-header.html"]
+
+# Run test with optimisation to speed up tests solving optimisation problems.
+[profile.test]
+opt-level = 3

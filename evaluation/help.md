@@ -65,3 +65,148 @@ Node: cr-dar, Coordinate: (505.67518706531337, 0.8703524271376406), Distance: 0.
     \begin{equation}\label{eq:all}
         \text{\textbf{\textit{Minimize}}} \sum_{i=1}^{k} \sum_{\substack{i=1 \\ j=1}}^m l_{ij}x_{ij} + \sum_{i=1}^{k} \sum_{j=1}^m y_{ij}S^{util}_{j}c_{i} + \sum_{i=1}^{k} \left( \sum_{j=1}^m y_{ij}\lambda_{i}S^{util}_{j} - \frac {(\frac{1}{k} \sum_{i=1}^{k} \sum_{j=1}^m y_{ij}S^{util}_{j})}{\alpha} \right)^2
     \end{equation}
+
+
+```
+
+### VM Setup
+
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
+
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+
+sudo usermod -aG docker $USER
+
+
+On the master, initialize the stack:
+
+docker swarm init --advertise-addr 10.10.1.6
+
+On the workers:
+
+docker swarm join --token SWMTKN-1-1ncbid4ay0oajmjxrg047wd59vdvoc28kz91f4uizyn8x8r7rd-6i3z1p5m2fk4xk65cp88kllgo 10.10.1.6:2377
+
+
+Label the nodes:
+docker node update --label-add name=ocas01 mtbdoitzu4vr1sxdwgn26lgrx
+docker node update --label-add name=ocas02 un0kgk87q71hpnuwn7l7dhol5
+docker node update --label-add name=ocas03 sj2xbzfdjswmq3ldams5il9fm
+docker node update --label-add name=ocas04 xufjp6855mey4wmnpnrfi5bol
+docker node update --label-add name=ocas05 02inlnm7tzx3lnuaiz5o6atn6
+
+
+
+
+
+*/5 * * * * /bin/bash /proj/rip-PG0/ocas/scripts/yonga/perf.sh 10.10.1.X >> /var/log/ocas-perf.log 2>&1 && sudo mv /users/amwotil/ocas/evaluation/network/metrics.txt /var/lib/node_exporter/yonga.prom
+
+
+sudo mkdir /var/lib/node_exporter
+
+mkdir -p /users/amwotil/ocas/evaluation/network
+
+pip3 install tcp-latency
+sudo apt install python3-pip iperf3 jq pkg-config libclang-dev libssl-dev
+
+sudo ln -s .local/bin/tcp-latency /usr/local/bin/
+sudo ln -s .local/bin/tcp-latency /usr/bin/
+
+sudo touch /var/log/ocas-perf.log
+
+sudo chown amwotil:rip-PG0 /var/log/ocas-perf.log
+
+
+sudo vim /etc/systemd/system/iperf3.service
+
+
+[Unit]
+Description=iperf3 server
+After=syslog.target network.target auditd.service
+
+[Service]
+ExecStart=/usr/bin/iperf3 -s
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+sudo systemctl enable iperf3
+sudo systemctl start iperf3
+
+
+
+docker compose build
+
+docker tag hotel_reserv_profile_single_node:latest mwotila/hotel_reserv_profile_single_node:latest
+docker tag hotel_reserv_geo_single_node:latest mwotila/hotel_reserv_geo_single_node:latest
+docker tag hotel_reserv_search_single_node:latest mwotila/hotel_reserv_search_single_node:latest
+docker tag hotel_reserv_rate_single_node:latest mwotila/hotel_reserv_rate_single_node:latest
+docker tag hotel_reserv_rsv_single_node:latest mwotila/hotel_reserv_rsv_single_node:latest
+docker tag hotel_reserv_frontend_single_node:latest mwotila/hotel_reserv_frontend_single_node:latest
+docker tag hotel_reserv_recommend_single_node:latest mwotila/hotel_reserv_recommend_single_node:latest
+docker tag hotel_reserv_user_single_node:latest mwotila/hotel_reserv_user_single_node:latest
+
+docker rmi $(docker images -f "dangling=true" -q)
+
+
+docker stack deploy -c monitor.yaml monitor
+
+
+sudo mkdir /var/mongodb
+sudo chown amwotil:rip-PG0 /var/mongodb/
+
+
+docker node update --label-add name=ocas01 mtbdoitzu4vr1sxdwgn26lgrx
+docker node update --label-add name=ocas02 un0kgk87q71hpnuwn7l7dhol5
+docker node update --label-add name=ocas03 sj2xbzfdjswmq3ldams5il9fm
+docker node update --label-add name=ocas04 xufjp6855mey4wmnpnrfi5bol
+docker node update --label-add name=ocas05 02inlnm7tzx3lnuaiz5o6atn6
+
+
+
+Wrk2
+
+sudo apt-get install luarocks
+sudo luarocks install luasocket
+lua -e "require('socket.core')"
+
+
+
+Docker Stack 
+
+
+Tcp-latency - https://pypi.org/project/tcp-latency/
+sudo apt install python3-pip iperf3
+pip install tcp-latency 
+
+
+Scripts / Crontab
+
+
+Rust - ocas
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh 
+
+
+
+
+docker rmi hotel_reserv_geo_single_node hotel_reserv_frontend_single_node hotel_reserv_rate_single_node  hotel_reserv_user_single_node hotel_reserv_rsv_single_node  hotel_reserv_recommend_single_node hotel_reserv_profile_single_node hotel_reserv_search_single_node

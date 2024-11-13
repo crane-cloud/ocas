@@ -1,0 +1,147 @@
+cluster:
+  nodes:
+    - id: 1
+      name: "ocas01"
+      ip: "10.10.1.1"
+      resource: 
+        cpu: 20
+        memory: 64317
+        disk: 64000
+        network: 25000
+    - id: 2
+      name: "ocas02"
+      ip: "10.10.1.2"
+      resource: 
+        cpu: 20
+        memory: 64317
+        disk: 64000
+        network: 25000
+    - id: 3
+      name: "ocas03"
+      ip: "10.10.1.3"
+      resource: 
+        cpu: 20
+        memory: 64317
+        disk: 64000
+        network: 25000
+    - id: 4
+      name: "ocas04"
+      ip: "10.10.1.4"
+      resource: 
+        cpu: 20
+        memory: 64317
+        disk: 64000
+        network: 25000
+    - id: 5
+      name: "ocas05"
+      ip: "10.10.1.5"
+      resource: 
+        cpu: 20
+        memory: 64317
+        disk: 64000
+        network: 25000
+  prometheus:
+    url: "http://10.10.1.6:9090"
+    label: "container_label_com_docker_swarm_service_name"
+    stack: "hotelreservation_"
+    query: "sum(rate(metric{container_label_com_docker_swarm_service_name=\"_\"}[2m])) by (instance)" # query to get nodes
+    metric: "container_cpu_usage_seconds_total" # metric to determine service node
+
+
+database:
+  uri: "mongodb://mongoadmin:949cad0977fb8daf334e@10.10.1.6:27017/"
+  db: "yonga"
+  collections:
+    - name: "ocas01"
+    - name: "ocas02"
+    - name: "ocas03"
+    - name: "ocas04"
+    - name: "ocas05"
+
+services:
+  - name: "frontend"
+    id: "1"
+    cache: ""
+    db: ""
+  - name: "profile"
+    id: "2"
+    cache: "memcached-profile"
+    db: "mongodb-profile"
+  - name: "search"
+    id: "3"
+    cache: ""
+    db: ""
+  - name: "geo"
+    id: "4"
+    cache: ""
+    db: "mongodb-geo"
+  - name: "rate"
+    id: "5"
+    cache: "memcached-rate"
+    db: "mongodb-rate"
+  - name: "recommendation"
+    id: "6"
+    cache: ""
+    db: "mongodb-recommendation"
+  - name: "user"
+    id: "7"
+    cache: ""
+    db: "mongodb-user"
+  - name: "reservation"
+    id: "8"
+    cache: "memcached-reserve"
+    db: "mongodb-reservation"
+  - name: "memcached-rate"
+    id: "9"
+    cache: ""
+    db: ""
+  - name: "memcached-profile"
+    id: "10"
+    cache: ""
+    db: ""
+  - name: "memcached-reserve"
+    id: "11"
+    cache: ""
+    db: ""
+  - name: "mongodb-geo"
+    id: "12"
+    cache: ""
+    db: ""
+  - name: "mongodb-profile"
+    id: "13"
+    cache: ""
+    db: ""
+  - name: "mongodb-rate"
+    id: "14"
+    cache: ""
+    db: ""
+  - name: "mongodb-recommendation"
+    id: "15"
+    cache: ""
+    db: ""
+  - name: "mongodb-reservation"
+    id: "16"
+    cache: ""
+    db: ""
+  - name: "mongodb-user"
+    id: "17"
+    cache: ""
+    db: ""
+
+weights:
+  - name: "cpu"
+    value: 0.4
+  - name: "memory"
+    value: 0.3
+  - name: "disk"
+    value: 0.2
+  - name: "network"
+    value: 0.1
+  - name: "latency"
+    value: 0.4
+  - name: "available"
+    value: 0.2
+  - name: "bandwidth"
+    value: 0.3
+  - name: "packet_loss"
+    value: 0.1

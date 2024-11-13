@@ -125,7 +125,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             placement.start().await;
         }
         _ => {
-            println!("No strategy selected - exiting");
+            println!("Non-implemented strategy selected or none provided - exiting");
 
             return Ok(());
         }

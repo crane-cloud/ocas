@@ -2,7 +2,7 @@ use chrono::Local;
 use mongodb::Client;
 use crate::stack::{self, StackConfig};
 use crate::solver::Solver;
-use crate::trace::{TraceEntry, ServiceGraph, get_trace_entries, build_trees};
+use crate::trace::{TraceEntry, ServiceGraph, get_latest_trace_entries, build_trees};
 use crate::node::{NodeTree, NodeGraph, NodeEntryMongo};
 use crate::utility::Config;
 use std::process::Command;
@@ -39,6 +39,9 @@ impl Yonga {
             .arg(compose_file)
             .output()
             .map_err(|e| e.to_string())?;
+
+        //print the output
+        println!("Output: {:?}", output);
         
         if !output.status.success() {
             return Err(format!("Command failed with status: {}", output.status));
@@ -73,6 +76,9 @@ impl Yonga {
                 stack::update_node_constraints(&mut local_stack_config, map);
                 stack::populate_volumes(&mut local_stack_config);
                 stack::delete_null_placement(&mut local_stack_config);
+
+                // print the stack config
+                // println!("Stack Config: {:?}", local_stack_config);
 
                 // Update the stack config
                 self.stack_config = local_stack_config;
@@ -129,33 +135,46 @@ impl Yonga {
         }).collect();
 
         //Retrieve trace entries with a limit
-        let limit = 1000000000; // This can be any variable number
+        //let limit = 1000000000; // This can be any variable number
+        let limit = 500000;
 
-        let trace_entries = get_trace_entries(&collection_trace, limit).await.unwrap();
+        let trace_entries = get_latest_trace_entries(&collection_trace, limit).await.unwrap();
+
+        // Print the number of trace entries
+        //println!("Number of trace entries: {}", trace_entries.len());
 
         let trees = build_trees(trace_entries);
+
+        // print the length of the trees
+        //println!("Number of trees: {}", trees.len());
 
         let mut service_tree = ServiceGraph::new();
         service_tree.build_from_traces(&trees);
 
-        // Print the entire service graph
-        // service_graph.print_graph();
+        //Print the entire service graph
+        //service_tree.print_graph();
 
         // Create a NodeGraph instance
         let mut node_graph = NodeGraph::new(nodes.clone());
 
         // Build the graph with the collections and limit
-        node_graph.build(collection_nodes,limit).await;
+        node_graph.build(collection_nodes, 500).await;
+
+        // get the maxmin network
+        let maxmin_network = node_graph.get_maxmin_network();
 
         // Create a NodeTree instance
         let mut node_tree = NodeTree::new(self.config.clone());
 
         // Aggregate the edges
-        node_tree.aggregate_edges(&node_graph);
+        node_tree.aggregate_edges(&node_graph, &maxmin_network);
+
+        // Print the entire node graph
+        //node_tree.print_tree();
 
 
         //let placement_map = self.solver.solve_1(service_tree, node_tree).await;
-        let placement_map = self.solver.solve_lp(service_tree, node_tree).await;
+        let placement_map = self.solver.solve_lp_nsga2opticas(service_tree, node_tree).await;
 
 
         match placement_map {

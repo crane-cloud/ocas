@@ -102,104 +102,134 @@ impl NodeTree {
     }
 
     // Aggregates edges and calculates weighted edges based on the 99th percentile
-    pub fn aggregate_edges(&mut self, node_graph: &NodeGraph) {
+    pub fn aggregate_edges(&mut self, node_graph: &NodeGraph, maxmin_network: &Network) {
+
+        //let maxmin_network = self.get_maxmin_network();
+
         for server_node in &node_graph.nodes {
             // Collect the network data for all edges associated with this server_node
             let mut edge_networks: HashMap<Node, Vec<Network>> = HashMap::new();
             for edge in &server_node.edges {
+                // eliminate inf values from the network
+                let network = edge.network.clone();
+
+                if network.bandwidth == f64::INFINITY || network.latency == f64::INFINITY || network.packet_loss == f64::INFINITY  || network.available == f64::INFINITY {
+                    // print the network
+                    println!("Network with inf values: {:?}", network);
+                    continue;
+                }
+                
+                
                 edge_networks.entry(edge.destination.clone())
                     .or_insert_with(Vec::new)
                     .push(edge.network.clone());
             }
 
             for (destination, networks) in edge_networks {
-                let aggregated_edge = Network::aggregate_network(self.config.clone(), &networks);
+                let aggregated_edge = Network::aggregate_network(self.config.clone(), &networks, maxmin_network);
                 self.add_edge(server_node.node.clone(), destination, aggregated_edge);
             }
         }
     }
 
+    // A function to print the tree
     pub fn print_tree(&self) {
         for (node, edges) in &self.tree {
-            println!("Node: {:?}", node);
+            println!("Node: {}", node.name);
             for edge in edges {
-                println!("  -> {:?} (Weighted Edge: {:?})", edge.destination, edge.edge);
+                println!("  -> {} (Weighted Edge: {:?})", edge.destination.name, edge.edge);
             }
         }
     }
 
+    // A function to get the highest weighted edge overall
+    pub fn get_worst_cost(&self) -> f64 {
+        let mut worst_cost = 0.0;
 
-    // Compute the strongest path for each node to a level
-    pub fn compute_strong_paths(&self, nodes: Vec<Node>, level: usize) -> HashMap<Node, (Vec<Node>, f64)> {
-        let mut strong_paths: HashMap<Node, (Vec<Node>, f64)> = HashMap::new();
-    
+        for (_, edges) in &self.tree {
+            for edge in edges {
+                if edge.edge > worst_cost {
+                    worst_cost = edge.edge;
+                }
+            }
+        }
+
+        worst_cost
+    }
+
+    // Compute the best paths (minimal cost) for each node to a level
+    pub fn compute_best_paths(&self, nodes: Vec<Node>, level: usize) -> HashMap<Node, (Vec<Node>, f64)> {
+        let mut best_paths: HashMap<Node, (Vec<Node>, f64)> = HashMap::new();
+
         for start in nodes.iter() {
             let mut heap = BinaryHeap::new();
-            let mut best_paths: HashMap<Node, (f64, Vec<Node>)> = HashMap::new();  // Track the best strength and path
+            let mut path_costs: HashMap<Node, (f64, Vec<Node>)> = HashMap::new();  // Track the minimal cost and path
             let mut visited: HashSet<Node> = HashSet::new();
-    
+
+            // Push the start node with cost 0
             heap.push((ComparableFloat(0.0), vec![start.clone()]));
             visited.insert(start.clone());
-    
-            while let Some((current_strength, path)) = heap.pop() {
+
+            while let Some((current_cost, path)) = heap.pop() {
                 let current_node = path.last().unwrap();
-    
+
                 // Stop if the path length exceeds the desired level
                 if path.len() > level + 1 {
                     continue;
                 }
-    
-                // Update best paths if the path is stronger or not present
-                if let Some((best_strength, _)) = best_paths.get(current_node) {
-                    if current_strength.0 <= *best_strength {
+
+                // Update paths if this one has a lower cost or is not yet recorded
+                if let Some((best_cost, _)) = path_costs.get(current_node) {
+                    if current_cost.0 >= *best_cost {
                         continue;
                     }
                 }
-    
-                best_paths.insert(current_node.clone(), (current_strength.0, path.clone()));
-    
+
+                path_costs.insert(current_node.clone(), (current_cost.0, path.clone()));
+
+                // Explore neighbors to update costs
                 if let Some(neighbors) = self.tree.get(current_node) {
                     for edge in neighbors {
                         if !path.contains(&edge.destination) {
                             let mut new_path = path.clone();
                             new_path.push(edge.destination.clone());
-                            let new_strength = ComparableFloat(current_strength.0 + edge.edge);
-    
-                            // Add new path to heap if it's stronger
-                            if new_strength.0 > current_strength.0 {
-                                heap.push((new_strength, new_path.clone()));
+                            let new_cost = ComparableFloat(current_cost.0 + edge.edge);
+
+                            // Add the new path to the heap if it's cheaper
+                            if new_cost.0 < current_cost.0 {
+                                heap.push((new_cost, new_path.clone()));
                             }
                         }
                     }
                 }
             }
-    
-            // Collect the strongest path and sort by strength if needed
-            let mut ordered_paths: Vec<_> = best_paths.into_iter().collect();
-            ordered_paths.sort_by(|(_, (strength1, _)), (_, (strength2, _))| 
-                strength2.partial_cmp(&strength1).unwrap_or(Ordering::Equal)  // Sort by strength in descending order
+
+            // Collect the best (minimal cost) path for this start node
+            let mut ordered_paths: Vec<_> = path_costs.into_iter().collect();
+            ordered_paths.sort_by(|(_, (cost1, _)), (_, (cost2, _))| 
+                cost1.partial_cmp(&cost2).unwrap_or(Ordering::Equal)  // Sort by cost in ascending order
             );
-    
-            // Get the strongest path
-            if let Some((_, (strongest_strength, strongest_path))) = ordered_paths.first() {
-                strong_paths.insert(start.clone(), (strongest_path.clone(), *strongest_strength));
+
+            // Get the minimal cost path
+            if let Some((_, (best_cost, best_path))) = ordered_paths.first() {
+                best_paths.insert(start.clone(), (best_path.clone(), *best_cost));
             }
         }
-    
-        strong_paths
+
+        best_paths
     }
 
-    // A function that takes all the strong paths and returns one with the highest strength
-    pub fn get_strongest_path(&self, strong_paths: HashMap<Node, (Vec<Node>, f64)>) -> (Vec<Node>, f64) {
-        let mut strongest_path = (Vec::new(), 0.0);
-    
-        for (_, (path, strength)) in strong_paths {
-            if strength > strongest_path.1 {
-                strongest_path = (path, strength);
+    // A function that takes all the strong paths and returns one with the lowest path cost
+    pub fn get_best_path(&self, strong_paths: HashMap<Node, (Vec<Node>, f64)>) -> (Vec<Node>, f64) {
+        let mut best_path = (Vec::new(), f64::INFINITY);
+
+        for (_, (path, cost)) in strong_paths {
+            if cost < best_path.1 {
+                best_path = (path, cost);
             }
         }
-    
-        strongest_path
+
+        best_path
     }
 
     // A function to get nodes in the tree
@@ -254,7 +284,7 @@ impl NodeGraph {
                             server_node.edges.push(edge);
                         }
                     } else {
-                        eprintln!("Node not found in graph: {:?}", node);
+                        eprintln!("Node not found in graph: {}", node.name);
                     }
                 }
             } else {
@@ -305,6 +335,37 @@ impl NodeGraph {
                 );
             }
         }
+    }
+
+    // A function to determine the max. bandwidth, max. available, min. latency, and min. packet loss for the whole node graph
+    pub fn get_maxmin_network(&self) -> Network {
+        let mut network = Network {
+            bandwidth: 0.0,
+            available: 0.0,
+            latency: f64::INFINITY, // Initialize to infinity
+            packet_loss: f64::INFINITY, // Initialize to infinity
+        };
+
+        for node in &self.nodes {
+            for edge in &node.edges {
+                network.bandwidth = network.bandwidth.max(edge.network.bandwidth);
+                network.available = network.available.max(edge.network.available);
+                network.latency = network.latency.min(edge.network.latency);
+                network.packet_loss = network.packet_loss.min(edge.network.packet_loss);
+            }
+        }
+
+        // Adjust packet loss if it's zero
+        if network.packet_loss == 0.0 {
+            network.packet_loss = 0.0001; // Set to an arbitrary low value
+        }
+
+        // Adjust latency if it's zero
+        if network.latency == 0.0 {
+            network.latency = 0.0001; // Set to an arbitrary low value
+        }
+
+        network
     }
 }
 

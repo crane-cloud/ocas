@@ -1,4 +1,4 @@
-mongo_url: "mongodb://mongoadmin:949cad0977fb8daf334e@196.32.213.62:27017/"
+mongo_url: "mongodb://mongoadmin:949cad0977fb8daf334e@10.10.1.6:27017/"
 mongo_database: yonga
 mongo_collection: trace
 mongo_span_ttl_duration: "24h"

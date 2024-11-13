@@ -1,11 +1,16 @@
 #!/bin/bash
 
 # Define the JSON file path
-json_file="/home/ubuntu/ocas/evaluation/network/metrics.txt"
-temp_file="/home/ubuntu/ocas/evaluation/network/metrics_temp.txt"
+json_file="/users/amwotil/ocas/evaluation/network/metrics.txt"
+temp_file="/users/amwotil/ocas/evaluation/network/metrics_temp.txt"
+
+replicas=("10.10.1.1" "10.10.1.2" "10.10.1.3" "10.10.1.4" "10.10.1.5")
+
+# json_file="/home/ubuntu/ocas/evaluation/network/metrics.txt"
+# temp_file="/home/ubuntu/ocas/evaluation/network/metrics_temp.txt"
 
 # Define a list of replicas
-replicas=("129.232.230.130" "196.32.212.213" "102.134.147.244" "196.32.215.213" "196.43.171.248")
+# replicas=("129.232.230.130" "196.32.212.213" "102.134.147.244" "196.32.215.213" "196.43.171.248")
 
 # Check if an IP address argument is provided
 if [ $# -eq 0 ]; then
@@ -32,8 +37,9 @@ measure_bandwidth_pl_latency() {
 
     id=$((idx+1))
 
-    latency_output=$(tcp-latency -p 9100 $ip)
+    #latency_output=$(tcp-latency -p 9100 $ip)
     #latency_output=$(/home/ubuntu/.pyenv/shims/tcp-latency -p 9100 $ip)
+    latency_output=$(/users/amwotil/.local/bin/tcp-latency -p 9100 $ip)
     last_line_log=$(echo "$latency_output" | tail -n 1)
 
     if [[ "$last_line_log" == *"All 5 transmissions failed"* ]]; then

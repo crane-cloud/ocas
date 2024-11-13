@@ -29,10 +29,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "frontend"
 
   profile:
     environment:
@@ -52,10 +48,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "profile"
 
   search:
     image: mwotila/hotel_reserv_search_single_node:latest
@@ -72,10 +64,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "search"
 
   geo:
     environment:
@@ -93,10 +81,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "geo"
 
   rate:
     environment:
@@ -116,10 +100,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "rate"
 
   recommendation:
     environment:
@@ -137,10 +117,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "recommendation"
 
   user:
     environment:
@@ -158,10 +134,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "user"
 
   reservation:
     environment:
@@ -181,10 +153,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "reservation"
 
   memcached-rate:
     image: memcached
@@ -192,10 +160,6 @@ services:
     environment:
       - MEMCACHED_CACHE_SIZE=128
       - MEMCACHED_THREADS=2
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "memcached-rate"
     deploy:
       replicas: 1
       restart_policy:
@@ -207,10 +171,6 @@ services:
     environment:
       - MEMCACHED_CACHE_SIZE=128
       - MEMCACHED_THREADS=2
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "memcached-profile"
     deploy:
       replicas: 1
       restart_policy:
@@ -222,10 +182,6 @@ services:
     environment:
       - MEMCACHED_CACHE_SIZE=128
       - MEMCACHED_THREADS=2
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "memcached-reserve"
     deploy:
       replicas: 1
       restart_policy:
@@ -240,10 +196,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "mongodb-geo"
 
   mongodb-profile:
     image: mongo:4.4.6
@@ -254,10 +206,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "mongodb-profile"
 
   mongodb-rate:
     image: mongo:4.4.6
@@ -268,10 +216,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "mongodb-rate"
 
   mongodb-recommendation:
     image: mongo:4.4.6
@@ -282,10 +226,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "mongodb-recommendation"
 
   mongodb-reservation:
     image: mongo:4.4.6
@@ -296,10 +236,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "mongodb-reservation"
 
   mongodb-user:
     image: mongo:4.4.6
@@ -310,10 +246,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    logging:
-      driver: "fluentd"
-      options:
-        tag: "mongodb-user"
 
   jaeger:
     image: jaegertracing/all-in-one:1.25
@@ -341,7 +273,8 @@ services:
       placement:
         constraints: [node.role == manager]
     volumes:
-      - /home/ubuntu/ocas/jaeger-mongodb:/app
+      #- /home/ubuntu/ocas/jaeger-mongodb:/app
+      - /proj/rip-PG0/ocas/jaeger-mongodb:/app
 
 volumes:
   geo:

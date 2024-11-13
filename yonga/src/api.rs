@@ -1,5 +1,6 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use mongodb::{options::ClientOptions, Client as MongoClient, Database};
+use prometheus_http_query::response;
 use std::sync::Arc;
 use clap::{Arg, Command, ArgAction};
 use std::fs;
@@ -141,19 +142,20 @@ async fn get_node_service_utilization(state: web::Data<Arc<AppState>>, path: web
 
     let (node, service) = path.into_inner();
 
-    if !yonga::utility::is_node_in_config(&node, &state.config) || !yonga::utility::is_service_in_config(&service, &state.config) {
-        println!("Node or service not found in the configuration \n");
-        return HttpResponse::NotFound().body("Node or service not found in the configuration \n");
-    }
+    // if !yonga::utility::is_node_in_config(&node, &state.config) || !yonga::utility::is_service_in_config(&service, &state.config) {
+    //     println!("Node or service not found in the configuration \n");
+    //     return HttpResponse::NotFound().body("Node or service not found in the configuration \n");
+    // }
 
-    //println!("retrieving resource utilization for service: {} on node: {}", service, node);
+    println!("retrieving resource utilization for service: {} on node: {}", service, node);
 
     let collection: mongodb::Collection<mongodb::bson::Document> = state.database.collection(&node);
 
     // get the latest document
     match get_latest_document(&collection).await {
         Ok(latest_document) => {
-            let service = format!("{}{}", state.config.cluster.prometheus.stack, service);
+            // print 
+            let service = format!("{}", service);
             match extract_service_metrics(&service, &latest_document) {
                 Ok(metrics) => HttpResponse::Ok().json(metrics),
                 Err(_) => HttpResponse::InternalServerError().body("Failed to extract service resource metrics.\n"),
@@ -453,8 +455,10 @@ async fn get_node_services(state: web::Data<Arc<AppState>>, node: web::Path<Stri
                 }
             }
 
-            println!("Success: services: {:?}", service_names);
-            let response = format!("Services: {:?}", service_names);
+            //println!("Success: services: {:?}", service_names);
+            //let response = format!("Services: {:?}", service_names);
+            let response = serde_json::to_string(&service_names).unwrap();
+            // let response = service_names;
             HttpResponse::Ok().body(response)
         }
         Err(response) => response,

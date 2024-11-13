@@ -147,6 +147,9 @@ fn get_ip_addresses(promql_result: &prometheus_http_query::response::PromqlResul
 
 // retrieve a list of services from prometheus
 async fn get_services_prometheus(config: &Config, client: &Client, prometheus: &Prometheus) -> Result<Vec<ServicePrometheus>, Box<dyn Error>> {
+    // print the parameters
+    println!("Prometheus URL: {}", prometheus.url);
+
     let url_service = format!("{}/api/v1/label/{}/values", prometheus.url, prometheus.label);
 
     let response = client.get(&url_service).send().await?;
@@ -200,7 +203,7 @@ async fn get_services_prometheus(config: &Config, client: &Client, prometheus: &
                 }
             }
             // print the prometheus services
-            // println!("{:?}", services_prometheus);
+            println!("{:?}", services_prometheus);
             return Ok(services_prometheus);
         }
     }
@@ -222,12 +225,12 @@ async fn get_service_metrics_prometheus(config: &Config, service: &ServicePromet
     let service_formatted = format!(r#""{}""#, service.name);
 
     let queries = [
-        ("cpu", "sum(rate(container_cpu_usage_seconds_total{label=\"{}\"}[5m])) by (instance)"),
+        ("cpu", "sum(rate(container_cpu_usage_seconds_total{label=\"{}\"}[1m])) by (instance)"),
         ("memory", "sum(container_memory_working_set_bytes{name!~\"POD\", label=\"{}\"}) by (name)"),
         ("disk_r", "container_fs_reads_bytes_total{label=\"{}\"}"),
         ("disk_w", "container_fs_writes_bytes_total{label=\"{}\"}"),
-        ("network_rx", "sum(rate(container_network_receive_bytes_total{label=\"{}\"}[10m])) by (name)"),
-        ("network_tx", "sum(rate(container_network_transmit_bytes_total{label=\"{}\"}[10m])) by (name)"),
+        ("network_rx", "sum(rate(container_network_receive_bytes_total{label=\"{}\"}[1m])) by (name)"),
+        ("network_tx", "sum(rate(container_network_transmit_bytes_total{label=\"{}\"}[1m])) by (name)"),
     ];
 
     let mut metrics = std::collections::HashMap::new();

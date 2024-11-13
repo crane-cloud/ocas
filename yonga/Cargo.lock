@@ -1169,6 +1169,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "hv-fonseca-et-al-2006-sys-ocas"
+version = "2.0.2-rc.2"
+dependencies = [
+ "bindgen",
+ "cc",
+]
+
+[[package]]
 name = "hyper"
 version = "1.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1739,6 +1747,34 @@ dependencies = [
  "libc",
  "pkg-config",
  "vcpkg",
+]
+
+[[package]]
+name = "opticas"
+version = "0.0.1"
+dependencies = [
+ "chrono",
+ "env_logger",
+ "hv-fonseca-et-al-2006-sys-ocas",
+ "log",
+ "nalgebra",
+ "opticas-macros",
+ "ordered-float",
+ "rand",
+ "rand_chacha",
+ "rayon",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "opticas-macros"
+version = "1.0.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.77",
 ]
 
 [[package]]
@@ -3266,6 +3302,7 @@ dependencies = [
  "futures",
  "log",
  "mongodb",
+ "opticas",
  "optirustic",
  "prometheus-http-query",
  "rand",

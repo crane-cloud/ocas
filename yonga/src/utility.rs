@@ -1,3 +1,4 @@
+use rand::distributions::weighted;
 use serde::{Deserialize, Deserializer, Serialize};
 // use serde::de::Error as DeError;
 use bson::DateTime;
@@ -78,15 +79,15 @@ impl Config {
         0.0
     }
 
-    // a function to group services based on their relationships db, cache
-    pub fn group_services(&self) -> (usize, Vec<Vec<Service>>) {
+    // A helper function that groups services based on their relationships (db, cache)
+    pub fn group_services(&self) -> Vec<HashSet<String>> {
         let mut groups: Vec<HashSet<String>> = Vec::new();
         let mut service_to_group: HashMap<String, usize> = HashMap::new();
-        
+
         for service in &self.services {
             let mut current_group = HashSet::new();
             current_group.insert(service.name.clone());
-            
+
             if let Some(cache) = &service.cache {
                 if !cache.is_empty() {
                     current_group.insert(cache.clone());
@@ -97,14 +98,14 @@ impl Config {
                     current_group.insert(db.clone());
                 }
             }
-            
+
             let mut merged_groups: Vec<usize> = Vec::new();
             for name in &current_group {
                 if let Some(group_index) = service_to_group.get(name) {
                     merged_groups.push(*group_index);
                 }
             }
-            
+
             if merged_groups.is_empty() {
                 let new_group_index = groups.len();
                 for name in &current_group {
@@ -129,100 +130,38 @@ impl Config {
                 }
             }
         }
-        
-        let mut grouped_services: Vec<Vec<Service>> = Vec::new();
-        for group in groups {
-            if !group.is_empty() {
-                let mut group_services = Vec::new();
-                for service_name in group {
-                    if let Some(service) = self.services.iter().find(|s| s.name == service_name) {
-                        group_services.push(service.clone());
-                    }
-                }
-                grouped_services.push(group_services);
-            }
-        }
-        
-        (grouped_services.len(), grouped_services)
+
+        groups.into_iter().filter(|g| !g.is_empty()).collect()
     }
 
+    // A function to return named groups based on db or cache presence
     pub fn grouped_services(&self) -> Vec<(String, Vec<Service>)> {
-        let mut groups: Vec<HashSet<String>> = Vec::new();
-        let mut service_to_group: HashMap<String, usize> = HashMap::new();
-    
-        for service in &self.services {
-            let mut current_group = HashSet::new();
-            current_group.insert(service.name.clone());
-    
-            if let Some(cache) = &service.cache {
-                if !cache.is_empty() {
-                    current_group.insert(cache.clone());
-                }
-            }
-            if let Some(db) = &service.db {
-                if !db.is_empty() {
-                    current_group.insert(db.clone());
-                }
-            }
-    
-            let mut merged_groups: Vec<usize> = Vec::new();
-            for name in &current_group {
-                if let Some(group_index) = service_to_group.get(name) {
-                    merged_groups.push(*group_index);
-                }
-            }
-    
-            if merged_groups.is_empty() {
-                let new_group_index = groups.len();
-                for name in &current_group {
-                    service_to_group.insert(name.clone(), new_group_index);
-                }
-                groups.push(current_group);
-            } else {
-                let mut merged_group = HashSet::new();
-                for index in &merged_groups {
-                    merged_group.extend(groups[*index].clone());
-                }
-                for name in &current_group {
-                    merged_group.insert(name.clone());
-                }
-                let main_group_index = merged_groups[0];
-                groups[main_group_index] = merged_group.clone();
-                for name in &merged_group {
-                    service_to_group.insert(name.clone(), main_group_index);
-                }
-                for &index in merged_groups.iter().skip(1) {
-                    groups[index].clear();
-                }
-            }
-        }
-    
+        let groups = self.group_services();
         let mut grouped_services: Vec<(String, Vec<Service>)> = Vec::new();
+
         for group in groups {
-            if !group.is_empty() {
-                let mut group_services = Vec::new();
-                let mut group_name = String::new();
-                for service_name in &group {
-                    if let Some(service) = self.services.iter().find(|s| s.name == *service_name) {
-                        group_services.push(service.clone());
-    
-                        // Set the main service's name as the group name if it has a cache or db
-                        if group_name.is_empty() && (!service.cache.as_ref().unwrap_or(&"".to_string()).is_empty() || !service.db.as_ref().unwrap_or(&"".to_string()).is_empty()) {
-                            group_name = service.name.clone();
-                        }
+            let mut group_services = Vec::new();
+            let mut group_name = String::new();
+
+            for service_name in &group {
+                if let Some(service) = self.services.iter().find(|s| s.name == *service_name) {
+                    group_services.push(service.clone());
+
+                    // Set the main service's name as the group name if it has a cache or db
+                    if group_name.is_empty() && (!service.cache.as_ref().unwrap_or(&"".to_string()).is_empty() || !service.db.as_ref().unwrap_or(&"".to_string()).is_empty()) {
+                        group_name = service.name.clone();
                     }
                 }
-                if group_name.is_empty() {
-                    // Fallback to the first service name if no cache/db is found
-                    group_name = group_services.first().unwrap().name.clone();
-                }
-                grouped_services.push((group_name, group_services));
             }
+            if group_name.is_empty() {
+                // Fallback to the first service name if no cache/db is found
+                group_name = group_services.first().unwrap().name.clone();
+            }
+            grouped_services.push((group_name, group_services));
         }
-    
+
         grouped_services
-    }
-    
+    }    
     // A function to retrieve the Resource of a node from the config
     
 
@@ -311,31 +250,68 @@ impl Network {
         }
     }
 
-    pub fn aggregate_network(config: Config, net: &Vec<Network>) -> f64 {
+    pub fn aggregate_network(config: Config, net: &Vec<Network>, maxmin_network: &Network) -> f64 {
         let mut available_values: Vec<f64> = net.iter().map(|n| n.available).collect();
         let mut bandwidth_values: Vec<f64> = net.iter().map(|n| n.bandwidth).collect();
         let mut latency_values: Vec<f64> = net.iter().map(|n| n.latency).collect();
         let mut packet_loss_values: Vec<f64> = net.iter().map(|n| n.packet_loss).collect();
-
+    
         available_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
         bandwidth_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
         latency_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
         packet_loss_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
-
+    
         let percentile_index = (net.len() as f64 * 0.99).ceil() as usize - 1;
-
+    
         let p99_available = available_values[percentile_index];
         let p99_bandwidth = bandwidth_values[percentile_index];
         let p99_latency = latency_values[percentile_index];
         let p99_packet_loss = packet_loss_values[percentile_index];
-
-        // Using weights from Config to compute the weighted value
-        let weighted_value = config.get_weight("available") * p99_available/1.0
-            + config.get_weight("bandwidth") * p99_bandwidth/10.0
-            + config.get_weight("latency") * 50.0/p99_latency
-            + config.get_weight("packet_loss") * 0.000000001/p99_packet_loss;
-
-        weighted_value
+    
+        // Avoiding division by zero or extremely small values
+        let safe_latency = if p99_latency < 1e-9 { 
+            //println!("p99_latency: {}, maxmin_network.latency: {}", p99_latency, maxmin_network.latency);
+            maxmin_network.latency 
+        } 
+        else { 
+            p99_latency 
+        }; // Minimum threshold for latency
+        let safe_packet_loss = if p99_packet_loss < 1e-12 { 
+            //println!("p99_packet_loss: {}, maxmin_network.packet_loss: {}", p99_packet_loss, maxmin_network.packet_loss);
+            maxmin_network.packet_loss 
+        } 
+        else { 
+            p99_packet_loss 
+        }; // Minimum threshold for packet loss
+    
+        let weight_available = config.get_weight("available");
+        let weight_bandwidth = config.get_weight("bandwidth");
+        let weight_latency = config.get_weight("latency");
+        let weight_packet_loss = config.get_weight("packet_loss");
+    
+        // Calculate each weighted value
+        let weighted_available = weight_available * p99_available / maxmin_network.available;
+        let weighted_bandwidth = weight_bandwidth * p99_bandwidth / maxmin_network.bandwidth;
+    
+        // Ensure that latency and packet loss do not exceed their respective weights
+        let weighted_latency = weight_latency * maxmin_network.latency / safe_latency;
+        let clamped_latency = weighted_latency.min(weight_latency); // Clamp to the maximum weight
+    
+        let weighted_packet_loss = weight_packet_loss * maxmin_network.packet_loss / safe_packet_loss;
+        let clamped_packet_loss = weighted_packet_loss.min(weight_packet_loss); // Clamp to the maximum weight
+    
+        let weighted_value = weighted_available + weighted_bandwidth + clamped_latency + clamped_packet_loss;
+    
+        // Normalize the weighted value to between 0.0 and 1.0
+        let normalized_value = weighted_value.min(1.0);
+    
+        // Invert the cost to make better network configurations have lower cost
+        let cost = 1.0 - normalized_value;
+    
+        // Print the weighted value, normalized value, and cost
+        // println!("Weighted value: {}, Normalized value: {}, Cost: {}", weighted_value, normalized_value, cost);
+    
+        cost
     }
 }
 
@@ -602,7 +578,7 @@ pub fn extract_f64(document: &mongodb::bson::Document, field: &str) -> f64 {
 pub async fn get_latest_document(collection: &mongodb::Collection<Document>) -> Result<Document, HttpResponse> {
     let query = doc! {};
     let options = FindOneOptions::builder()
-        .sort(doc! { "_id": -1 })
+        .sort(doc! { "timestamp": -1 })
         .build();
 
     match collection.find_one(query, options).await {
@@ -618,12 +594,12 @@ pub async fn get_latest_document(collection: &mongodb::Collection<Document>) -> 
     }
 }
 
-// Helper function to retrieve the latest 10 documents from a collection
+// Helper function to retrieve the latest 20 documents from a collection
 pub async fn get_latest_documents(collection: &mongodb::Collection<Document>) -> Result<Vec<Document>, HttpResponse> {
     let query = doc! {};
     let options = FindOptions::builder()
-        .sort(doc! { "_id": -1 })
-        .limit(10)
+        .sort(doc! { "timestamp": -1 })
+        .limit(20)
         .build();
 
     match collection.find(query, options).await {
@@ -687,10 +663,66 @@ pub async fn is_service_in_node(service: &str, collection: &mongodb::Collection<
 
 // a function that takes ResourceInt and Resource and returns the difference as a Resource
 pub fn resource_diff(resource_int: ResourceInt, resource: Resource) -> Resource {
+    // Resource {
+    //     cpu: resource_int.cpu as f64 - resource.cpu,
+    //     memory: (resource_int.memory *1000) as f64 - resource.memory,
+    //     disk: (resource_int.disk * 1000) as f64 - resource.disk,
+    //     network: (resource_int.network * 1000) as f64 - resource.network,
+    // }
+    Resource {
+        cpu: resource.cpu,
+        memory: resource.memory,
+        disk: resource.disk,
+        network: resource_int.network as f64 - resource.network,
+    }
+}
+
+// a function that adds two Resource objects and returns the sum as a Resource
+pub fn resource_sum(resource1: Resource, resource2: Resource) -> Resource {
+    Resource {
+        cpu: resource1.cpu + resource2.cpu,
+        memory: resource1.memory + resource2.memory,
+        disk: resource1.disk + resource2.disk,
+        network: resource1.network + resource2.network,
+    }
+}
+
+// a function that takes two resource objects and subs
+pub fn resource_sub(resource1: Resource, resource2: Resource) -> Resource {
+    Resource {
+        cpu: resource1.cpu - resource2.cpu,
+        memory: resource1.memory - resource2.memory,
+        disk: resource1.disk - resource2.disk,
+        network: resource1.network - resource2.network,
+    }
+}
+
+// a function that subtracts resource from resource_int and returns the difference as a Resource
+pub fn resource_int_sub(resource_int: ResourceInt, resource: Resource) -> Resource {
     Resource {
         cpu: resource_int.cpu as f64 - resource.cpu,
-        memory: (resource_int.memory *1000) as f64 - resource.memory,
-        disk: (resource_int.disk * 1000) as f64 - resource.disk,
-        network: (resource_int.network * 1000) as f64 - resource.network,
+        memory: resource_int.memory as f64 - resource.memory,
+        disk: resource_int.disk as f64 - resource.disk,
+        network: resource_int.network as f64 - resource.network,
+    }
+}
+
+// a function that adds/subtracts two resource objects
+pub fn resource_sum_sub(resource1: Resource, resource2: Resource) -> Resource {
+    Resource {
+        cpu: resource1.cpu + resource2.cpu,
+        memory: resource1.memory + resource2.memory,
+        disk: resource1.disk + resource2.disk,
+        network: resource1.network - resource2.network,
+    }
+}
+
+// a function that takes a ResourceInt and adds/sums some properties
+pub fn resource_int_subx(resource_int: ResourceInt, resource: Resource) -> Resource {
+    Resource {
+        cpu: resource_int.cpu as f64 - resource.cpu,
+        memory: resource_int.memory as f64 - resource.memory,
+        disk: (resource_int.disk as f64)/1000.0 - resource.disk,
+        network: resource.network,
     }
 }
