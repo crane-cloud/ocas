@@ -1,27 +1,18 @@
-version: "3"
+version: '3.7'
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+networks:
+  monitor-net:
+
 services:
-  mongo:
-    image: mongo:5.0.25
-    restart: always
-    container_name: 'mongo'
-    ports:
-      - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: mongoadmin
-      MONGO_INITDB_ROOT_PASSWORD: 949cad0977fb8daf334e
-    volumes:
-      - /var/mongodb:/data/db
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-      placement:
-        constraints: [node.role == manager]
 
   prometheus:
     image: prom/prometheus:v2.36.2
     volumes:
-      - ./prometheus/prometheus/:/etc/prometheus/
+      - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -34,7 +25,9 @@ services:
       - 9090:9090
     depends_on:
       - cadvisor
-      - node_exporter
+#      - pushgateway
+    networks:
+      - monitor-net
     deploy:
       placement:
         constraints:
@@ -48,18 +41,15 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-      - /var/lib/node_exporter:/var/lib/node_exporter:ro
     command: 
       - '--path.procfs=/host/proc' 
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-      - '--collector.textfile.directory=/var/lib/node_exporter'
     ports:
-      - target: 9100
-        published: 9100
-        protocol: tcp
-        mode: host
+      - 9100:9100
+    networks:
+      - monitor-net
     deploy:
       mode: global
       restart_policy:
@@ -70,7 +60,9 @@ services:
     ports:
       - 9093:9093
     volumes:
-      - "./prometheus/alertmanager/:/etc/alertmanager/"
+      - "./alertmanager/:/etc/alertmanager/"
+    networks:
+      - monitor-net
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
@@ -85,18 +77,17 @@ services:
     image: gcr.io/cadvisor/cadvisor
     volumes:
       - /:/rootfs:ro
-      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
     ports:
-      - target: 8080
-        published: 8080
-        protocol: tcp
-        mode: host
+      - 8080:8080
+    networks:
+      - monitor-net
     deploy:
       mode: global
       restart_policy:
-        condition: on-failure
+          condition: on-failure
 
   grafana:
     image: grafana/grafana
@@ -106,9 +97,11 @@ services:
       - 3000:3000
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./prometheus/grafana/provisioning/:/etc/grafana/provisioning/
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
     env_file:
-      - ./prometheus/grafana/config.monitoring
+      - ./grafana/config.monitoring
+    networks:
+      - monitor-net
     user: "472"
     deploy:
       placement:
@@ -117,7 +110,13 @@ services:
       restart_policy:
         condition: on-failure
 
-
-volumes:
-  prometheus_data:
-  grafana_data:
+#  pushgateway:
+#    image: prom/pushgateway
+#    deploy:
+#      mode: global
+#      restart_policy:
+#        condition: on-failure
+#    ports:
+#      - 9091:9091
+#    networks:
+#      - monitor-net

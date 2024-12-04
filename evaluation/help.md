@@ -116,12 +116,12 @@ docker node update --label-add name=ocas05 02inlnm7tzx3lnuaiz5o6atn6
 
 
 
-*/5 * * * * /bin/bash /proj/rip-PG0/ocas/scripts/yonga/perf.sh 10.10.1.X >> /var/log/ocas-perf.log 2>&1 && sudo mv /users/amwotil/ocas/evaluation/network/metrics.txt /var/lib/node_exporter/yonga.prom
+*/5 * * * * /bin/bash /proj/rip-PG0/ocas/scripts/yonga/perf.sh 10.10.1.X >> /var/log/ocas-perf.log 2>&1 && sudo mv /users/mwotila/ocas/evaluation/network/metrics.txt /var/lib/node_exporter/yonga.prom
 
 
 sudo mkdir /var/lib/node_exporter
 
-mkdir -p /users/amwotil/ocas/evaluation/network
+mkdir -p /users/mwotila/ocas/evaluation/network
 
 pip3 install tcp-latency
 sudo apt install python3-pip iperf3 jq pkg-config libclang-dev libssl-dev
@@ -131,7 +131,7 @@ sudo ln -s .local/bin/tcp-latency /usr/bin/
 
 sudo touch /var/log/ocas-perf.log
 
-sudo chown amwotil:rip-PG0 /var/log/ocas-perf.log
+sudo chown mwotila:cranecloud-PG0 /var/log/ocas-perf.log
 
 
 sudo vim /etc/systemd/system/iperf3.service
@@ -152,7 +152,9 @@ WantedBy=multi-user.target
 sudo systemctl enable iperf3
 sudo systemctl start iperf3
 
+On all the workers
 
+cd /proj/cranecloud-PG0/ocas/hotelReservation
 
 docker compose build
 
@@ -167,12 +169,13 @@ docker tag hotel_reserv_user_single_node:latest mwotila/hotel_reserv_user_single
 
 docker rmi $(docker images -f "dangling=true" -q)
 
+docker image rm hotel_reserv_recommend_single_node hotel_reserv_frontend_single_node hotel_reserv_profile_single_node hotel_reserv_rsv_single_node hotel_reserv_rate_single_node hotel_reserv_user_single_node hotel_reserv_geo_single_node
 
 docker stack deploy -c monitor.yaml monitor
 
 
 sudo mkdir /var/mongodb
-sudo chown amwotil:rip-PG0 /var/mongodb/
+sudo chown mwotila:cranecloud-PG0 /var/mongodb/
 
 
 docker node update --label-add name=ocas01 mtbdoitzu4vr1sxdwgn26lgrx
@@ -206,7 +209,6 @@ Rust - ocas
 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh 
 
-
-
+source $HOME/.cargo/env
 
 docker rmi hotel_reserv_geo_single_node hotel_reserv_frontend_single_node hotel_reserv_rate_single_node  hotel_reserv_user_single_node hotel_reserv_rsv_single_node  hotel_reserv_recommend_single_node hotel_reserv_profile_single_node hotel_reserv_search_single_node

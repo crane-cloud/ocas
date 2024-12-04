@@ -60,7 +60,7 @@ impl Yonga {
                 self.placement_0().await;
             }
 
-            tokio::time::sleep(tokio::time::Duration::from_secs(300)).await;
+            tokio::time::sleep(tokio::time::Duration::from_secs(180)).await;
         }
     }
 
@@ -141,18 +141,18 @@ impl Yonga {
         let trace_entries = get_latest_trace_entries(&collection_trace, limit).await.unwrap();
 
         // Print the number of trace entries
-        //println!("Number of trace entries: {}", trace_entries.len());
+        println!("Number of trace entries: {}", trace_entries.len());
 
         let trees = build_trees(trace_entries);
 
         // print the length of the trees
-        //println!("Number of trees: {}", trees.len());
+        println!("Number of trees: {}", trees.len());
 
         let mut service_tree = ServiceGraph::new();
         service_tree.build_from_traces(&trees);
 
         //Print the entire service graph
-        //service_tree.print_graph();
+        service_tree.print_graph();
 
         // Create a NodeGraph instance
         let mut node_graph = NodeGraph::new(nodes.clone());

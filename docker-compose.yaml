@@ -274,7 +274,8 @@ services:
         constraints: [node.role == manager]
     volumes:
       #- /home/ubuntu/ocas/jaeger-mongodb:/app
-      - /proj/rip-PG0/ocas/jaeger-mongodb:/app
+      #- /proj/rip-PG0/ocas/jaeger-mongodb:/app
+      - /proj/cranecloud-PG0/ocas/jaeger-mongodb:/app
 
 volumes:
   geo:

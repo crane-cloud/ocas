@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define the JSON file path
-json_file="/users/amwotil/ocas/evaluation/network/metrics.txt"
-temp_file="/users/amwotil/ocas/evaluation/network/metrics_temp.txt"
+json_file="/users/mwotila/ocas/evaluation/network/metrics.txt"
+temp_file="/users/mwotila/ocas/evaluation/network/metrics_temp.txt"
 
 replicas=("10.10.1.1" "10.10.1.2" "10.10.1.3" "10.10.1.4" "10.10.1.5")
 
@@ -39,7 +39,7 @@ measure_bandwidth_pl_latency() {
 
     #latency_output=$(tcp-latency -p 9100 $ip)
     #latency_output=$(/home/ubuntu/.pyenv/shims/tcp-latency -p 9100 $ip)
-    latency_output=$(/users/amwotil/.local/bin/tcp-latency -p 9100 $ip)
+    latency_output=$(/users/mwotila/.local/bin/tcp-latency -p 9100 $ip)
     last_line_log=$(echo "$latency_output" | tail -n 1)
 
     if [[ "$last_line_log" == *"All 5 transmissions failed"* ]]; then

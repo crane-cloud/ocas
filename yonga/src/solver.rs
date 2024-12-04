@@ -115,7 +115,7 @@ impl Solver {
             // resource_map.insert(node.clone(), (node_utilization, node_environment));
         }
 
-        //println!("Resource Map: {:?}", resource_map);
+        println!("Resource Map: {:?}", resource_map);
 
         
         // Use the resource map to populate the node_map
@@ -125,6 +125,9 @@ impl Solver {
                 y: self.compute_network_cost(network, &resource_map), //compute_ne(network, &resource_map),
             });
         }
+
+        // print the node map
+        println!("Node Map: {:?}", node_map);
 
         // Get all coordinates in the map
         let coordinates: Vec<Coordinate> = node_map.values().cloned().collect();
@@ -591,7 +594,7 @@ impl Solver {
         println!("Base Utilization Map (+- services): {:?}", node_utilization);
 
         // Print the service tree
-        //println!("Service Tree: {:?}", service_tree);
+        println!("Service Tree: {:?}", service_tree);
         
         // Find the most popular services
         let (most_popular_services, _) = service_tree.most_popular_services();
@@ -757,13 +760,14 @@ impl Solver {
         }
 
         else {
-            if diff > (0.5 * self.config.services.len() as f64) && value > self.obj_value.unwrap() {
-                println!("Placement difference {} > 50% or objectives value {} > current value {}", diff, value, self.obj_value.unwrap());
+            if value > self.obj_value.unwrap() {
+            //if diff > (0.5 * self.config.services.len() as f64) && value > self.obj_value.unwrap() {
+                println!("Placement objectives value {} > current value {}", value, self.obj_value.unwrap());
                 Err("No solution found".into())
             }
 
             else {
-                println!("Placement difference {} or objectives value {} is less than the current value - to deployment", diff, value);
+                println!("Placement objectives value {} <= current value {}", value, self.obj_value.unwrap());
                 self.obj_value = Some(value);
                 self.revision += 1;
                 self.placement = Some(placement_map.clone());
@@ -940,13 +944,13 @@ impl Solver {
         let safe_div = |num: f64, denom: f64| if denom == 0.0 { f64::MAX } else { num / denom };
     
         // Print debugging information
-        // println!("Bandwidth: {}, Latency: {}, Packet Loss: {}, Available: {}", bandwidth, latency, packet_loss, available);
-        // println!("Max Bandwidth: {}, Min Latency: {}, Min Packet Loss: {}, Max Available: {}", max_bandwidth, min_latency, min_packet_loss, max_available);
-        // println!("Weights: Bandwidth: {}, Latency: {}, Packet Loss: {}, Available: {}", 
-        //          self.config.get_weight("bandwidth"), 
-        //          self.config.get_weight("latency"), 
-        //          self.config.get_weight("packet_loss"), 
-        //          self.config.get_weight("available"));
+        println!("Bandwidth: {}, Latency: {}, Packet Loss: {}, Available: {}", bandwidth, latency, packet_loss, available);
+        println!("Max Bandwidth: {}, Min Latency: {}, Min Packet Loss: {}, Max Available: {}", max_bandwidth, min_latency, min_packet_loss, max_available);
+        println!("Weights: Bandwidth: {}, Latency: {}, Packet Loss: {}, Available: {}", 
+                 self.config.get_weight("bandwidth"), 
+                 self.config.get_weight("latency"), 
+                 self.config.get_weight("packet_loss"), 
+                 self.config.get_weight("available"));
     
         // Compute the cost (`ne`) based on inversed normalization for cost minimization
         let ne = safe_div(max_bandwidth, bandwidth) * self.config.get_weight("bandwidth") +

@@ -172,7 +172,7 @@ impl Binpack {
                 let yaml_str = serde_yaml::to_string(&self.stack_config).unwrap();
 
                 // Provide the YAML to the deploy binary
-                let compose_file = format!("random_{}.yml", Local::now().format("%Y-%m-%d_%H-%M-%S"));
+                let compose_file = format!("binpack_{}.yml", Local::now().format("%Y-%m-%d_%H-%M-%S"));
 
                 // Write the YAML to a file
                 std::fs::write(&compose_file, yaml_str).expect("Failed to write the YAML configuration file");

@@ -1,0 +1,626 @@
+    1  cat /etc/issue
+    2  sudo apt update && sudo apt upgrade -y
+    3  sudo reboot now
+    4  cd /proj/cranecloud-PG0/
+    5  ls
+    6  locate
+    7  sudo apt install plocate
+    8  locate ocas
+    9  scp amwotil@hp157.utah.cloudlab.us:/proj/rip-PG0/ocas.tar.gz .
+   10  ls
+   11  git
+   12  git clone git@github.com:crane-cloud/ocas.git
+   13  cd
+   14  clear
+   15  for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+   16  sudo apt-get update
+   17  sudo apt-get install ca-certificates curl
+   18  sudo install -m 0755 -d /etc/apt/keyrings
+   19  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+   20  sudo chmod a+r /etc/apt/keyrings/docker.asc
+   21  echo   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+   22    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   23  sudo apt-get update
+   24  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+   25  sudo usermod -aG docker $USER
+   26  docker swarm init --advertise-addr 10.10.1.6
+   27  docker
+   28  pwd
+   29  docker swarm init --advertise-addr 10.10.1.6
+   30  docker node ls
+   31  docker node update --label-add name=ocas01 oa7pyomjxadl2eq1mllvv5lxx
+   32  docker node update --label-add name=ocas02 h4rwenxp4w4w70412asdfa5iq
+   33  docker node update --label-add name=ocas03 hta89sizoaba7mnhvw8ril623
+   34  docker node update --label-add name=ocas05 qq7wrzu86d7jh0wzll1s8q29u
+   35  docker node ls
+   36  docker node update --label-add name=ocas04 1lelvk10he7pzzyswmrbdd38j
+   37  sudo mkdir /var/lib/node_exporter
+   38  mkdir -p /users/mwotila/ocas/evaluation/network
+   39  sudo apt install python3-pip iperf3 jq pkg-config libclang-dev libssl-dev
+   40  pip3 install tcp-latency
+   41  sudo ln -s .local/bin/tcp-latency /usr/local/bin/
+   42  sudo ln -s .local/bin/tcp-latency /usr/bin/
+   43  crontab -e
+   44  groups
+   45  sudo chown mwotila:cranecloud-PG0 /var/log/ocas-perf.log
+   46  sudo vim /etc/systemd/system/iperf3.service
+   47  sudo touch /var/log/ocas-perf.log
+   48  sudo chown mwotila:cranecloud-PG0 /var/log/ocas-perf.log
+   49  sudo vim /etc/systemd/system/iperf3.service
+   50  sudo systemctl enable iperf3
+   51  sudo systemctl start iperf3
+   52  ls
+   53  cd ocas/
+   54  ls
+   55  cd
+   56  cd /proj/cranecloud-PG0/ocas
+   57  ls
+   58  docker compose build
+   59  docker image ls
+   60  ls
+   61  docker stack deploy -c monitor.yaml monitor
+   62  ls
+   63  cd /tm
+   64  cd /tmp/
+   65  ls
+   66  history | grep scp
+   67  scp amwotil@hp157.utah.cloudlab.us:/proj/rip-PG0/ocas.tar.gz .
+   68  tar xf ocas.tar.gz 
+   69  ls
+   70  cd ocas
+   71  ls
+   72  cp -r prometheus/ /proj/cranecloud-PG0/ocas/
+   73  cp -r yonga/optirustic/ /proj/cranecloud-PG0/ocas/yonga
+   74  ls /var/mongodb
+   75  sudo mkdir /var/mongodb
+   76  sudo chown mwotila:cranecloud-PG0 /var/mongodb/
+   77  sudo apt-get install luarocks
+   78  sudo luarocks install luasocket
+   79  lua -e "require('socket.core')"
+   80  ls
+   81  ./wrk 
+   82  cd /tmp
+   83  mkdir pkg
+   84  cd pkg
+   85  clear
+   86  ls
+   87  git clone https://github.com/crane-cloud/ocas.git
+   88  ls
+   89  cd ocas
+   90  ls
+   91  cat docker-compose.yaml 
+   92  docker compose build
+   93  lear
+   94  clear
+   95  cd
+   96  clear
+   97  docker ps
+   98  history | grep wek
+   99  history | grep wrk
+  100  cd /proj/cranecloud-PG0/
+  101  ls
+  102  cd ocas
+  103  ls
+  104  ./wrk -t 1 -c 10 -d 300 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.1:5000 -R 1000000 -L
+  105  python
+  106  ./wrk -t 1 -c 10 -d 3600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.3:5000 -R 1000000 -L
+  107  history | grep compose
+  108  ls
+  109  docker ps
+  110  screen
+  111  sudo apt install screen
+  112  ./wrk -t 1 -c 10 -d 3600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.3:5000 -R 1000000 -L
+  113  screen
+  114  docker ps
+  115  docker stack ls
+  116  docker services monitor
+  117  docker service monitor
+  118  docker service ls
+  119  docker ps
+  120  docker node ls
+  121  docker stack rm hotelreservation
+  122  docker stack ls
+  123  docker stack rm monitor
+  124  docker node ls
+  125  history | grep label
+  126  ls
+  127  docker stack deploy -c monitor.yaml monitor
+  128  ls
+  129  docker stack deploy -c hdocker-compose.yaml hotelreservation
+  130  docker stack deploy -c docker-compose.yaml hotelreservation
+  131  curl ifconfig.me
+  132  cd yonga
+  133  `./target/debug/monitor -c ../evaluation/config-dev.yaml 
+  134  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  135  ip add
+  136  netstat -tulnp
+  137  pwd
+  138  history | grep compose
+  139  docker stack deploy -c docker-compose.yaml hotelreservation
+  140  cd yonga
+  141  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh 
+  142  cd
+  143  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh 
+  144  . "$HOME/.cargo/env"
+  145  cd /proj/cranecloud-PG0/ocas
+  146  ls
+  147  cd yonga
+  148  cargo build
+  149  cd ..
+  150  docker stack deploy -c monitor.yaml monitor
+  151  docker stack ps
+  152  docker stack ls
+  153  docker services 
+  154  docker service 
+  155  docker service ls
+  156  docker service ls hjuaxh
+  157  docker service ls
+  158  docker ps
+  159  docker service ls
+  160  ls
+  161  docker stack deploy -c docker-compose.yaml hotelreservation
+  162  docker service ls
+  163  ls
+  164  cd hotelReservation/
+  165  cd ..
+  166  cd yonga
+  167  cd /proj/cranecloud-PG0/ocas
+  168  ./wrk -t 1 -c 10 -d 3600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.3:5000 -R 1000000 -L
+  169  cargo build
+  170  history |
+  171  history | grep moni
+  172  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  173  history | grep api
+  174  cd yonga
+  175  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  176  ./target/debug/ocas -m docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  177  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  178  cd yonga
+  179  cargo buil
+  180  cargo build
+  181  history | grep monitor
+  182  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  183  cd yongs
+  184  history | grep yonga
+  185  history | grep api
+  186  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  187  cd yonga
+  188  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  189  cd yonga
+  190  history | grep ocas
+  191  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  192  cd yonga
+  193  ls
+  194  cd /proj/cranecloud-PG0/ocas
+  195  ls
+  196  history | grep wrk
+  197  ./wrk -t 1 -c 10 -d 7200 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.3:5000 -R 1000000 -L
+  198  vim /proj/cranecloud-PG0/ocas/scripts/yonga/perf.sh
+  199  q
+  200  cd /proj/cranecloud-PG0/
+  201  ls
+  202  df -lh
+  203  ls
+  204  cd ocas
+  205  ls
+  206  git status
+  207  clear
+  208  history | grep wrk
+  209  ./wrk -t 1 -c 10 -d 300 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.1:5000 -R 1000000 -L
+  210  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.1:5000 -R 1000000 -L
+  211  history | grep ps
+  212  docker stack ps
+  213  docker stack ps hotelreservation
+  214  docker stack ps hotelreservation | grep frontend
+  215  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.1:5000 -R 1000000 -L
+  216  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  217  cd /proj/cranecloud-PG0/ocas
+  218  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  219  cd yonga
+  220  cargo build
+  221  history | grep monitor
+  222  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  223  cd yong
+  224  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservationa
+  225  d yonga
+  226  cd yonga
+  227  history | grep api
+  228  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  229  cd yonga
+  230  history | grep 3000
+  231  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  232  cargo build
+  233  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  234  cd /proj/cranecloud-PG0/ocas/
+  235  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  236  ./wrk -t 1 -c 10 -d 600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  237  cd yonga
+  238  cargo build
+  239  history | grep monitor
+  240  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  241  cd yonga
+  242  history | grep api
+  243  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  244  cd yonga
+  245  history | grep 3000
+  246  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  247  cargo build
+  248  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  249  ./target/debug/ocas -m ../docker-compose.yaml -p  spread -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  250  cd /proj/cranecloud-PG0/ocas
+  251  ./wrk -t 1 -c 10 -d 600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  252  docker stack ps hotelreservation | grep Runn
+  253  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  254  docker stack ps hotelreservation | grep Runn
+  255  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  256  docker stack ps hotelreservation | grep Runn | grep front
+  257  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  258  docker stack ps hotelreservation | grep Runn
+  259  docker stack ps hotelreservation | grep Runn | grep front
+  260  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  261  docker stack ps hotelreservation | grep Runn | grep front
+  262  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  263  docker stack ps hotelreservation | grep Runn | grep front
+  264  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  265  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  266  cd /proj/cranecloud-PG0/ocas
+  267  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  268  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  269  cd yonga
+  270  history | grep monitor
+  271  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  272  cd yonga
+  273  history | grep api
+  274  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  275  cd yonga
+  276  history | grep spread
+  277  ./target/debug/ocas -m ../docker-compose.yaml -p  spread -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  278  clear
+  279  ./target/debug/ocas -m ../docker-compose.yaml -p  spread -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  280  docker stack ps hotelreservation | grep Runn
+  281  ./target/debug/ocas -m ../docker-compose.yaml -p  spread -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  282  ./target/debug/ocas -m ../docker-compose.yaml -p random -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  283  ./target/debug/ocas -m ../docker-compose.yaml -p binpack -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  284  docker ps | grep Running
+  285  ./target/debug/ocas -m ../docker-compose.yaml -p binpack -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  286  history | grep yonga
+  287  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  288  docker stack ps hotelreservation | grep Run
+  289  cd /proj/cranecloud-PG0/ocas
+  290  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  291  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  292  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  293  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  294  clear
+  295  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  296  docker stack ps hotelreservation | grep Runn
+  297  clear
+  298  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  299  '
+  300  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  301  history | grep stack | grep Run
+  302  docker stack ps hotelreservation | grep Runn
+  303  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  304  docker stack ps hotelreservation | grep Runn
+  305  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  306  docker stack ps hotelreservation | grep Runn
+  307  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  308  docker stack ps hotelreservation | grep Runn
+  309  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  310  docker stack ps hotelreservation | grep Runn
+  311  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  312  docker stack rm hotelreservation
+  313  docker stack ps hotelreservation | grep Runn
+  314  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  315  docker stack rm hotelreservation
+  316  docker stack ps hotelreservation | grep Runn
+  317  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L && ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  318  cd yonga
+  319  cargo build
+  320  history | grep monitor
+  321  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  322  cd yonga
+  323  history | grep api
+  324  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  325  cd yona
+  326  cd yonga/
+  327  history | grep yongs
+  328  history | grep yonga
+  329  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  330  cargo build
+  331  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  332  history | grep spread
+  333  ./target/debug/ocas -m ../docker-compose.yaml -p  spread -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  334  docker stack ps hotelreservation | grep front
+  335  ./target/debug/ocas -m ../docker-compose.yaml -p  spread -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  336  docker stack ps hotelreservation | grep front
+  337  docker stack ps hotelreservation | grep front| grep Run
+  338  ./target/debug/ocas -m ../docker-compose.yaml -p  spread -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  339  history | grep random
+  340  ./target/debug/ocas -m ../docker-compose.yaml -p random -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  341  ./target/debug/ocas -m ../docker-compose.yaml -p binpack -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  342  cargo build
+  343  ./target/debug/ocas -m ../docker-compose.yaml -p binpack -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  344  history | grep yonga
+  345  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  346  cd yonga
+  347  cargo build
+  348  history | grep monitor
+  349  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  350  cd yonga
+  351  history | grep api
+  352  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  353  cd yonga
+  354  history | grep yonga
+  355  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  356  cd yonga
+  357  cargo build
+  358  cd /proj/cranecloud-PG0/ocas
+  359  /wrk -t 1 -c 10 -d 3600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  360  ./wrk -t 1 -c 10 -d 3600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  361  /wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  362  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  363  cd /proj/cranecloud-PG0/ocas
+  364  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  365  cd yonga
+  366  history | grep mon
+  367  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  368  cd yonga
+  369  history | grep api
+  370  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  371  cd yonga
+  372  history | grep yonga
+  373  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  374  cd yonga
+  375  cd /proj/cranecloud-PG0/ocas
+  376  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  377  history | grep monitor
+  378  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  379  history | grep api
+  380  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  381  history | grep yonga
+  382  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  383  cargo build
+  384  cd /proj/cranecloud-PG0/ocas
+  385  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  386  cd /proj/cranecloud-PG0/ocas
+  387  ./wrk -t 1 -c 10 -d 10800 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  388  cd monit
+  389  cd yonga
+  390  carfo build
+  391  cargo build
+  392  history | grep monitor
+  393  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  394  cd yonga
+  395  history | grep api
+  396  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  397  cd yonga
+  398  history | grep yonga
+  399  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  400  cd /proj/cranecloud-PG0/ocas
+  401  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  402  ./wrk -t 1 -c 10 -d 7200 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  403  cd yonga
+  404  cargo build
+  405  history | grep mon
+  406  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  407  cd yonga
+  408  history | grep api
+  409  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  410  cd yonga
+  411  history | grep yonga
+  412  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  413  cd yonga
+  414  ./wrk -t 1 -c 10 -d 3600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.3:5000 -R 1000000 -L
+  415  cd /proj/cranecloud-PG0/ocas
+  416  ./wrk -t 1 -c 10 -d 3600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  417  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  418  sudo reboot bow 
+  419  cd /proj/cranecloud-PG0/ocas
+  420  ls
+  421  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  422  cd yonga
+  423  history | grep monitor
+  424  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  425  cd yp
+  426  cd yonga/
+  427  ls
+  428  history | grep api
+  429  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  430  cd yonga
+  431  history  grep yonga
+  432  history  | grep yonga
+  433  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  434  cd /proj/cranecloud-PG0/ocas
+  435  ls
+  436  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  437  ls
+  438  cd yonga/
+  439  ls
+  440  cargo build
+  441  history | grep monitor
+  442  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  443  cd yonga
+  444  history | grep api
+  445  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  446  cd yonga/
+  447  ls
+  448  cd ..
+  449  ls
+  450  cd yonga/
+  451  history | grep yonga
+  452  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  453  cargo build
+  454  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  455  cargo build
+  456  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  457  docker ps
+  458  docker logs -f 4cf426ea4fa5
+  459  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  460  docker stack ps
+  461  docker stack ls
+  462  docker stack rm hotelreservation
+  463  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  464  docker stack rm hotelreservation
+  465  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  466  docker stack rm hotelreservation
+  467  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  468  docker stack ps
+  469  docker stack ls
+  470  docker stack rm hotelreservation monitor
+  471  docker ps
+  472  docker volume ls
+  473  docker network ls
+  474  history | grep monitor
+  475  history | grep monitor | greps tacj
+  476  history | grep monitor | grep stack
+  477  cd ..
+  478  ls
+  479  docker stack deploy -c monitor.yaml monitor
+  480  docker ps
+  481  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  482  cd yonga/
+  483  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  484  docker ps
+  485  docker logs -f 4cf426ea4fa5
+  486  cargo build
+  487  cd yonga
+  488  cargo build
+  489  docker ps
+  490  docker logs 4dbd9b8dc5d9
+  491  docker stack ps
+  492  docker stack ls
+  493  docker ps
+  494  docker logs 31b526624f90
+  495  ls /proj/cranecloud-PG0/ocas/jaeger-mongodb
+  496  docker volume ls
+  497  docker stack ps
+  498  docker stack ls
+  499  docker stack rm hotelreservation
+  500  docker ps
+  501  ls
+  502  docker ps
+  503  docker stack ps
+  504  docker stack ps hotelreservation
+  505  docker pull jaegertracing/all-in-one:1.30
+  506  docker image ls
+  507  docker stack rm hotelreservation
+  508  docker pull jaegertracing/all-in-one:1.30
+  509  docker ps
+  510  docker logs -f e26cc2c3ebea
+  511  docker ps
+  512  docker restart e26cc2c3ebea
+  513  docker ps
+  514  docker logs -f 6f37100d5f66
+  515  cd /proj/cranecloud-PG0/ocas
+  516  ls
+  517  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  518  python
+  519  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  520  cd /proj/cranecloud-PG0/ocas
+  521  cd yonga/
+  522  history | grep monitor
+  523  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  524  cd yonga/
+  525  history | grep api
+  526  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  527  cd yonga/
+  528  cd yonga
+  529  cargo build
+  530  history | grep monitor
+  531  ./target/debug/monitor -c ../evaluation/config-dev.yaml
+  532  history | grep api
+  533  ./target/debug/api -c ../evaluation/config-dev.yaml -p 30000
+  534  history | grep yonga
+  535  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  536  docker stack ps
+  537  docker stack ls
+  538  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  539  docker stack rm hotelreservation
+  540  docker stack deploy -c ../yonga-20k.yaml hotelreservation
+  541  docker stack ps hotelreservation | grep frontend
+  542  docker stack ps hotelreservation | grep Running
+  543  docker stack deploy -c ../yonga-20k.yaml hotelreservation
+  544  docker stack ps hotelreservation | grep Running
+  545  docker stack deploy -c ../yonga-20k.yaml hotelreservation
+  546  docker stack ps hotelreservation | grep Running
+  547  docker stack deploy -c ../yonga-20k.yaml hotelreservation
+  548  docker stack ps hotelreservation | grep Running
+  549  docker stack deploy -c ../binpack-12k.yaml hotelreservation
+  550  docker stack ps hotelreservation | grep Running
+  551  cd yonga
+  552  ls
+  553  cd ..
+  554  ls
+  555  vim yonga-20k.yaml
+  556  l
+  557  cp yonga-20k.yaml binpack-12k.yaml
+  558  cd /proj/cranecloud-PG0/ocas/
+  559  ls
+  560  ./wrk -t 512 -c 1000 -d 200 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  561  cd /proj/cranecloud-PG0/ocas
+  562  ./wrk -t 1 -c 10 -d 60 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  563  cd /proj/cranecloud-PG0/ocas
+  564  ./wrk -t 1 -c 10 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  565  Running 30s test @ http://10.10.1.5:5000
+  566  ./wrk -t 1 -c 10 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  567  ./wrk -t 512 -c 1000 -d 600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  568  cd /proj/cranecloud-PG0/ocas
+  569  ./wrk -t 1 -c 10 -d 150 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  570  ./wrk -t 512 -c 1000 -d 600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  571  sudo reboot now
+  572  cd /proj/cranecloud-PG0/ocas
+  573  ./wrk -t 1 -c 10 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.4:5000 -R 1000000 -L
+  574  ./wrk -t 1 -c 10 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  575  ./wrk -t 100 -c 100 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  576  ./wrk -t 1000 -c 1000 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  577  ./wrk -t 512 -c 1000 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  578  ./wrk -t 512 -c 10000 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  579  ./wrk -t 512 -c 8000 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  580  ./wrk -t 512 -c 5000 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  581  ./wrk -t 512 -c 3000 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  582  ./wrk -t 512 -c 2048 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  583  ./wrk -t 512 -c 1500 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  584  ./wrk -t 512 -c 1200 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  585  ./wrk -t 512 -c 1024 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  586  ./wrk -t 512 -c 1010 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  587  ./wrk -t 512 -c 1000 -d 30 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  588  ./wrk -t 512 -c 1000 -d 600 -s ./scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.5:5000 -R 1000000 -L
+  589  ls
+  590  cp binpack-12k.yaml random-8k.yaml 
+  591  cp binpack-12k.yaml spread-12k.yaml 
+  592  history | grep 12k
+  593  docker stack deploy -c ../binpack-12k.yaml hotelreservation
+  594  docker stack deploy -c binpack-12k.yaml hotelreservation
+  595  ulimit -n
+  596  cd yonga
+  597  history | grep random
+  598  ./target/debug/ocas -m ../docker-compose.yaml -p random -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  599  docker stack ps hotelreservation 
+  600  docker stack ps hotelreservation | Running
+  601  docker stack ps hotelreservation | grep Running
+  602  history | grep spread
+  603  ./target/debug/ocas -m ../docker-compose.yaml -p  spread -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  604  docker stack ps hotelreservation | grep Running
+  605  history | grep binpack
+  606  ./target/debug/ocas -m ../docker-compose.yaml -p binpack -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation
+  607  docker stack ps hotelreservation | grep Running
+  608  ls
+  609  cd ..
+  610  mv binpack-12k.yaml evaluation/
+  611  mv random-8k.yaml evaluation/
+  612  mv yonga-20k.yaml evaluation/
+  613  ls
+  614  mv spread-12k.yaml evaluation/
+  615  ls
+  616  git status
+  617  cd evaluation/
+  618  ls
+  619  mkdir top-results
+  620  mv binpack-12k.yaml top-results/
+  621  mv random-8k.yaml top-results/
+  622  mv yonga-20k.yaml top-results/
+  623  mv spread-12k.yaml top-results/
+  624  ls
+  625  touch history.txt
+  626  history 
