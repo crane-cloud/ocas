@@ -57,6 +57,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let cluster_config: Config = serde_yaml::from_str(&cluster_str)?;
 
+    // print the cluster config
+    //println!("Cluster Config: {:?}", cluster_config);
+
     // determine the strategy
     match strategy.as_str() {
         "spread" => {

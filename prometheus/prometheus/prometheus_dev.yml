@@ -54,103 +54,103 @@ scrape_configs:
 
   ##Node Exporter##
 
-  - job_name: 'hotelreservation-cr-nodex'
+  - job_name: 'hotelreservation-ocas-nodex'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 15s
   
     static_configs:
-      - targets: ['196.32.213.62:9100']
+      - targets: ['10.10.1.6:9100']
 
-  - job_name: 'hotelreservation-cr_dar-nodex'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 15s
-  
-    static_configs:
-      - targets: ['196.32.212.213:9100']
-
-  - job_name: 'hotelreservation-cr_kla-nodex'
+  - job_name: 'hotelreservation-ocas01-nodex'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 15s
   
     static_configs:
-      - targets: ['102.134.147.244:9100']
+      - targets: ['10.10.1.1:9100']
 
-  - job_name: 'hotelreservation-cr_bun-nodex'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 15s
-  
-    static_configs:
-      - targets: ['196.43.171.248:9100']
-
-  - job_name: 'hotelreservation-cr_lsk-nodex'
+  - job_name: 'hotelreservation-ocas02-nodex'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 15s
   
     static_configs:
-      - targets: ['196.32.215.213:9100']
+      - targets: ['10.10.1.2:9100']
 
-  - job_name: 'hotelreservation-cr_jhb-nodex'
+  - job_name: 'hotelreservation-ocas03-nodex'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 15s
   
     static_configs:
-      - targets: ['129.232.230.130:9100']
+      - targets: ['10.10.1.3:9100']
+
+  - job_name: 'hotelreservation-ocas04-nodex'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 15s
+  
+    static_configs:
+      - targets: ['10.10.1.4:9100']
+
+  - job_name: 'hotelreservation-ocas05-nodex'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 15s
+  
+    static_configs:
+      - targets: ['10.10.1.5:9100']
 
   ##CADVISOR##
 
-  - job_name: 'hotelreservation-cr-cadvisor'
+  - job_name: 'hotelreservation-ocas-cadvisor'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 15s
   
     static_configs:
-      - targets: ['196.32.213.62:31080']
+      - targets: ['10.10.1.6:8080']
 
-  - job_name: 'hotelreservation-cr_dar-cadvisor'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 15s
-  
-    static_configs:
-      - targets: ['196.32.212.213:31080']
-
-  - job_name: 'hotelreservation-cr_kla-cadvisor'
+  - job_name: 'hotelreservation-ocas01-cadvisor'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 15s
   
     static_configs:
-      - targets: ['102.134.147.244:31080']
+      - targets: ['10.10.1.1:8080']
 
-  - job_name: 'hotelreservation-cr_bun-cadvisor'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 15s
-  
-    static_configs:
-      - targets: ['196.43.171.248:31080']
-
-  - job_name: 'hotelreservation-cr_lsk-cadvisor'
+  - job_name: 'hotelreservation-ocas02-cadvisor'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 15s
   
     static_configs:
-      - targets: ['196.32.215.213:31080']
+      - targets: ['10.10.1.2:8080']
 
-  - job_name: 'hotelreservation-cr_jhb-cadvisor'
+  - job_name: 'hotelreservation-ocas03-cadvisor'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 15s
   
     static_configs:
-      - targets: ['129.232.230.130:31080']
+      - targets: ['10.10.1.3:8080']
+
+  - job_name: 'hotelreservation-ocas04-cadvisor'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 15s
+  
+    static_configs:
+      - targets: ['10.10.1.4:8080']
+
+  - job_name: 'hotelreservation-ocas05-cadvisor'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 15s
+  
+    static_configs:
+      - targets: ['10.10.1.5:8080']
 
 
 
@@ -162,4 +162,4 @@ scrape_configs:
     scrape_interval: 15s
   
     static_configs:
-      - targets: ['196.32.213.62:9323']
+      - targets: ['10.10.1.6:9323']

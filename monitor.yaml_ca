@@ -90,7 +90,7 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     ports:
       - target: 8080
-        published: 31080
+        published: 8080
         protocol: tcp
         mode: host
     deploy:

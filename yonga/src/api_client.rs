@@ -62,7 +62,7 @@ impl ApiClient {
         let url = format!("{}/node/{}/utilization", self.base_url, node);
         let resource = self.get_json::<Resource>(&url).await?;
         // Print the resource for the node
-        //println!("Resource for node {}: {:?}", node, resource);
+        println!("Resource for node {}: {:?}", node, resource);
         Ok(resource)
     }
 
