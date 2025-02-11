@@ -1,0 +1,814 @@
+Starting test run at Sat Feb  1 03:51:33 UTC 2025
+Iteration #1: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.810568302928337, memory: 56330.9896484375, disk: 1206.4133630752565, network: 233.68072299957277 }
+Resource for node cr-dar: Resource { cpu: 1.3661817991375604, memory: 12566.207421875, disk: 205.78628635406497, network: 39.79185643196106 }
+Resource for node cr-kla: Resource { cpu: 1.735857711287745, memory: 12255.818359375, disk: 17.823395919799804, network: 40.52516407966614 }
+Resource for node cr-lsk: Resource { cpu: 1.8606898126084297, memory: 14803.443359375, disk: 206.77810344696044, network: 172.749174785614 }
+Resource for node cr-bun: Resource { cpu: 1.8368702387792664, memory: 15176.751171875, disk: 156.15662212371825, network: 493.7917628288269 }
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 3815
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3685
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4500
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17169
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4634
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     13.29
+  Test #2
+  Test #3
+Requests/sec:     11.50
+  Test #4
+  Test #5
+Requests/sec:     13.24
+All tests completed for iteration #1!
+Iteration #2: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.811014212929972, memory: 56387.384375, disk: 1206.468158340454, network: 239.2674129962921 }
+Resource for node cr-dar: Resource { cpu: 1.3675029292596697, memory: 12466.8806640625, disk: 205.8699426651001, network: 35.048392391204835 }
+Resource for node cr-kla: Resource { cpu: 1.7360902930476012, memory: 12147.710546875, disk: 17.870285415649413, network: 35.057092618942264 }
+Resource for node cr-lsk: Resource { cpu: 1.8607098099306925, memory: 14821.9099609375, disk: 206.777672958374, network: 175.88216919898986 }
+Resource for node cr-bun: Resource { cpu: 1.8370868182113889, memory: 15191.3701171875, disk: 156.1565948486328, network: 496.8935198307037 }
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 3785
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3652
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4506
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4639
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17187
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.76
+  Test #3
+  Test #4
+Requests/sec:      0.40
+  Test #5
+All tests completed for iteration #2!
+Iteration #3: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.811425560344691, memory: 56478.14296875, disk: 1206.4565998077392, network: 244.79165601730347 }
+Resource for node cr-dar: Resource { cpu: 1.3685723885057717, memory: 13892.225390625, disk: 205.93730773925785, network: 31.87160029411316 }
+Resource for node cr-kla: Resource { cpu: 1.7363449596173606, memory: 13426.0884765625, disk: 17.91158084869385, network: 31.44749183654785 }
+Resource for node cr-lsk: Resource { cpu: 1.860729892614371, memory: 14843.3234375, disk: 206.77727241516112, network: 178.98603372573854 }
+Resource for node cr-bun: Resource { cpu: 1.8373014808944883, memory: 15213.873828125, disk: 156.1566987991333, network: 499.92893319129945 }
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4646
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4512
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17215
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4035
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4212
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.43
+  Test #2
+  Test #3
+Requests/sec:      0.47
+  Test #4
+  Test #5
+Requests/sec:      0.93
+All tests completed for iteration #3!
+Iteration #4: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.811571353760234, memory: 56492.096875, disk: 1206.455411529541, network: 248.06760601997377 }
+Resource for node cr-dar: Resource { cpu: 1.3686111470836173, memory: 13891.6052734375, disk: 205.9369602203369, network: 33.718181705474855 }
+Resource for node cr-kla: Resource { cpu: 1.7363026602283806, memory: 12822.3650390625, disk: 17.9162446975708, network: 33.55897064208985 }
+Resource for node cr-lsk: Resource { cpu: 1.860737366407094, memory: 14842.1216796875, disk: 206.77720546722412, network: 180.7725345611572 }
+Resource for node cr-bun: Resource { cpu: 1.837400484410576, memory: 15216.0576171875, disk: 156.15666084289552, network: 501.67692241668703 }
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4512
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3854
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4646
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17219
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4212
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.40
+  Test #3
+  Test #4
+Requests/sec:      0.30
+  Test #5
+All tests completed for iteration #4!
+Iteration #5: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.811740850680886, memory: 56485.5453125, disk: 1206.443501853943, network: 252.06813201904296 }
+Resource for node cr-dar: Resource { cpu: 1.368658681454265, memory: 13886.688671875, disk: 205.93646774291992, network: 35.96794481277466 }
+Resource for node cr-kla: Resource { cpu: 1.736190714437085, memory: 12325.3791015625, disk: 17.916074562072755, network: 36.14962210655212 }
+Resource for node cr-lsk: Resource { cpu: 1.860745935716767, memory: 14838.2099609375, disk: 206.7771203994751, network: 182.94124150276184 }
+Resource for node cr-bun: Resource { cpu: 1.8375198839921196, memory: 15215.9478515625, disk: 156.15658416748047, network: 503.8130753040314 }
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4511
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17218
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4647
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3705
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4211
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.67
+  Test #2
+  Test #3
+Requests/sec:      0.30
+  Test #4
+  Test #5
+Requests/sec:      0.57
+All tests completed for iteration #5!
+Iteration #6: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.81187455375095, memory: 56480.1220703125, disk: 1206.4391067504882, network: 255.339684677124 }
+Resource for node cr-dar: Resource { cpu: 1.3686967967747896, memory: 13859.6470703125, disk: 205.9361145019531, network: 37.81322717666626 }
+Resource for node cr-kla: Resource { cpu: 1.736093388104986, memory: 12237.771875, disk: 17.91114921569824, network: 38.267108058929445 }
+Resource for node cr-lsk: Resource { cpu: 1.8607504088443931, memory: 14831.6392578125, disk: 206.7770683288574, network: 184.71583952903748 }
+Resource for node cr-bun: Resource { cpu: 1.8376181060124035, memory: 15217.01484375, disk: 156.15651912689208, network: 505.5575793743134 }
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4203
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4510
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3679
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4647
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17216
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.10
+  Test #3
+  Test #4
+Requests/sec:      0.23
+  Test #5
+All tests completed for iteration #6!
+Iteration #7: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.812046888548348, memory: 56475.140625, disk: 1206.447558784485, network: 259.3365174770355 }
+Resource for node cr-dar: Resource { cpu: 1.3687423395087437, memory: 13854.708984375, disk: 205.93577919006347, network: 40.07750859260559 }
+Resource for node cr-kla: Resource { cpu: 1.7359741441926104, memory: 12206.6162109375, disk: 17.911034202575685, network: 40.84641623497009 }
+Resource for node cr-lsk: Resource { cpu: 1.860755782764511, memory: 14828.4046875, disk: 206.77696838378907, network: 186.89946422576904 }
+Resource for node cr-bun: Resource { cpu: 1.837734593217741, memory: 15218.1669921875, disk: 156.1564344406128, network: 507.6878079891205 }
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17215
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4648
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4202
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3670
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4509
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.60
+  Test #2
+  Test #3
+Requests/sec:      0.13
+  Test #4
+  Test #5
+Requests/sec:      0.20
+All tests completed for iteration #7!
+Iteration #8: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.812192487225374, memory: 56473.3388671875, disk: 1206.4466588974, network: 262.6095131874084 }
+Resource for node cr-dar: Resource { cpu: 1.3687806808561138, memory: 13856.9828125, disk: 205.9355100631714, network: 41.93112683296203 }
+Resource for node cr-kla: Resource { cpu: 1.7358786878097583, memory: 12316.7794921875, disk: 17.910901641845705, network: 42.95196433067322 }
+Resource for node cr-lsk: Resource { cpu: 1.8607628363254831, memory: 14831.2166015625, disk: 206.77686920166016, network: 188.68647112846375 }
+Resource for node cr-bun: Resource { cpu: 1.8378256630710923, memory: 15217.2166015625, disk: 156.15637226104735, network: 509.4337371826171 }
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3703
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4203
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4510
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4648
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17215
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.33
+  Test #3
+  Test #4
+Requests/sec:      0.33
+  Test #5
+All tests completed for iteration #8!
+Iteration #9: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.81237014185784, memory: 56469.37890625, disk: 1206.4312339782714, network: 266.6122353553772 }
+Resource for node cr-dar: Resource { cpu: 1.3688294997974515, memory: 13856.0986328125, disk: 205.9339979171753, network: 44.195886325836184 }
+Resource for node cr-kla: Resource { cpu: 1.735761611915232, memory: 12243.3787109375, disk: 17.909803199768067, network: 45.53027257919312 }
+Resource for node cr-lsk: Resource { cpu: 1.860772131806981, memory: 14830.3486328125, disk: 206.77678661346437, network: 190.8662494659424 }
+Resource for node cr-bun: Resource { cpu: 1.837937102010385, memory: 15216.315625, disk: 156.15590000152588, network: 511.5627730846405 }
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17214
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4510
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4202
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3681
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4648
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.57
+  Test #2
+  Test #3
+Requests/sec:      0.50
+  Test #4
+  Test #5
+Requests/sec:      0.23
+All tests completed for iteration #9!
+Iteration #10: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.812516441893568, memory: 56480.3642578125, disk: 1206.4228372573853, network: 269.88772387504576 }
+Resource for node cr-dar: Resource { cpu: 1.368869683557099, memory: 13853.8251953125, disk: 205.93016223907472, network: 46.04864616394043 }
+Resource for node cr-kla: Resource { cpu: 1.7356624604483346, memory: 12203.896875, disk: 17.906003379821776, network: 47.642380475997925 }
+Resource for node cr-lsk: Resource { cpu: 1.8607778779840536, memory: 14830.33125, disk: 206.77671871185305, network: 192.65073113441468 }
+Resource for node cr-bun: Resource { cpu: 1.8380263230966056, memory: 15216.9763671875, disk: 156.1522979736328, network: 513.2996891975403 }
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4648
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3670
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4510
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17218
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4202
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.47
+  Test #3
+  Test #4
+Requests/sec:      0.10
+  Test #5
+All tests completed for iteration #10!
+Iteration #11: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.812694977342016, memory: 56491.8740234375, disk: 1206.421863746643, network: 273.8930024623871 }
+Resource for node cr-dar: Resource { cpu: 1.368918369018375, memory: 13851.1240234375, disk: 205.92656383514404, network: 48.31167631149292 }
+Resource for node cr-kla: Resource { cpu: 1.7355416300630229, memory: 12227.56953125, disk: 17.902299308776854, network: 50.22122101783752 }
+Resource for node cr-lsk: Resource { cpu: 1.8607835185586872, memory: 14832.0697265625, disk: 206.77663974761964, network: 194.83071269989017 }
+Resource for node cr-bun: Resource { cpu: 1.8381350031143628, memory: 15215.8556640625, disk: 156.14827766418458, network: 515.4229649543762 }
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3677
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17222
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4648
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4201
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4511
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.27
+  Test #2
+  Test #3
+Requests/sec:      0.23
+  Test #4
+  Test #5
+Requests/sec:      0.57
+All tests completed for iteration #11!
+Iteration #12: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.812840795942856, memory: 56489.84609375, disk: 1206.4174352645873, network: 277.16854548454285 }
+Resource for node cr-dar: Resource { cpu: 1.3689561364042595, memory: 13883.2845703125, disk: 205.9261766433716, network: 50.16101975440979 }
+Resource for node cr-kla: Resource { cpu: 1.7354429684440074, memory: 12247.7404296875, disk: 17.90528678894043, network: 52.32269601821899 }
+Resource for node cr-lsk: Resource { cpu: 1.860790136144023, memory: 14848.6765625, disk: 206.7765699386597, network: 196.6069051265717 }
+Resource for node cr-bun: Resource { cpu: 1.8382023774887937, memory: 15202.2216796875, disk: 156.14829711914064, network: 517.1653759002686 }
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3683
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4516
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4644
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17221
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4211
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.33
+  Test #3
+  Test #4
+Requests/sec:      0.33
+  Test #5
+All tests completed for iteration #12!
+Iteration #13: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.813019718489816, memory: 56491.315234375, disk: 1206.4083126068117, network: 281.1694649219513 }
+Resource for node cr-dar: Resource { cpu: 1.3690012137848313, memory: 13882.88828125, disk: 205.9256238937378, network: 52.421657133102414 }
+Resource for node cr-kla: Resource { cpu: 1.7353232725042358, memory: 12310.518359375, disk: 17.908699607849123, network: 54.87819395065308 }
+Resource for node cr-lsk: Resource { cpu: 1.8608006353317896, memory: 14867.637109375, disk: 206.77649097442628, network: 198.76150817871093 }
+Resource for node cr-bun: Resource { cpu: 1.8382618217373223, memory: 15185.63203125, disk: 156.1483242034912, network: 519.3104597568512 }
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4639
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17222
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4211
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3702
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4522
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.33
+  Test #2
+  Test #3
+Requests/sec:      0.20
+  Test #4
+  Test #5
+Requests/sec:      0.20
+All tests completed for iteration #13!
+Test run completed at Sat Feb  1 06:00:59 UTC 2025
+Starting test run at Sat Feb  1 06:25:54 UTC 2025
+Iteration #1: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.813572129103743, memory: 56479.256640625, disk: 1206.3923767089843, network: 293.5326609134674 }
+Resource for node cr-dar: Resource { cpu: 1.3691533134767655, memory: 13859.915625, disk: 205.9244297027588, network: 59.41642050743103 }
+Resource for node cr-kla: Resource { cpu: 1.7350837094431946, memory: 13556.9234375, disk: 17.915438652038574, network: 62.82568187713623 }
+Resource for node cr-lsk: Resource { cpu: 1.860830243222813, memory: 14867.1208984375, disk: 206.7762222290039, network: 205.4025996208191 }
+Resource for node cr-bun: Resource { cpu: 1.8384826312300009, memory: 15184.93046875, disk: 156.14802837371826, network: 525.9871938705444 }
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17220
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4205
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4522
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4077
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4640
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.13
+  Test #3
+  Test #4
+Requests/sec:      0.40
+  Test #5
+All tests completed for iteration #1!
+Iteration #2: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.813750134661168, memory: 56477.7921875, disk: 1206.3912536621094, network: 297.5316063404083 }
+Resource for node cr-dar: Resource { cpu: 1.3692005235328852, memory: 13914.383203125, disk: 205.9240993499756, network: 61.678053569793704 }
+Resource for node cr-kla: Resource { cpu: 1.7350881798172502, memory: 13023.7576171875, disk: 17.91516571044922, network: 65.40344705581666 }
+Resource for node cr-lsk: Resource { cpu: 1.8608378997813493, memory: 14871.0041015625, disk: 206.77612857818605, network: 207.55698351860048 }
+Resource for node cr-bun: Resource { cpu: 1.8385459427623196, memory: 15181.9244140625, disk: 156.1480173110962, network: 528.1536102771759 }
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3917
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17220
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4524
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4639
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4222
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.57
+  Test #2
+  Test #3
+Requests/sec:      0.47
+  Test #4
+  Test #5
+Requests/sec:      0.37
+All tests completed for iteration #2!
+Iteration #3: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.813895972069096, memory: 56478.5669921875, disk: 1206.389161491394, network: 300.8060821056366 }
+Resource for node cr-dar: Resource { cpu: 1.369236064141299, memory: 13958.348046875, disk: 205.9285987854004, network: 63.51774010658264 }
+Resource for node cr-kla: Resource { cpu: 1.73503779185797, memory: 12325.49921875, disk: 17.914755249023436, network: 67.52356491088867 }
+Resource for node cr-lsk: Resource { cpu: 1.8608453624161192, memory: 14871.6365234375, disk: 206.77409534454347, network: 209.32305421829224 }
+Resource for node cr-bun: Resource { cpu: 1.8385893027771385, memory: 15180.7306640625, disk: 156.14804649353027, network: 529.9253380298615 }
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17220
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3708
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4235
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4524
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4639
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.47
+  Test #3
+  Test #4
+Requests/sec:      0.50
+  Test #5
+All tests completed for iteration #3!
+Iteration #4: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.814056765067374, memory: 56481.2541015625, disk: 1206.3789964675902, network: 304.44668827056887 }
+Resource for node cr-dar: Resource { cpu: 1.3692782222657365, memory: 13911.114453125, disk: 205.92821464538576, network: 65.55596423149109 }
+Resource for node cr-kla: Resource { cpu: 1.734923073159375, memory: 11875.9427734375, disk: 17.914452171325685, network: 69.88520779609681 }
+Resource for node cr-lsk: Resource { cpu: 1.8608544333965968, memory: 14867.6453125, disk: 206.77005710601807, network: 211.2826139450073 }
+Resource for node cr-bun: Resource { cpu: 1.8386304641543691, memory: 15181.508203125, disk: 156.14797439575196, network: 531.9010023117065 }
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3574
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17222
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4221
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4639
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4523
+Node 3 does not have enough capacity for service 12
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     11.35
+  Test #2
+  Test #3
+Requests/sec:     12.89
+  Test #4
+  Test #5
+Requests/sec:     12.73
+All tests completed for iteration #4!
+Iteration #5: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.814216651775192, memory: 56474.4904296875, disk: 1206.3724817276002, network: 308.0851041793823 }
+Resource for node cr-dar: Resource { cpu: 1.3693168164163976, memory: 13847.227734375, disk: 205.9228702545166, network: 67.61063089370728 }
+Resource for node cr-kla: Resource { cpu: 1.7348187023678323, memory: 12535.514453125, disk: 17.914365196228026, network: 72.23094925880432 }
+Resource for node cr-lsk: Resource { cpu: 1.8608618161386905, memory: 14850.354296875, disk: 206.7679159164429, network: 213.2455987930298 }
+Resource for node cr-bun: Resource { cpu: 1.838672686472876, memory: 15194.1349609375, disk: 156.14782218933107, network: 533.872047996521 }
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17220
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4202
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 3772
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4518
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4643
+Node 3 does not have enough capacity for service 13
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     11.85
+  Test #2
+  Test #3
+Requests/sec:     12.88
+  Test #4
+  Test #5
+Requests/sec:     13.31
+All tests completed for iteration #5!
+Iteration #6: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.81435995143534, memory: 56453.467578125, disk: 1206.3677461624145, network: 311.36222925186155 }
+Resource for node cr-dar: Resource { cpu: 1.3693441886357718, memory: 13864.4587890625, disk: 205.9223522186279, network: 69.47354798316955 }
+Resource for node cr-kla: Resource { cpu: 1.734781440573697, memory: 13329.0287109375, disk: 17.914865493774414, network: 74.32703700065613 }
+Resource for node cr-lsk: Resource { cpu: 1.8608670907695315, memory: 14848.0166015625, disk: 206.76781005859377, network: 215.02430248260495 }
+Resource for node cr-bun: Resource { cpu: 1.8387348713819, memory: 15209.7578125, disk: 156.14773826599122, network: 535.629896736145 }
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4208
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4518
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4010
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4648
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17214
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:     13.29
+  Test #3
+  Test #4
+Requests/sec:     13.24
+  Test #5
+All tests completed for iteration #6!
+Iteration #7: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.814531955194951, memory: 56438.1712890625, disk: 1206.3579608917237, network: 315.3878813266754 }
+Resource for node cr-dar: Resource { cpu: 1.3693787659061454, memory: 13940.058203125, disk: 205.92163524627685, network: 71.74036993980408 }
+Resource for node cr-kla: Resource { cpu: 1.734788750615343, memory: 13466.1443359375, disk: 17.915442848205565, network: 76.89923372268677 }
+Resource for node cr-lsk: Resource { cpu: 1.8608745716514357, memory: 14863.40859375, disk: 206.76799087524415, network: 217.18916358947752 }
+Resource for node cr-bun: Resource { cpu: 1.8388386136969448, memory: 15214.43046875, disk: 156.14338626861573, network: 537.7642148017883 }
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4230
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4051
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4650
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17210
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4522
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     13.21
+  Test #2
+  Test #3
+Requests/sec:      5.29
+  Test #4
+  Test #5
+Requests/sec:     13.25
+All tests completed for iteration #7!
+Iteration #8: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.814671238476404, memory: 56440.8287109375, disk: 1206.3489318847655, network: 318.6924634933472 }
+Resource for node cr-dar: Resource { cpu: 1.3694118732038514, memory: 13999.3630859375, disk: 205.9212905883789, network: 73.57595462799073 }
+Resource for node cr-kla: Resource { cpu: 1.7347983740645851, memory: 13552.656640625, disk: 17.91503200531006, network: 79.02173237800598 }
+Resource for node cr-lsk: Resource { cpu: 1.8608820271781048, memory: 14867.2052734375, disk: 206.76821098327636, network: 218.9444559574127 }
+Resource for node cr-bun: Resource { cpu: 1.8389296117739693, memory: 15213.81875, disk: 156.13979682922363, network: 539.5114589214324 }
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4650
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17211
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4248
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4077
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4524
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:     13.14
+  Test #3
+  Test #4
+Requests/sec:      9.83
+  Test #5
+All tests completed for iteration #8!
+Iteration #9: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.81484176136006, memory: 56443.094140625, disk: 1206.348996925354, network: 322.7302830219269 }
+Resource for node cr-dar: Resource { cpu: 1.369453082629757, memory: 14034.42578125, disk: 205.91951484680175, network: 75.81039094924927 }
+Resource for node cr-kla: Resource { cpu: 1.7348122173934957, memory: 13710.86796875, disk: 17.91002712249756, network: 81.62433319091797 }
+Resource for node cr-lsk: Resource { cpu: 1.8608913743997604, memory: 14867.9244140625, disk: 206.76822891235352, network: 221.10300335884097 }
+Resource for node cr-bun: Resource { cpu: 1.8390402325925337, memory: 15215.8189453125, disk: 156.13982181549073, network: 541.6504185676574 }
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4524
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4259
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4125
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17212
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4650
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      7.90
+  Test #2
+  Test #3
+Requests/sec:     10.19
+  Test #4
+  Test #5
+Requests/sec:     13.00
+All tests completed for iteration #9!
+Iteration #10: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.814981700330694, memory: 56442.3361328125, disk: 1206.348454093933, network: 326.03251457214355 }
+Resource for node cr-dar: Resource { cpu: 1.3694899124157214, memory: 14000.7798828125, disk: 205.91565647125245, network: 77.63793363571168 }
+Resource for node cr-kla: Resource { cpu: 1.7348239209231866, memory: 13720.5626953125, disk: 17.90595874786377, network: 83.75099520683288 }
+Resource for node cr-lsk: Resource { cpu: 1.8608994005196, memory: 14868.794140625, disk: 206.7681350708008, network: 222.87965927124023 }
+Resource for node cr-bun: Resource { cpu: 1.8391305322730331, memory: 15218.084765625, disk: 156.14000549316407, network: 543.4000844955444 }
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4128
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4525
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4651
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4249
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17212
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     13.00
+  Test #2
+  Test #3
+Requests/sec:     12.28
+  Test #4
+  Test #5
+Requests/sec:     12.68
+All tests completed for iteration #10!
+Iteration #11: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.8151226918389, memory: 56464.839453125, disk: 1206.3387660980225, network: 329.3286077976227 }
+Resource for node cr-dar: Resource { cpu: 1.3695276826675316, memory: 13968.71015625, disk: 205.9126098632813, network: 79.47168207168579 }
+Resource for node cr-kla: Resource { cpu: 1.7348350577938718, memory: 13710.0283203125, disk: 17.90523796081543, network: 85.88364815711975 }
+Resource for node cr-lsk: Resource { cpu: 1.8609077179813276, memory: 14864.7388671875, disk: 206.7680337905884, network: 224.6540985107422 }
+Resource for node cr-bun: Resource { cpu: 1.8391984536937296, memory: 15203.2890625, disk: 156.1401948928833, network: 545.1550276756286 }
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4523
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4647
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4125
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4240
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17219
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:     13.20
+  Test #3
+  Test #4
+Requests/sec:     12.41
+  Test #5
+All tests completed for iteration #11!
+Iteration #12: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.815298235139924, memory: 56488.9291015625, disk: 1206.3323347091675, network: 333.3392844200134 }
+Resource for node cr-dar: Resource { cpu: 1.369570935844024, memory: 14002.3171875, disk: 205.91227741241457, network: 81.7137047290802 }
+Resource for node cr-kla: Resource { cpu: 1.7348490802121517, memory: 13721.7970703125, disk: 17.904476356506347, network: 88.50060458183289 }
+Resource for node cr-lsk: Resource { cpu: 1.860917517260442, memory: 14863.703515625, disk: 206.76791248321533, network: 226.812761592865 }
+Resource for node cr-bun: Resource { cpu: 1.8392583201227943, memory: 15184.2279296875, disk: 156.14031715393065, network: 547.31885638237 }
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17227
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4250
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4523
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4641
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4129
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     13.11
+  Test #2
+  Test #3
+Requests/sec:     13.21
+  Test #4
+  Test #5
+Requests/sec:     13.21
+All tests completed for iteration #12!
+Iteration #13: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node cr-jhb: Resource { cpu: 14.815443772138096, memory: 56488.0056640625, disk: 1206.3322896957395, network: 336.6120053768158 }
+Resource for node cr-dar: Resource { cpu: 1.369607576329677, memory: 14034.32890625, disk: 205.9120304107666, network: 83.540771484375 }
+Resource for node cr-kla: Resource { cpu: 1.7348604541928547, memory: 13636.6130859375, disk: 17.904031372070314, network: 90.64067811965944 }
+Resource for node cr-lsk: Resource { cpu: 1.8609228175768795, memory: 14851.3775390625, disk: 206.76781787872315, network: 228.5779788970947 }
+Resource for node cr-bun: Resource { cpu: 1.8393112139530985, memory: 15197.13203125, disk: 156.14033870697023, network: 549.0916357517242 }
+Node: Node { id: 2, name: "cr-dar", ip: "196.32.212.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4260
+Node: Node { id: 5, name: "cr-bun", ip: "196.43.171.248", resource: ResourceInt { cpu: 2, memory: 16000, disk: 194000, network: 1000 } }, Bins: 4646
+Node: Node { id: 1, name: "cr-jhb", ip: "129.232.230.130", resource: ResourceInt { cpu: 16, memory: 64317, disk: 1800000, network: 1000 } }, Bins: 17227
+Node: Node { id: 3, name: "cr-kla", ip: "102.134.147.244", resource: ResourceInt { cpu: 2, memory: 16000, disk: 47000, network: 1000 } }, Bins: 4104
+Node: Node { id: 4, name: "cr-lsk", ip: "196.32.215.213", resource: ResourceInt { cpu: 2, memory: 16000, disk: 245000, network: 1000 } }, Bins: 4520
+Node 3 does not have enough capacity for service 14
+Node 3 does not have enough capacity for service 15
+Node 3 does not have enough capacity for service 16
+Node 3 does not have enough capacity for service 17
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.43
+  Test #3
+  Test #4
+Requests/sec:      0.27
+  Test #5
+All tests completed for iteration #13!
+Test run completed at Sat Feb  1 08:34:41 UTC 2025
