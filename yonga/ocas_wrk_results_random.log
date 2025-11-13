@@ -1,0 +1,31 @@
+Starting test run at Thu Feb  6 06:03:15 UTC 2025
+Iteration #1: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     86.46
+  Test #2
+Requests/sec:     92.92
+  Test #3
+Requests/sec:     89.20
+  Test #4
+Requests/sec:     85.99
+  Test #5
+Requests/sec:     84.14
+All tests completed for iteration #1!
+Iteration #2: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     82.25
+  Test #2

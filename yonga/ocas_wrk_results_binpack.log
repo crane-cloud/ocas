@@ -1,0 +1,147 @@
+Starting test run at Thu Feb  6 11:02:24 UTC 2025
+Iteration #1: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node ocas01: Resource { cpu: 19.830937448331788, memory: 60227.987890625, disk: 53.10233001708984, network: 1072.8988462924958 }
+Resource for node ocas02: Resource { cpu: 19.9613171760069, memory: 61998.1927734375, disk: 53.150946044921874, network: 1019.6038345336914 }
+Resource for node ocas03: Resource { cpu: 19.941250635095095, memory: 62033.401953125, disk: 53.13197212219238, network: 1017.2868984222412 }
+Resource for node ocas04: Resource { cpu: 19.966214674696683, memory: 62035.919140625, disk: 53.14180088043213, network: 1020.4805087566376 }
+Resource for node ocas05: Resource { cpu: 19.92398728739755, memory: 62028.29453125, disk: 53.088304138183595, network: 1023.8155045986176 }
+Node: Node { id: 2, name: "ocas02", ip: "10.10.1.2", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18720
+Node: Node { id: 5, name: "ocas05", ip: "10.10.1.5", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18729
+Node: Node { id: 1, name: "ocas01", ip: "10.10.1.1", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18194
+Node: Node { id: 3, name: "ocas03", ip: "10.10.1.3", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18730
+Node: Node { id: 4, name: "ocas04", ip: "10.10.1.4", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18731
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     45.19
+  Test #2
+Requests/sec:     47.12
+  Test #3
+Requests/sec:     42.88
+  Test #4
+Requests/sec:     46.62
+  Test #5
+Requests/sec:     47.41
+All tests completed for iteration #1!
+Iteration #2: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node ocas01: Resource { cpu: 19.828867441930292, memory: 60230.628515625, disk: 53.102264404296875, network: 1074.0172534942626 }
+Resource for node ocas02: Resource { cpu: 19.96131078742192, memory: 61997.3716796875, disk: 53.15093574523926, network: 1020.5963690757752 }
+Resource for node ocas03: Resource { cpu: 19.941258591782734, memory: 62032.869140625, disk: 53.131965255737306, network: 1018.2724892139436 }
+Resource for node ocas04: Resource { cpu: 19.966213392172698, memory: 62036.012890625, disk: 53.14179458618164, network: 1021.465465593338 }
+Resource for node ocas05: Resource { cpu: 19.924000083660943, memory: 62027.755859375, disk: 53.088296508789064, network: 1024.8012884140014 }
+Node: Node { id: 2, name: "ocas02", ip: "10.10.1.2", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18719
+Node: Node { id: 1, name: "ocas01", ip: "10.10.1.1", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18195
+Node: Node { id: 5, name: "ocas05", ip: "10.10.1.5", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18729
+Node: Node { id: 4, name: "ocas04", ip: "10.10.1.4", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18731
+Node: Node { id: 3, name: "ocas03", ip: "10.10.1.3", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18730
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     48.73
+  Test #2
+Requests/sec:     53.33
+  Test #3
+Requests/sec:     42.69
+  Test #4
+Requests/sec:     43.12
+  Test #5
+Requests/sec:     48.31
+All tests completed for iteration #2!
+Iteration #3: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node ocas01: Resource { cpu: 19.826080769444296, memory: 60228.984375, disk: 53.102169036865234, network: 1075.508702802658 }
+Resource for node ocas02: Resource { cpu: 19.96130225229431, memory: 61996.0478515625, disk: 53.15092258453369, network: 1021.919835281372 }
+Resource for node ocas03: Resource { cpu: 19.94126891395387, memory: 62033.5755859375, disk: 53.13195457458496, network: 1019.5867551326752 }
+Resource for node ocas04: Resource { cpu: 19.96621160925065, memory: 62035.3572265625, disk: 53.14178581237793, network: 1022.7786986351014 }
+Resource for node ocas05: Resource { cpu: 19.924017088699117, memory: 62025.9353515625, disk: 53.08828620910644, network: 1026.1158118247986 }
+Node: Node { id: 4, name: "ocas04", ip: "10.10.1.4", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18731
+Node: Node { id: 2, name: "ocas02", ip: "10.10.1.2", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18719
+Node: Node { id: 5, name: "ocas05", ip: "10.10.1.5", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18728
+Node: Node { id: 1, name: "ocas01", ip: "10.10.1.1", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18194
+Node: Node { id: 3, name: "ocas03", ip: "10.10.1.3", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18730
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     45.95
+  Test #2
+Requests/sec:     46.93
+  Test #3
+Requests/sec:     42.35
+  Test #4
+Requests/sec:     46.42
+  Test #5
+Requests/sec:     44.18
+All tests completed for iteration #3!
+Iteration #4: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node ocas01: Resource { cpu: 19.823278217981567, memory: 60220.4232421875, disk: 53.10206489562988, network: 1076.999771499634 }
+Resource for node ocas02: Resource { cpu: 19.96129369834256, memory: 61994.2564453125, disk: 53.15090923309326, network: 1023.2435606002808 }
+Resource for node ocas03: Resource { cpu: 19.941279064823348, memory: 62034.1591796875, disk: 53.131944274902345, network: 1020.9011082172394 }
+Resource for node ocas04: Resource { cpu: 19.966210279631472, memory: 62034.2779296875, disk: 53.14177494049072, network: 1024.0923517227172 }
+Resource for node ocas05: Resource { cpu: 19.92403396127589, memory: 62026.1435546875, disk: 53.0882755279541, network: 1027.4309465408326 }
+Node: Node { id: 3, name: "ocas03", ip: "10.10.1.3", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18730
+Node: Node { id: 1, name: "ocas01", ip: "10.10.1.1", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18192
+Node: Node { id: 4, name: "ocas04", ip: "10.10.1.4", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18731
+Node: Node { id: 2, name: "ocas02", ip: "10.10.1.2", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18719
+Node: Node { id: 5, name: "ocas05", ip: "10.10.1.5", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18729
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     45.15
+  Test #2
+Requests/sec:     46.18
+  Test #3
+Requests/sec:     50.38
+  Test #4
+Requests/sec:     47.03
+  Test #5
+Requests/sec:     49.75
+All tests completed for iteration #4!
+Iteration #5: Running 'ocas' command
+Binpack strategy selected
+Running the Binpack Strategy 0
+Resource for node ocas01: Resource { cpu: 19.82047324381625, memory: 60206.531640625, disk: 53.101943016052246, network: 1078.4904855251311 }
+Resource for node ocas02: Resource { cpu: 19.961285205324312, memory: 61993.579296875, disk: 53.150895309448245, network: 1024.5675273418426 }
+Resource for node ocas03: Resource { cpu: 19.94128926526968, memory: 62034.1345703125, disk: 53.131933784484865, network: 1022.2155705451966 }
+Resource for node ocas04: Resource { cpu: 19.96620887847832, memory: 62030.829296875, disk: 53.141763877868655, network: 1025.4060064792634 }
+Resource for node ocas05: Resource { cpu: 19.924050438427905, memory: 62023.8603515625, disk: 53.08826313018799, network: 1028.7463797569276 }
+Node: Node { id: 3, name: "ocas03", ip: "10.10.1.3", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18731
+Node: Node { id: 2, name: "ocas02", ip: "10.10.1.2", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18719
+Node: Node { id: 1, name: "ocas01", ip: "10.10.1.1", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18188
+Node: Node { id: 4, name: "ocas04", ip: "10.10.1.4", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18730
+Node: Node { id: 5, name: "ocas05", ip: "10.10.1.5", resource: ResourceInt { cpu: 20, memory: 64317, disk: 64000, network: 25000 } }, Bins: 18728
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     45.95
+  Test #2
+Requests/sec:     50.13
+  Test #3
+Requests/sec:     44.79
+  Test #4
+Requests/sec:     51.18
+  Test #5
+Requests/sec:     49.08
+All tests completed for iteration #5!
+Test run completed at Thu Feb  6 11:21:10 UTC 2025
