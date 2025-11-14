@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define the JSON file path
-json_file="/users/mwotila/ocas/evaluation/network/metrics.txt"
-temp_file="/users/mwotila/ocas/evaluation/network/metrics_temp.txt"
+json_file="/tmp/metrics.txt"
+temp_file="/tmp/metrics_temp.txt"
 
 replicas=("10.10.1.1" "10.10.1.2" "10.10.1.3" "10.10.1.4" "10.10.1.5")
 
@@ -39,7 +39,7 @@ measure_bandwidth_pl_latency() {
 
     #latency_output=$(tcp-latency -p 9100 $ip)
     #latency_output=$(/home/ubuntu/.pyenv/shims/tcp-latency -p 9100 $ip)
-    latency_output=$(/users/mwotila/.local/bin/tcp-latency -p 9100 $ip)
+    latency_output=$(/usr/local/bin/tcp-latency -p 9100 $ip)
     last_line_log=$(echo "$latency_output" | tail -n 1)
 
     if [[ "$last_line_log" == *"All 5 transmissions failed"* ]]; then
@@ -53,7 +53,8 @@ measure_bandwidth_pl_latency() {
         availability=1
     fi
 
-    iperf3_output=$(iperf3 -c $ip -u -b 10M -t 5 --json)
+    #iperf3_output=$(iperf3 -c $ip -u -b 10M -t 2 --json)
+    iperf3_output=$(iperf3 -c $ip --connect-timeout 500 -u -t 2 -b 10M --json)
 
     average_bandwidth_bps=$(echo $iperf3_output | jq -r '.end.sum.bits_per_second')
     packet_loss=$(echo $iperf3_output | jq -r '.end.sum.lost_percent')
@@ -97,8 +98,10 @@ for i in "${!replicas[@]}"; do
     if [ "$replica" == "$ip" ]; then
         echo "Skipping test to the local server ($ip)."
     else
+        sleep $((RANDOM % 20 + 1))   # prevents simultaneous test collisions
         echo "Measuring metrics for replica at index $i: $replica..."
         measure_bandwidth_pl_latency "$i" "$replica"
         echo ""
+        sleep $((RANDOM % 20 + 1))
     fi
 done

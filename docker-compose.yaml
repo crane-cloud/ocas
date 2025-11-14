@@ -248,7 +248,7 @@ services:
         condition: any
 
   jaeger:
-    image: jaegertracing/all-in-one:1.25
+    image: jaegertracing/all-in-one:1.47
     container_name: 'hotel_reserv_jaeger'
     ports:
       - "14250:14250"
