@@ -60,7 +60,7 @@ impl Yonga {
                 self.placement_0().await;
             }
 
-            tokio::time::sleep(tokio::time::Duration::from_secs(180)).await;
+            tokio::time::sleep(tokio::time::Duration::from_secs(90)).await;
         }
     }
 
@@ -136,7 +136,7 @@ impl Yonga {
 
         //Retrieve trace entries with a limit
         //let limit = 1000000000; // This can be any variable number
-        let limit = 500000;
+        let limit = 1000; // This can be any variable number
 
         let trace_entries = get_latest_trace_entries(&collection_trace, limit).await.unwrap();
 
@@ -152,13 +152,13 @@ impl Yonga {
         service_tree.build_from_traces(&trees);
 
         //Print the entire service graph
-        service_tree.print_graph();
+        // service_tree.print_graph();
 
         // Create a NodeGraph instance
         let mut node_graph = NodeGraph::new(nodes.clone());
 
         // Build the graph with the collections and limit
-        node_graph.build(collection_nodes, 500).await;
+        node_graph.build(collection_nodes, 300).await;
 
         // get the maxmin network
         let maxmin_network = node_graph.get_maxmin_network();
@@ -170,7 +170,7 @@ impl Yonga {
         node_tree.aggregate_edges(&node_graph, &maxmin_network);
 
         // Print the entire node graph
-        //node_tree.print_tree();
+        // node_tree.print_graph();
 
 
         //let placement_map = self.solver.solve_1(service_tree, node_tree).await;

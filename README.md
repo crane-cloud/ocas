@@ -38,7 +38,7 @@ Update all nodes:
 sudo apt update && sudo apt upgrade -y
 ```
 
-Install Docker manually or use the automatic setup script:
+Install Docker manually or use the automatic setup script (For the experiments, we use Docker 5:23.0.6-1~ubuntu.22.04~jammy):
 
 ```bash
 ./install_docker_swarm.sh
@@ -180,7 +180,7 @@ Script:
 Cron:
 
 ```
-*/5 * * * * /bin/bash /proj/cranecloud-PG0/ocas/scripts/yonga/perf.sh X.X.X.X   >> /var/log/ocas-perf.log 2>&1 &&   mv /tmp/metrics.txt /var/lib/node_exporter/yonga.prom
+*/5 * * * * /bin/bash /proj/cranecloud-PG0/ocas/scripts/yonga/perf.sh X.X.X.X   >> /var/log/ocas-perf.log 2>&1 && sudo mv /tmp/metrics.txt /var/lib/node_exporter/yonga.prom
 ```
 
 Prepare files:
@@ -211,11 +211,23 @@ source $HOME/.cargo/env
 
 ## 11. Running Yonga
 
+Run the monitor service:
+
 ```bash
 cd ocas/yonga
-cargo run --release --bin ocas   -- -m ../docker-compose.yaml      -p yonga      -c ../evaluation/config-dev.yaml      -u http://127.0.0.1:30000      -s hotelreservation
+cargo run --release --bin monitor   -- -c ../evaluation/config-dev.yaml
 ```
 
+```bash
+cd ocas/yonga
+cargo run --release --bin ocas   -- -m ../docker-compose.yaml      -p yonga      -c ../evaluation/config-dev.yaml      -u http://127.0.0.1:31000      -s hotelreservation
+```
+
+Run the api service:
+
+```bash
+cd ocas/yonga
+cargo run --release --bin api   -- - c../evaluation/config-dev.yaml      -p 31000
 
 
 
@@ -243,4 +255,15 @@ To build the jaeger-mongodb binary from source for your platform, use the follow
 git clone https://github.com/mongodb-labs/jaeger-mongodb.git
 cd jaeger-mongodb
 GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build ./cmd/jaeger-mongodb # Specify your target OS and architecture
+```
+
+You may need to change the permissions for writability of /var/lib/node_exporter/yonga.prom 
+```bash
+sudo chmod 666 /var/lib/node_exporter/yonga.prom
+```
+
+Run the script for multiple tests:
+```bash
+cd /proj/cranecloud-PG0/ocas/evaluation
+for i in {1..10}; do      echo "=== Run $i ===";     ./generate_workload.sh [protocol];     sleep 10; done
 ```

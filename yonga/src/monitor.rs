@@ -152,6 +152,9 @@ async fn get_services_prometheus(config: &Config, client: &Client, prometheus: &
 
     let url_service = format!("{}/api/v1/label/{}/values", prometheus.url, prometheus.label);
 
+    // print the url_service
+    println!("Service URL: {}", url_service);
+
     let response = client.get(&url_service).send().await?;
 
     // initialize a vector to hold the services

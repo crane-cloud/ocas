@@ -3,9 +3,9 @@ use std::result::Result::Ok;
 use crate::utility::{Config, Node, Service};
 use crate::api_client::ApiClient;
 use crate::utility::{Network, Resource, resource_diff, get_node_by_id, resource_sum, resource_sum_sub, resource_int_subx};
-use crate::node::NodeTree;
+use crate::node::{NodeTree, AggLinkEdge};
 use crate::trace::ServiceGraph;
-use crate::nsga2::{MicroservicePlacementProblem, get_best_individual};
+// use crate::nsga2::{MicroservicePlacementProblem, get_best_individual};
 
 
 use optirustic::algorithms::{
@@ -51,7 +51,7 @@ impl Solver {
     }
 
     pub async fn solve_0(&mut self) -> Result<HashMap<Service, Option<HashSet<Node>>>, Box<dyn std::error::Error>> {
-        println!("Running the Solver for placement 0");
+        println!("Running the Solver for placement 0 - review");
 
         self.placement = Some(HashMap::new());
 
@@ -194,74 +194,79 @@ impl Solver {
     ) -> Result<HashMap<Service, Option<HashSet<Node>>>, Box<dyn std::error::Error>> {
 
         println!("Running the Solver for placement 1");
-    
+
         self.placement = Some(HashMap::new());
 
         // get all services from the config
         let all_services = &self.config.services;
-    
+
         // Find the longest service paths
         let (longest_paths, max_length) = service_tree.longest_paths();
 
         // Find the most popular services
         let (most_popular_services, _) = service_tree.most_popular_services();
 
-
         if longest_paths.len() as u32 == 0 || most_popular_services.len() == 0 || max_length == 0 {
             return Err("No microservices running or communicating".into());
-        }
-
-        else {
+        } else {
             println!("Longest Paths: {:?}", longest_paths);
-            println!("Most Popular Services: {:?}", most_popular_services);
+            println!("Most Popular Services in Solve_1: {:?}", most_popular_services);
             println!("Max Length of the longest path/paths: {}", max_length);
         }
 
-
-        // convert longest_paths to a Vec of Services
+        // convert longest_paths to a Vec<Vec<Service>>
         let longest_paths: Vec<Vec<Service>> = longest_paths.iter().map(|path| {
-            path.iter().map(|service| {
-                get_services_by_names(service.clone(), &self.config.services).unwrap()
+            path.iter().map(|service_name| {
+                get_services_by_names(service_name.clone(), &self.config.services).unwrap()
             }).collect()
         }).collect();
 
-
-
-
-        // convert most_popular_services to a Vec of Services
-        let most_popular_services: Vec<Service> = most_popular_services.iter().map(|service| {
-            get_services_by_names(service.clone(), &self.config.services).unwrap()
+        // convert most_popular_services to a Vec<Service>
+        let most_popular_services: Vec<Service> = most_popular_services.iter().map(|service_name| {
+            get_services_by_names(service_name.clone(), &self.config.services).unwrap()
         }).collect();
 
-        // Get services in the tree
+        // Get services present in the tree (and translate names -> Service)
         let svc_tree = service_tree.get_services();
         let mut services_tree = Vec::new();
-        for service in svc_tree {
-            let service = get_services_by_names(service, &self.config.services);
-            if let Some(service) = service {
-                services_tree.push(service);
+        for service_name in svc_tree {
+            if let Some(svc) = get_services_by_names(service_name, &self.config.services) {
+                services_tree.push(svc);
             }
         }
 
-        // print services in the tree
-        // println!("Services in the tree: {:?}", services_tree);
-    
-        // Compute the strongest paths in the node tree
-        let strong_paths = node_tree.compute_best_paths(node_tree.get_nodes(), max_length - 1);
-    
-        // Find the strongest path overall
-        let strongest_path = node_tree.get_best_path(strong_paths.clone());
+        // Compute best paths (note: NodeTree now works with node NAMES (String))
+        let node_names = node_tree.get_nodes(); // Vec<String>
+        let strong_paths = node_tree.compute_best_paths(node_names.clone(), max_length - 1);
+        let (global_best_path_names, _global_best_cost) = node_tree.get_best_path(strong_paths.clone());
 
-        // print the strongest path
-        println!("Strongest Path: {:?}", strongest_path);
-    
+        println!(
+            "Strongest overall path (names): {:?}",
+            global_best_path_names
+        );
+
+        // Map the global_best_path names back to Vec<Node> using config
+        let mut strongest_path_nodes: Vec<Node> = Vec::new();
+        for name in &global_best_path_names {
+            if let Some(n) = self.config.cluster.nodes.iter().find(|x| &x.name == name) {
+                strongest_path_nodes.push(n.clone());
+            } else {
+                // If name not found in config, skip it (we only need the name mostly)
+                println!("Warning: best-path node '{}' not found in config.cluster.nodes", name);
+            }
+        }
+
+        if strongest_path_nodes.is_empty() {
+            return Err("No valid nodes found for strongest path".into());
+        }
+
         // Retrieve node utilization data
         let mut node_utilization_map: HashMap<Node, Resource> = HashMap::new();
         for node in &self.config.cluster.nodes {
             let node_utilization = self.api_client.get_node_utilization(&node.name).await?;
             node_utilization_map.insert(node.clone(), node_utilization);
         }
-    
+
         // Retrieve service utilization data
         let mut service_utilization_map: HashMap<Service, Resource> = HashMap::new();
         for service in &self.config.services {
@@ -269,60 +274,76 @@ impl Solver {
             service_utilization_map.insert(service.clone(), service_utilization);
         }
 
-        // print the service utilization map
-        // println!("Service Utilization Map: {:?}", service_utilization_map);
-
         // create a placement map
         let mut placement_map: HashMap<Service, Option<HashSet<Node>>> = HashMap::new();
 
         // use ResourceInt of each node and current utilization map to get remaining capacity
         let mut remaining_capacity: HashMap<Node, Resource> = HashMap::new();
         for (node, resource) in &node_utilization_map {
-
             // get the node resource int from config
-            let resource_int = self.config.cluster.nodes.iter().find(|n| n.name == node.name).unwrap().resource.clone();
+            let resource_int = self
+                .config
+                .cluster
+                .nodes
+                .iter()
+                .find(|n| n.name == node.name)
+                .unwrap()
+                .resource
+                .clone();
 
             // get the remaining capacity
             let remaining = resource_diff(resource_int, resource.clone());
             remaining_capacity.insert(node.clone(), remaining);
         }
 
-        // create a structure to keep track of assignments
-        //let mut assignment_map: HashMap<Service, Node> = HashMap::new();
+        // Place the most popular services on the root of the strongest path
+        // root is the first node in `strongest_path_nodes`
+        let root = &strongest_path_nodes[0];
 
-        // place the most popular services on the root of the strongest path
         for service in &most_popular_services {
-            let root = &strongest_path.0[0];
             if can_accommodate(root, service, all_services, &mut remaining_capacity, &service_utilization_map) {
                 println!("Placing service {} on root node {}", service.name, root.name);
-                // update the placement_map with the service and its dependencies
+                // place service and its dependencies on root
                 let service_dep = get_dependencies(service, all_services);
                 for dep in service_dep {
-                    placement_map.entry(dep.clone()).or_insert_with(|| Some(HashSet::new())).as_mut().unwrap().insert(root.clone());
-                    //assignment_map.insert(dep.clone(), root.clone());
+                    placement_map
+                        .entry(dep.clone())
+                        .or_insert_with(|| Some(HashSet::new()))
+                        .as_mut()
+                        .unwrap()
+                        .insert(root.clone());
                 }
-
             } else {
-                // If a node can't accommodate a service, find another suitable node
-                for (fallback_node, _) in strong_paths.iter() {
+                // Fallback: try other nodes in the strongest path first, then overall nodes
+                let mut placed = false;
+
+                // try nodes from strongest_path_nodes (in order)
+                for fallback_node in &strongest_path_nodes {
                     if can_accommodate(fallback_node, service, all_services, &mut remaining_capacity, &service_utilization_map) {
                         println!("Placing service {} on fallback node {}", service.name, fallback_node.name);
-                        placement_map.entry(service.clone()).or_insert_with(|| Some(HashSet::new())).as_mut().unwrap().insert(fallback_node.clone());
-                        //assignment_map.insert(service.clone(), fallback_node.clone());
+                        placement_map
+                            .entry(service.clone())
+                            .or_insert_with(|| Some(HashSet::new()))
+                            .as_mut()
+                            .unwrap()
+                            .insert(fallback_node.clone());
+                        placed = true;
                         break;
                     }
                 }
-            }
-        }
 
-        // place the longest service chain/tree on the strongest path
-        for path in &longest_paths {
-            for service in path {
-                if !placement_map.contains_key(service) {
-                    for node in strongest_path.0.iter() {
-                        if can_accommodate(node, service, all_services, &mut remaining_capacity, &service_utilization_map) {
-                            println!("Placing service [longest service chain] {} on node {}", service.name, node.name);
-                            placement_map.entry(service.clone()).or_insert_with(|| Some(HashSet::new())).as_mut().unwrap().insert(node.clone());
+                // if still not placed, try all config nodes
+                if !placed {
+                    for cfg_node in &self.config.cluster.nodes {
+                        if can_accommodate(cfg_node, service, all_services, &mut remaining_capacity, &service_utilization_map) {
+                            println!("Placing service {} on config fallback node {}", service.name, cfg_node.name);
+                            placement_map
+                                .entry(service.clone())
+                                .or_insert_with(|| Some(HashSet::new()))
+                                .as_mut()
+                                .unwrap()
+                                .insert(cfg_node.clone());
+                            placed = true;
                             break;
                         }
                     }
@@ -330,176 +351,218 @@ impl Solver {
             }
         }
 
-        // Handle remaining services not in the longest paths or most popular
-        for service in &self.config.services {
-            if !placement_map.contains_key(service) {
-                for node in strongest_path.0.iter() {
-                    if can_accommodate(node, service, all_services, &mut remaining_capacity, &service_utilization_map) {
-                        println!("Placing service [remaining] {} on node {}", service.name, node.name);
-                        placement_map.entry(service.clone()).or_insert_with(|| Some(HashSet::new())).as_mut().unwrap().insert(node.clone());
-                        break;
+        // place the longest service chain/tree on the strongest path nodes (in order)
+        for path in &longest_paths {
+            for service in path {
+                if !placement_map.contains_key(service) {
+                    for node in &strongest_path_nodes {
+                        if can_accommodate(node, service, all_services, &mut remaining_capacity, &service_utilization_map) {
+                            println!("Placing service [longest service chain] {} on node {}", service.name, node.name);
+                            placement_map
+                                .entry(service.clone())
+                                .or_insert_with(|| Some(HashSet::new()))
+                                .as_mut()
+                                .unwrap()
+                                .insert(node.clone());
+                            break;
+                        }
                     }
                 }
             }
         }
-    
-        //println!("Final Placement Map: {:?}", placement_map);
-    
-        Ok(placement_map)
-    }
 
-    pub async fn solve_lp_nsga2(
-        &mut self,
-        service_tree: ServiceGraph,
-        node_tree: NodeTree,
-    ) -> Result<HashMap<Service, Option<HashSet<Node>>>, Box<dyn std::error::Error>> {
-
-        let all_services = &self.config.services;
-        let all_nodes = &self.config.cluster.nodes;
-
-        // create service-service mappings from the service tree
-        let service_comms = service_tree.get_service_pairs(all_services.clone());
-        let node_comms = node_tree.get_tree();
-        let service_resources = self.get_service_resources(&all_services.clone(), &all_nodes.clone()).await;
-
-        // Create an empty map to hold Node as key, and Resource & Network as tuple values
-        let mut resource_map: HashMap<Node, (Resource, Network)> = HashMap::new();
-
-        for node in &self.config.cluster.nodes {
-            let node_utilization = self.api_client.get_node_utilization(&node.name).await?;
-            let node_environment = self.api_client.get_node_environment(&node.name).await?;
-            resource_map.insert(node.clone(), (node_utilization, node_environment));
-        }
-
-        let mut node_costs: HashMap<Node, f64> = HashMap::new();
-
-        for (node, (_resource, network)) in &resource_map {
-            node_costs.insert(node.clone(), self.compute_network_cost(network, &resource_map));
-        }
-
-        let mut node_resources: HashMap<Node, Resource> = HashMap::new();
-        for node in &self.config.cluster.nodes {
-            let node_utilization = self.api_client.get_node_utilization(&node.name).await?;
-            node_resources.insert(node.clone(), node_utilization);
-        }
-
-        let mut available_resources: HashMap<Node, Resource> = HashMap::new();
-        for (node, resource) in &node_resources {
-            let resource_int = self.config.cluster.nodes.iter().find(|n| n.name == node.name).unwrap().resource.clone();
-            let available = resource_diff(resource_int, resource.clone());
-            available_resources.insert(node.clone(), available);
-        }
-
-        // Create the constraints
-        let mut constraints = Vec::new();
-
-        //create node resource constraints
-        for node in &available_resources {
-            let (cpu, memory, disk, network) = (node.1.cpu, node.1.memory, node.1.disk, node.1.network);
-            let mut resource_constraint: HashMap<u64, (f64, f64, f64, f64)> = HashMap::new();   
-            resource_constraint.insert(node.0.id as u64, (cpu, memory, disk, network));
-            let constraint = Constraint::new(&node.0.name, RelationalOperator::LessOrEqualTo, None, None, Some(resource_constraint));
-            constraints.push(constraint);
-        }
-
-        // print all the constraints
-        println!("Constraints: {:?}", constraints);
-
-
-        // Create the problem
-        let problem = MicroservicePlacementProblem::create(
-            self.config.clone(),
-            service_comms,
-            node_comms.clone(),
-            node_costs,
-            service_resources,
-            available_resources,
-            Some(constraints),
-
-        )?;
-
-        //let mutation_operator_options = PolynomialMutationArgs::default(&problem);
-        let mutation_operator_options = PolynomialMutationArgs {
-            // ensure different variable value (with integers)
-            index_parameter: 1.0,
-            // always force mutation
-            variable_probability: 0.7,
-        };
-
-        // Customise the SBX and PM operators like in the paper
-        let crossover_operator_options = SimulatedBinaryCrossoverArgs {
-            distribution_index: 30.0,
-            crossover_probability: 1.0,
-            ..SimulatedBinaryCrossoverArgs::default()
-        };
-
-        // Setup the NSGA2 algorithm
-        let args = NSGA2Arg {
-            // use 100 individuals and stop the algorithm at 250 generations
-            number_of_individuals: 100,
-            stopping_condition: StoppingConditionType::MaxGeneration(MaxGenerationValue(250)),
-            // use default options for the SBX and PM operators
-            crossover_operator_options: Some(crossover_operator_options),
-            mutation_operator_options: Some(mutation_operator_options),
-            //mutation_operator_options: None,  
-            // no need to evaluate the objective in parallel
-            parallel: Some(false),
-            // do not export intermediate solutions
-            export_history: None,
-            resume_from_file: None,
-            // to reproduce results
-            seed: Some(10),
-        };
-
-        let mut algo = NSGA2::new(problem, args)?;
-
-        // initialize the timestamp 
-        let timestamp0 = chrono::Utc::now().timestamp();
-
-        // run the algorithm
-        algo.run().unwrap();
-
-        let (best, _value) = get_best_individual(&algo.get_results().individuals, ObjectiveDirection::Minimise);
-
-        // get the best individual
-        let best_individual = best.serialise();
-
-        // get values of the best individual
-        let best_values = best_individual.variable_values;
-
-        // create the placement map
-        let mut placement_map: HashMap<Service, Option<HashSet<Node>>> = HashMap::new();
-
-        for (service, var) in best_values {
-            // get Service from service
-            let service = get_services_by_names(service, &self.config.services).unwrap();
-            match var {
-                VariableValue::Choice(id) => {
-                    let node = get_node_by_id(id as i64, &self.config.cluster.nodes).unwrap();
-                    placement_map.entry(service.clone()).or_insert_with(|| Some(HashSet::new())).as_mut().unwrap().insert(node);
+        // Handle remaining services not placed yet
+        for service in &self.config.services {
+            if !placement_map.contains_key(service) {
+                // try strongest path nodes first
+                let mut placed = false;
+                for node in &strongest_path_nodes {
+                    if can_accommodate(node, service, all_services, &mut remaining_capacity, &service_utilization_map) {
+                        println!("Placing service [remaining] {} on node {}", service.name, node.name);
+                        placement_map
+                            .entry(service.clone())
+                            .or_insert_with(|| Some(HashSet::new()))
+                            .as_mut()
+                            .unwrap()
+                            .insert(node.clone());
+                        placed = true;
+                        break;
+                    }
                 }
-                // ignore the rest
-                _ => {}
+
+                // otherwise try config nodes
+                if !placed {
+                    for cfg_node in &self.config.cluster.nodes {
+                        if can_accommodate(cfg_node, service, all_services, &mut remaining_capacity, &service_utilization_map) {
+                            println!("Placing service [remaining fallback] {} on node {}", service.name, cfg_node.name);
+                            placement_map
+                                .entry(service.clone())
+                                .or_insert_with(|| Some(HashSet::new()))
+                                .as_mut()
+                                .unwrap()
+                                .insert(cfg_node.clone());
+                            break;
+                        }
+                    }
+                }
             }
         }
 
-        // update the placement map
-        self.placement = Some(placement_map.clone());
-
-        // update the revision  
-        self.revision += 1;
-
-        // print the placement map
-        print_placement_map(placement_map.clone());
-
-        // get the timestamp
-        let timestamp1 = chrono::Utc::now().timestamp();
-
-        // print the time taken
-        println!("Time taken to solve the problem: {} seconds", timestamp1 - timestamp0);
-
         Ok(placement_map)
     }
+
+    // pub async fn solve_lp_nsga2(
+    //     &mut self,
+    //     service_tree: ServiceGraph,
+    //     node_tree: NodeTree,
+    // ) -> Result<HashMap<Service, Option<HashSet<Node>>>, Box<dyn std::error::Error>> {
+
+    //     let all_services = &self.config.services;
+    //     let all_nodes = &self.config.cluster.nodes;
+
+    //     // create service-service mappings from the service tree
+    //     let service_comms = service_tree.get_service_pairs(all_services.clone());
+    //     let node_comms = node_tree.get_tree();
+    //     let service_resources = self.get_service_resources(&all_services.clone(), &all_nodes.clone()).await;
+
+    //     // Create an empty map to hold Node as key, and Resource & Network as tuple values
+    //     let mut resource_map: HashMap<Node, (Resource, Network)> = HashMap::new();
+
+    //     for node in &self.config.cluster.nodes {
+    //         let node_utilization = self.api_client.get_node_utilization(&node.name).await?;
+    //         let node_environment = self.api_client.get_node_environment(&node.name).await?;
+    //         resource_map.insert(node.clone(), (node_utilization, node_environment));
+    //     }
+
+    //     let mut node_costs: HashMap<Node, f64> = HashMap::new();
+
+    //     for (node, (_resource, network)) in &resource_map {
+    //         node_costs.insert(node.clone(), self.compute_network_cost(network, &resource_map));
+    //     }
+
+    //     let mut node_resources: HashMap<Node, Resource> = HashMap::new();
+    //     for node in &self.config.cluster.nodes {
+    //         let node_utilization = self.api_client.get_node_utilization(&node.name).await?;
+    //         node_resources.insert(node.clone(), node_utilization);
+    //     }
+
+    //     let mut available_resources: HashMap<Node, Resource> = HashMap::new();
+    //     for (node, resource) in &node_resources {
+    //         let resource_int = self.config.cluster.nodes.iter().find(|n| n.name == node.name).unwrap().resource.clone();
+    //         let available = resource_diff(resource_int, resource.clone());
+    //         available_resources.insert(node.clone(), available);
+    //     }
+
+    //     // Create the constraints
+    //     let mut constraints = Vec::new();
+
+    //     //create node resource constraints
+    //     for node in &available_resources {
+    //         let (cpu, memory, disk, network) = (node.1.cpu, node.1.memory, node.1.disk, node.1.network);
+    //         let mut resource_constraint: HashMap<u64, (f64, f64, f64, f64)> = HashMap::new();   
+    //         resource_constraint.insert(node.0.id as u64, (cpu, memory, disk, network));
+    //         let constraint = Constraint::new(&node.0.name, RelationalOperator::LessOrEqualTo, None, None, Some(resource_constraint));
+    //         constraints.push(constraint);
+    //     }
+
+    //     // print all the constraints
+    //     println!("Constraints: {:?}", constraints);
+
+
+    //     // Create the problem
+    //     let problem = MicroservicePlacementProblem::create(
+    //         self.config.clone(),
+    //         service_comms,
+    //         node_comms.clone(), 
+    //         node_costs,
+    //         service_resources,
+    //         available_resources,
+    //         Some(constraints),
+
+    //     )?;
+
+    //     //let mutation_operator_options = PolynomialMutationArgs::default(&problem);
+    //     let mutation_operator_options = PolynomialMutationArgs {
+    //         // ensure different variable value (with integers)
+    //         index_parameter: 1.0,
+    //         // always force mutation
+    //         variable_probability: 0.7,
+    //     };
+
+    //     // Customise the SBX and PM operators like in the paper
+    //     let crossover_operator_options = SimulatedBinaryCrossoverArgs {
+    //         distribution_index: 30.0,
+    //         crossover_probability: 1.0,
+    //         ..SimulatedBinaryCrossoverArgs::default()
+    //     };
+
+    //     // Setup the NSGA2 algorithm
+    //     let args = NSGA2Arg {
+    //         // use 100 individuals and stop the algorithm at 250 generations
+    //         number_of_individuals: 100,
+    //         stopping_condition: StoppingConditionType::MaxGeneration(MaxGenerationValue(250)),
+    //         // use default options for the SBX and PM operators
+    //         crossover_operator_options: Some(crossover_operator_options),
+    //         mutation_operator_options: Some(mutation_operator_options),
+    //         //mutation_operator_options: None,  
+    //         // no need to evaluate the objective in parallel
+    //         parallel: Some(false),
+    //         // do not export intermediate solutions
+    //         export_history: None,
+    //         resume_from_file: None,
+    //         // to reproduce results
+    //         seed: Some(10),
+    //     };
+
+    //     let mut algo = NSGA2::new(problem, args)?;
+
+    //     // initialize the timestamp 
+    //     let timestamp0 = chrono::Utc::now().timestamp();
+
+    //     // run the algorithm
+    //     algo.run().unwrap();
+
+    //     let (best, _value) = get_best_individual(&algo.get_results().individuals, ObjectiveDirection::Minimise);
+
+    //     // get the best individual
+    //     let best_individual = best.serialise();
+
+    //     // get values of the best individual
+    //     let best_values = best_individual.variable_values;
+
+    //     // create the placement map
+    //     let mut placement_map: HashMap<Service, Option<HashSet<Node>>> = HashMap::new();
+
+    //     for (service, var) in best_values {
+    //         // get Service from service
+    //         let service = get_services_by_names(service, &self.config.services).unwrap();
+    //         match var {
+    //             VariableValue::Choice(id) => {
+    //                 let node = get_node_by_id(id as i64, &self.config.cluster.nodes).unwrap();
+    //                 placement_map.entry(service.clone()).or_insert_with(|| Some(HashSet::new())).as_mut().unwrap().insert(node);
+    //             }
+    //             // ignore the rest
+    //             _ => {}
+    //         }
+    //     }
+
+    //     // update the placement map
+    //     self.placement = Some(placement_map.clone());
+
+    //     // update the revision  
+    //     self.revision += 1;
+
+    //     // print the placement map
+    //     print_placement_map(placement_map.clone());
+
+    //     // get the timestamp
+    //     let timestamp1 = chrono::Utc::now().timestamp();
+
+    //     // print the time taken
+    //     println!("Time taken to solve the problem: {} seconds", timestamp1 - timestamp0);
+
+    //     Ok(placement_map)
+    // }
 
 
     pub async fn solve_lp_nsga2opticas(
@@ -516,8 +579,12 @@ impl Solver {
         let node_comms = node_tree.get_tree();
         let service_resources = self.get_service_resources(&all_services.clone(), &all_nodes.clone()).await;
 
+        // Print the service communications and node communications
+        // println!("Service Communications: {:?}", service_comms);
+        // println!("Node Communications: {:?}", node_comms);
+
         // print the service resources
-        println!("Service Resources: {:?}", service_resources);
+        // println!("Service Resources: {:?}", service_resources);
 
         // // get the worst-case cost
         // println!("Worst-case cost: {}", node_tree.get_worst_cost());
@@ -527,8 +594,8 @@ impl Solver {
 
         let max_optimization_cost = node_tree.get_worst_cost() * service_tree.get_highest_message_count(&service_comms) as f64;
 
-        // print the max optimization cost
-        println!("Max Optimization Cost: {}", max_optimization_cost);
+        // // print the max optimization cost
+        // println!("Max Optimization Cost: {}", max_optimization_cost);
 
         // Create an empty map to hold Node as key, and Resource & Network as tuple values
         let mut resource_map: HashMap<Node, (Resource, Network)> = HashMap::new();
@@ -561,7 +628,7 @@ impl Solver {
                 resource_map.insert(node.clone(), (node_available, node_environment));
             }
              else {
-                println!("No services on node {}", node.name);
+                //println!("No services on node {}", node.name);
 
                 // Populate the resource map
                 resource_map.insert(node.clone(), (node_available, node_environment));
@@ -572,15 +639,6 @@ impl Solver {
         // print the resource map
         // println!("Resource Map: {:?}", resource_map);
 
-        let mut node_costs: HashMap<Node, f64> = HashMap::new();
-
-        for (node, (_resource, network)) in &resource_map {
-            node_costs.insert(node.clone(), self.compute_network_cost(network, &resource_map));
-        }
-
-        // print the node costs
-        println!("Node Costs: {:?}", node_costs);
-
         let mut node_utilization: HashMap<Node, Resource> = HashMap::new();
 
         // get available resources from the resource map
@@ -588,13 +646,45 @@ impl Solver {
             // get the node resource int from config
             let resource_int = self.config.cluster.nodes.iter().find(|n| n.name == node.name).unwrap().resource.clone();
             node_utilization.insert(node.clone(), resource_int_subx(resource_int, resource.clone()));
+        }        
+
+        // // print the available resources
+        // println!("Base Utilization Map (+- services): {:?}", node_utilization);
+
+        // Now compute node costs using node_comms (from node_tree.get_tree()) and base utilization
+        let mut node_costs: HashMap<Node, f64> = HashMap::new();
+        for (node, (_resource, _network)) in &resource_map {
+            let cost = self.compute_node_cost(node, &node_comms, &node_utilization);
+            node_costs.insert(node.clone(), cost);
         }
 
-        // print the available resources
-        println!("Base Utilization Map (+- services): {:?}", node_utilization);
+        // print the node costs
+        // println!("Node Costs: {:?}", node_costs);        
+
+
+        // let mut node_costs: HashMap<Node, f64> = HashMap::new();
+
+        // for (node, (_resource, network)) in &resource_map {
+        //     node_costs.insert(node.clone(), self.compute_network_cost(network, &resource_map));
+        // }
+
+        // // print the node costs
+        // println!("Node Costs: {:?}", node_costs);
+
+        // let mut node_utilization: HashMap<Node, Resource> = HashMap::new();
+
+        // // get available resources from the resource map
+        // for (node, (resource, _network)) in &resource_map {
+        //     // get the node resource int from config
+        //     let resource_int = self.config.cluster.nodes.iter().find(|n| n.name == node.name).unwrap().resource.clone();
+        //     node_utilization.insert(node.clone(), resource_int_subx(resource_int, resource.clone()));
+        // }
+
+        // // print the available resources
+        // println!("Base Utilization Map (+- services): {:?}", node_utilization);
 
         // Print the service tree
-        println!("Service Tree: {:?}", service_tree);
+        // println!("Service Tree: {:?}", service_tree);
         
         // Find the most popular services
         let (most_popular_services, _) = service_tree.most_popular_services();
@@ -603,17 +693,17 @@ impl Solver {
 
         let minmax_node_cost = self.get_min_max_costs(&node_costs);
         // print the minmax node cost
-        println!("MinMax Node Cost: {:?}", minmax_node_cost);
+        // println!("MinMax Node Cost: {:?}", minmax_node_cost);
 
         // print the most popular services
-        println!("Most Popular Services: {:?}", most_popular_services);
+        // println!("Most Popular Services: {:?}", most_popular_services);
 
         // print the least cost node
-        println!("Lowest Cost Node: {:?}", lowest_cost_node_id);
+        // println!("Lowest Cost Node: {:?}", lowest_cost_node_id);
 
         // print the minmax resource imbalance
         let minmax_resource_imbalance = self.get_min_max_resource_imbalance(&node_utilization, &service_resources);
-        println!("MinMax Resource Imbalance: {:?}", minmax_resource_imbalance);
+        // println!("MinMax Resource Imbalance: {:?}", minmax_resource_imbalance);
 
         // Create a constraint that places the most popular services on the least cost node
         let mut constraints = Vec::new();
@@ -828,6 +918,122 @@ impl Solver {
     
         assignment_map
     }
+
+    /// Connectivity-based cost: uses node_comms aggregated outgoing edge values.
+    /// We assume *higher edge value = better connectivity*. Cost := 1 - (local_avg / global_max_avg)
+    /// Returns a value in [0, 1] (0 = best connectivity).
+    pub fn compute_connectivity_cost(
+        &self,
+        node: &Node,
+        node_comms: &HashMap<String, Vec<AggLinkEdge>>,
+    ) -> f64 {
+        // Get outgoing edges for this node by name
+        let edges = node_comms.get(&node.name);
+
+        // If the node has no recorded edges -> treat as worst connectivity (cost = 1.0)
+        let local_avg = match edges {
+            Some(list) if !list.is_empty() => {
+                list.iter().map(|e| e.edge).sum::<f64>() / (list.len() as f64)
+            }
+            _ => {
+                return 1.0;
+            }
+        };
+
+        // Find maximum average among all nodes to normalize
+        let mut global_max_avg = 0.0;
+        for (_n, list) in node_comms.iter() {
+            if !list.is_empty() {
+                let avg = list.iter().map(|e| e.edge).sum::<f64>() / (list.len() as f64);
+                if avg > global_max_avg {
+                    global_max_avg = avg;
+                }
+            }
+        }
+
+        // If no global max (shouldn't happen) treat as worst
+        if global_max_avg == 0.0 {
+            return 1.0;
+        }
+
+        // Since higher edge => better, cost should be inverted: lower cost for higher avg
+        let ratio = local_avg / global_max_avg;
+        let cost = 1.0 - ratio;
+
+        // Clamp just in case of rounding
+        cost.max(0.0).min(1.0)
+    }
+
+    /// Resource pressure cost (0 = no pressure, 1 = fully saturated).
+    /// Uses base_utilization: HashMap<Node, Resource> where Resource fields are f64 usage.
+    pub fn compute_resource_pressure(
+        &self,
+        node: &Node,
+        base_utilization: &HashMap<Node, Resource>,
+    ) -> f64 {
+        // Map Node.resource (ResourceInt) -> Resource (f64)
+        let cap = Resource {
+            cpu: node.resource.cpu as f64,
+            memory: node.resource.memory as f64,
+            disk: node.resource.disk as f64,
+            network: node.resource.network as f64,
+        };
+
+        // Monitored usage (if missing, treat as zero)
+        let used = base_utilization.get(node).cloned().unwrap();
+
+        let safe_frac = |u: f64, t: f64| -> f64 {
+            if t <= 0.0 {
+                // If total capacity unknown or zero, treat as high pressure (1.0)
+                1.0
+            } else {
+                (u / t).max(0.0)
+            }
+        };
+
+        let cpu_p = safe_frac(used.cpu, cap.cpu);
+        let mem_p = safe_frac(used.memory, cap.memory);
+        let disk_p = safe_frac(used.disk, cap.disk);
+        let net_p = safe_frac(used.network, cap.network);
+
+        // average fractional utilization; clamp to 0..1
+        let avg_pressure = (cpu_p + mem_p + disk_p + net_p) / 4.0;
+        avg_pressure.min(1.0).max(0.0)
+    }    
+
+
+    /// Combined node cost [0..1]. Lower = cheaper/better for placement.
+    /// `node_comms`: HashMap keyed by node name -> outgoing edges
+    /// `base_utilization`: monitored usage per Node
+    pub fn compute_node_cost(
+        &self,
+        node: &Node,
+        node_comms: &HashMap<String, Vec<AggLinkEdge>>,
+        base_utilization: &HashMap<Node, Resource>,
+    ) -> f64 {
+        // compute sub-costs
+        let conn_cost = self.compute_connectivity_cost(node, node_comms);
+        let pressure_cost = self.compute_resource_pressure(node, base_utilization);
+
+        // get weights from config if present; otherwise defaults
+        // prefer network-first weight set A: connectivity heavier
+        let w_conn = 0.5;
+        let w_press = 0.5;
+
+        // normalize weights to sum to 1
+        let total_w = w_conn + w_press;
+        let w_conn = if total_w == 0.0 { 0.5 } else { w_conn / total_w };
+        let w_press = if total_w == 0.0 { 0.5 } else { w_press / total_w };
+
+        // simple linear combination: smaller is better
+        let final_cost = w_conn * conn_cost + w_press * pressure_cost;
+
+        // Clamp to 0..1
+        final_cost.max(0.0).min(1.0)
+    }
+
+
+
 
     fn compute_nr(&mut self, utilization: &Resource, resource_map: &HashMap<Node, (Resource, Network)>) -> f64 {
         let mut max_cpu = 0.0;
@@ -1075,7 +1281,7 @@ impl Solver {
         }
 
         // Print the total resources
-        println!("Total Service Resources: {:?}", total_service_resources);
+        // println!("Total Service Resources: {:?}", total_service_resources);
 
         let mut max_utilization_map = utilization_map.clone();
         // create a new node with max. resources and add to the utilization map
