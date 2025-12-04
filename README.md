@@ -265,5 +265,5 @@ sudo chmod 666 /var/lib/node_exporter/yonga.prom
 Run the script for multiple tests:
 ```bash
 cd /proj/cranecloud-PG0/ocas/evaluation
-for i in {1..10}; do      echo "=== Run $i ===";     ./generate_workload.sh [protocol];     sleep 10; done
+for i in {1..10}; do      echo "=== Run $i ===";     ./generate_workload.sh random /proj/cranecloud-PG0/ocas/scripts/hotel-reservation/mixed-workload_type_1.lua;     sleep 10; done
 ```

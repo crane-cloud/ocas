@@ -136,7 +136,7 @@ impl Yonga {
 
         //Retrieve trace entries with a limit
         //let limit = 1000000000; // This can be any variable number
-        let limit = 1000; // This can be any variable number
+        let limit = 10000; // This can be any variable number
 
         let trace_entries = get_latest_trace_entries(&collection_trace, limit).await.unwrap();
 
