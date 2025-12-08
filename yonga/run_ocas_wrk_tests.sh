@@ -1,5 +1,11 @@
 #!/bin/bash
 
+LOGFILE="ocas_wrk_results_yonga.log"
+echo "Starting test run at $(date)" > "$LOGFILE"
+
+for i in $(seq 1 10); do
+  echo "Iteration #$i: Running 'ocas' command" | tee -a "$LOGFILE"
+  ./target/debug/ocas -m ../docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation | tee -a "$LOGFILE"
 LOGFILE="ocas_wrk_results.log"
 echo "Starting test run at $(date)" > "$LOGFILE"
 
@@ -13,6 +19,7 @@ for i in $(seq 1 6); do
   echo "Running 5 'wrk' tests" | tee -a "$LOGFILE"
   for j in $(seq 1 5); do
     echo "  Test #$j" | tee -a "$LOGFILE"
+    ../wrk -t 1 -c 10 -d 30 -s ../scripts/hotel-reservation/mixed-workload_type_1.lua http://10.10.1.1:5000 -R 1000000 -L | grep 'Requests/sec' | tee -a "$LOGFILE"
     ../wrk -t 1 -c 10 -d 30 -s ../scripts/hotel-reservation/mixed-workload_type_1.lua http://cr-lsk.cranecloud.africa:5000 -R 1000000 -L | grep 'Requests/sec' | tee -a "$LOGFILE"
   done
 

@@ -3,7 +3,7 @@
 
 
 ## Run OCAS
-```./target/debug/ocas -m docker-compose.yaml -p yonga -c ../evaluation/config.yaml -u http://127.0.0.1:30000 -s hotelreservation```
+```./target/debug/ocas -m docker-compose.yaml -p yonga -c ../evaluation/config-dev.yaml -u http://127.0.0.1:30000 -s hotelreservation```
 
 
 ## Start the API

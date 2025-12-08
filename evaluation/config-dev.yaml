@@ -4,42 +4,42 @@ cluster:
       name: "ocas01"
       ip: "10.10.1.1"
       resource: 
-        cpu: 20
-        memory: 64317
-        disk: 64000
-        network: 25000
+        cpu: 16
+        memory: 65536
+        disk: 65479
+        network: 100000
     - id: 2
       name: "ocas02"
       ip: "10.10.1.2"
       resource: 
-        cpu: 20
-        memory: 64317
-        disk: 64000
-        network: 25000
+        cpu: 16
+        memory: 65536
+        disk: 65479
+        network: 100000
     - id: 3
       name: "ocas03"
       ip: "10.10.1.3"
       resource: 
-        cpu: 20
-        memory: 64317
-        disk: 64000
-        network: 25000
+        cpu: 16
+        memory: 65536
+        disk: 65479
+        network: 100000
     - id: 4
       name: "ocas04"
       ip: "10.10.1.4"
       resource: 
-        cpu: 20
-        memory: 64317
-        disk: 64000
-        network: 25000
+        cpu: 64
+        memory: 131072
+        disk: 65479
+        network: 100000
     - id: 5
       name: "ocas05"
       ip: "10.10.1.5"
       resource: 
-        cpu: 20
-        memory: 64317
-        disk: 64000
-        network: 25000
+        cpu: 64
+        memory: 131072
+        disk: 65479
+        network: 100000
   prometheus:
     url: "http://10.10.1.6:9090"
     label: "container_label_com_docker_swarm_service_name"

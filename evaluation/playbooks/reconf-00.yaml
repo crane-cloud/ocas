@@ -1,0 +1,14 @@
+---
+- hosts: peer_cloudlab, client_cloudlab
+  remote_user: mwotila
+  become: true
+
+  tasks:
+  - name: Check if the qdisc already exists and delete it if it does
+    command: tc qdisc del dev ens1f1np1 root
+    ignore_errors: yes
+    register: tc_del_result
+
+  - name: Display the result of the tc qdisc deletion
+    debug:
+      var: tc_del_result.stdout_lines

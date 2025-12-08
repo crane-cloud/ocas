@@ -1,4 +1,4 @@
-use rand::distributions::weighted;
+// use rand::distributions::weighted;
 use serde::{Deserialize, Deserializer, Serialize};
 // use serde::de::Error as DeError;
 use bson::DateTime;
@@ -250,69 +250,103 @@ impl Network {
         }
     }
 
-    pub fn aggregate_network(config: Config, net: &Vec<Network>, maxmin_network: &Network) -> f64 {
-        let mut available_values: Vec<f64> = net.iter().map(|n| n.available).collect();
-        let mut bandwidth_values: Vec<f64> = net.iter().map(|n| n.bandwidth).collect();
-        let mut latency_values: Vec<f64> = net.iter().map(|n| n.latency).collect();
-        let mut packet_loss_values: Vec<f64> = net.iter().map(|n| n.packet_loss).collect();
-    
-        available_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
-        bandwidth_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
-        latency_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
-        packet_loss_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
-    
-        let percentile_index = (net.len() as f64 * 0.99).ceil() as usize - 1;
-    
-        let p99_available = available_values[percentile_index];
-        let p99_bandwidth = bandwidth_values[percentile_index];
-        let p99_latency = latency_values[percentile_index];
-        let p99_packet_loss = packet_loss_values[percentile_index];
-    
-        // Avoiding division by zero or extremely small values
-        let safe_latency = if p99_latency < 1e-9 { 
-            //println!("p99_latency: {}, maxmin_network.latency: {}", p99_latency, maxmin_network.latency);
-            maxmin_network.latency 
-        } 
-        else { 
-            p99_latency 
-        }; // Minimum threshold for latency
-        let safe_packet_loss = if p99_packet_loss < 1e-12 { 
-            //println!("p99_packet_loss: {}, maxmin_network.packet_loss: {}", p99_packet_loss, maxmin_network.packet_loss);
-            maxmin_network.packet_loss 
-        } 
-        else { 
-            p99_packet_loss 
-        }; // Minimum threshold for packet loss
-    
-        let weight_available = config.get_weight("available");
-        let weight_bandwidth = config.get_weight("bandwidth");
-        let weight_latency = config.get_weight("latency");
-        let weight_packet_loss = config.get_weight("packet_loss");
-    
-        // Calculate each weighted value
-        let weighted_available = weight_available * p99_available / maxmin_network.available;
-        let weighted_bandwidth = weight_bandwidth * p99_bandwidth / maxmin_network.bandwidth;
-    
-        // Ensure that latency and packet loss do not exceed their respective weights
-        let weighted_latency = weight_latency * maxmin_network.latency / safe_latency;
-        let clamped_latency = weighted_latency.min(weight_latency); // Clamp to the maximum weight
-    
-        let weighted_packet_loss = weight_packet_loss * maxmin_network.packet_loss / safe_packet_loss;
-        let clamped_packet_loss = weighted_packet_loss.min(weight_packet_loss); // Clamp to the maximum weight
-    
-        let weighted_value = weighted_available + weighted_bandwidth + clamped_latency + clamped_packet_loss;
-    
-        // Normalize the weighted value to between 0.0 and 1.0
-        let normalized_value = weighted_value.min(1.0);
-    
-        // Invert the cost to make better network configurations have lower cost
-        let cost = 1.0 - normalized_value;
-    
-        // Print the weighted value, normalized value, and cost
-        // println!("Weighted value: {}, Normalized value: {}, Cost: {}", weighted_value, normalized_value, cost);
-    
-        cost
+    pub fn aggregate_network(config: Config, net: &Vec<Network>, _maxmin_network: &Network) -> f64 {
+        // Edge case: No samples (this should not happen)
+        if net.is_empty() {
+            return 1.0; // Highest cost
+        }
+
+        // Collect vectors
+        let mut available_vals: Vec<f64> = net.iter().map(|n| n.available).collect();
+        let mut bandwidth_vals: Vec<f64> = net.iter().map(|n| n.bandwidth).collect();
+        let mut latency_vals: Vec<f64> = net.iter().map(|n| n.latency).collect();
+        let mut packet_vals: Vec<f64> = net.iter().map(|n| n.packet_loss).collect();
+
+        // Sort for percentile
+        available_vals.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        bandwidth_vals.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        latency_vals.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        packet_vals.sort_by(|a, b| a.partial_cmp(b).unwrap());
+
+        let p = |v: &Vec<f64>| -> f64 {
+            let idx = ((v.len() as f64) * 0.99).ceil() as usize - 1;
+            v[idx]
+        };
+
+        let p99_available = p(&available_vals);
+        let p99_bandwidth = p(&bandwidth_vals);
+        let p99_latency = p(&latency_vals);
+        let p99_packet_loss = p(&packet_vals);
+
+        // -------------------------
+        // Min–max normalization
+        // -------------------------
+        fn normalize(v: f64, min: f64, max: f64, invert: bool) -> f64 {
+            if (max - min).abs() < 1e-12 {
+                return 0.0;
+            }
+            let mut n = (v - min) / (max - min);
+            if invert {
+                n = 1.0 - n;
+            }
+            n.clamp(0.0, 1.0)
+        }
+
+        let av_norm = normalize(
+            p99_available,
+            available_vals[0],
+            *available_vals.last().unwrap(),
+            false, // available: higher is better → no invert
+        );
+
+        let bw_norm = normalize(
+            p99_bandwidth,
+            bandwidth_vals[0],
+            *bandwidth_vals.last().unwrap(),
+            false, // bandwidth: higher is better
+        );
+
+        let lat_norm = normalize(
+            p99_latency,
+            latency_vals[0],
+            *latency_vals.last().unwrap(),
+            true, // latency: lower is better → invert
+        );
+
+        let pl_norm = normalize(
+            p99_packet_loss,
+            packet_vals[0],
+            *packet_vals.last().unwrap(),
+            true, // packet loss: lower is better
+        );
+
+        // --------------------------
+        // Weighted aggregation
+        // --------------------------
+        let w_av = config.get_weight("available");
+        let w_bw = config.get_weight("bandwidth");
+        let w_lat = config.get_weight("latency");
+        let w_pl = config.get_weight("packet_loss");
+
+        let weighted_sum =
+            w_av * av_norm +
+            w_bw * bw_norm +
+            w_lat * lat_norm +
+            w_pl * pl_norm;
+
+        let total_weight = w_av + w_bw + w_lat + w_pl;
+
+        // final normalized score 0..1
+        let score = if total_weight > 0.0 {
+            weighted_sum / total_weight
+        } else {
+            weighted_sum
+        };
+
+        // final cost is inverted
+        1.0 - score
     }
+
 }
 
 

@@ -1,0 +1,319 @@
+version: '3'
+services:
+  mongodb-reservation:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    container_name: hotel_reserv_reservation_mongo
+    volumes:
+    - reservation:/data/db
+  recommendation:
+    image: mwotila/hotel_reserv_recommend_single_node:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: recommendation
+    container_name: hotel_reserv_recommendation
+    depends_on:
+    - mongodb-recommendation
+    - consul
+  frontend:
+    image: mwotila/hotel_reserv_frontend_single_node:latest
+    ports:
+    - 5000:5000
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: frontend
+    container_name: hotel_reserv_frontend
+    depends_on:
+    - consul
+  profile:
+    image: mwotila/hotel_reserv_profile_single_node:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - MEMC_TIMEOUT
+    - LOG_LEVEL
+    entrypoint: profile
+    container_name: hotel_reserv_profile
+    depends_on:
+    - mongodb-profile
+    - memcached-profile
+    - consul
+  consul:
+    image: consul:1.12
+    ports:
+    - 8300:8300
+    - 8400:8400
+    - 8500:8500
+    - 8600:53/udp
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints: []
+  mongodb-user:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    container_name: hotel_reserv_user_mongo
+    volumes:
+    - user:/data/db
+  mongodb-recommendation:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    container_name: hotel_reserv_recommendation_mongo
+    volumes:
+    - recommendation:/data/db
+  mongodb-profile:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    container_name: hotel_reserv_profile_mongo
+    volumes:
+    - profile:/data/db
+  jaeger:
+    image: jaegertracing/all-in-one:1.48
+    ports:
+    - 14250:14250
+    - 9411:9411
+    - '14269'
+    - 5778:5778
+    - 14268:14268
+    - '14267'
+    - 16686:16686
+    - 5775:5775/udp
+    - 6831:6831/udp
+    - 6832:6832/udp
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.role == manager
+    environment:
+    - JAEGER_DISABLED=true
+    - SPAN_STORAGE_TYPE=grpc-plugin
+    - GRPC_STORAGE_PLUGIN_BINARY=/app/jaeger-mongodb
+    - GRPC_STORAGE_PLUGIN_CONFIGURATION_FILE=/app/configs/config.yaml
+    container_name: hotel_reserv_jaeger
+    volumes:
+    - /proj/cranecloud-PG0/ocas/jaeger-mongodb:/app
+  memcached-rate:
+    image: memcached
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - MEMCACHED_CACHE_SIZE=128
+    - MEMCACHED_THREADS=2
+    container_name: hotel_reserv_rate_mmc
+  rate:
+    image: mwotila/hotel_reserv_rate_single_node:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    - MEMC_TIMEOUT
+    entrypoint: rate
+    container_name: hotel_reserv_rate
+    depends_on:
+    - mongodb-rate
+    - memcached-rate
+    - consul
+  memcached-profile:
+    image: memcached
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - MEMCACHED_CACHE_SIZE=128
+    - MEMCACHED_THREADS=2
+    container_name: hotel_reserv_profile_mmc
+  memcached-reserve:
+    image: memcached
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - MEMCACHED_CACHE_SIZE=128
+    - MEMCACHED_THREADS=2
+    container_name: hotel_reserv_reservation_mmc
+  mongodb-geo:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    container_name: hotel_reserv_geo_mongo
+    volumes:
+    - geo:/data/db
+  mongodb-rate:
+    image: mongo:4.4.6
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    container_name: hotel_reserv_rate_mongo
+    volumes:
+    - rate:/data/db
+  search:
+    image: mwotila/hotel_reserv_search_single_node:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: search
+    container_name: hotel_reserv_search
+    depends_on:
+    - consul
+  geo:
+    image: mwotila/hotel_reserv_geo_single_node:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: geo
+    container_name: hotel_reserv_geo
+    depends_on:
+    - mongodb-geo
+    - consul
+  reservation:
+    image: mwotila/hotel_reserv_rsv_single_node:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    - MEMC_TIMEOUT
+    entrypoint: reservation
+    container_name: hotel_reserv_reservation
+    depends_on:
+    - mongodb-reservation
+    - memcached-reserve
+    - consul
+  user:
+    image: mwotila/hotel_reserv_user_single_node:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+        - node.labels.name == ocas01
+    environment:
+    - TLS
+    - GC
+    - JAEGER_SAMPLE_RATIO
+    - LOG_LEVEL
+    entrypoint: user
+    container_name: hotel_reserv_user
+    depends_on:
+    - mongodb-user
+    - consul
+volumes:
+  reservation: {}
+  recommendation: {}
+  profile: {}
+  geo: {}
+  rate: {}
+  user: {}

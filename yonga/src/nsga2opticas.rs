@@ -15,7 +15,7 @@ use crate::utility::{Node, Service, Config, Resource};
 pub struct OMicroservicePlacementProblem {
     config: Config,
     service_comms: HashMap<(Service, Service), (u32, f64)>, // (number of messages, 99-% latency)
-    node_comms: HashMap<Node, Vec<AggLinkEdge>>, // (node, (neighbour, link property))
+    node_comms: HashMap<String, Vec<AggLinkEdge>>, // (node, (neighbour, link property))
     cost: HashMap<Node, f64>,
     max_opt_cost: f64,
     minmax_node_cost: (f64, f64),
@@ -31,7 +31,7 @@ impl OMicroservicePlacementProblem {
     pub fn create(
         config: Config,
         service_comms: HashMap<(Service, Service), (u32, f64)>, // (number of messages, 99-% latency)
-        node_comms: HashMap<Node, Vec<AggLinkEdge>>, // (node, (neighbour, link property))
+        node_comms: HashMap<String, Vec<AggLinkEdge>>, // (node, (neighbour, link property))
         cost: HashMap<Node, f64>,
         max_opt_cost: f64,
         minmax_node_cost: (f64, f64),
@@ -72,111 +72,84 @@ impl OMicroservicePlacementProblem {
         OProblem::new(objectives, variables, constraints, e)
     }
 
-    // Calculate the resource cost
     pub fn resource_cost(&self, placements: &HashMap<Service, Node>) -> f64 {
-        // Calculate the total cost based on placements
-        let total_cost: f64 = placements
-            .iter()
-            .map(|(_, node)| *self.cost.get(node).unwrap_or(&0.0))
+        // 1. Sum the cost of each node used in placements
+        let total_raw_cost: f64 = placements
+            .values()
+            .map(|node| *self.cost.get(node).unwrap_or(&0.0))
             .sum();
 
-        // get the length of the placements
-        let num_placements = placements.len() as f64;
+        let service_count = placements.len() as f64;
 
-        let (min_cost, max_cost) = self.minmax_node_cost;
+        let (_min_cost, max_cost) = self.minmax_node_cost;
 
-        // Find the minimum and maximum resource cost
-        // let max_cost = self.cost.values()
-        //     .filter_map(|&val| if val.is_finite() { Some(val) } else { None })  // Ignore NaN or infinite values
-        //     .max_by(|a, b| a.partial_cmp(b).unwrap())
-        //     .unwrap_or(0.0);  // Default to 0.0 if all values are NaN/invalid
+        // 2. Maximum possible cost (all services placed on worst node)
+        let max_possible = max_cost * service_count;
 
-        // let min_cost = self.cost.values()
-        //     .filter_map(|&val| if val.is_finite() { Some(val) } else { None })  // Ignore NaN or infinite values
-        //     .min_by(|a, b| a.partial_cmp(b).unwrap())
-        //     .unwrap_or(0.0);  // Default to 0.0 if all values are NaN/invalid   
+        // 3. Normalize
+        let normalized = if max_possible > 0.0 {
+            total_raw_cost / max_possible
+        } else {
+            0.0
+        };
 
-        let max_resource_cost = max_cost * num_placements;
-        let _min_resource_cost = min_cost * num_placements;
-    
-        // Normalize the total cost based on the maximum observed resource cost
-        // let normalized_cost = if max_resource_cost > 0.0 {
-        //     total_cost / max_resource_cost
-        // } else {
-        //     0.0 // If max_cost is 0 (which is unlikely but possible), set cost to 0
-        // };
+        let final_cost = normalized.clamp(0.0, 1.0);
 
-        // Clamp the normalized cost between 0 and 1
-        //let final_cost = normalized_cost.max(0.0).min(1.0);
-
-        // Print the total cost, normalized cost, and final cost (optional)
-        // println!("Total cost: {}, Normalized cost: {}, Final cost: {}", total_cost, normalized_cost, final_cost);
-
-        let final_cost = total_cost / max_resource_cost;
-
-        // print the costs
-        // println!("Total cost: {}, Max resource cost: {}, Final cost: {}", total_cost, max_resource_cost, final_cost);
-
+        // Debug low-cost cases
         if final_cost < 0.1 {
-            println!("Total cost: {}, Max resource cost: {}, Final cost: {}", total_cost, max_resource_cost, final_cost);
-            println!("Placement: {:?}", placements);
+            println!(
+                "[resource_cost] Raw: {}, MaxPossible: {}, FinalNorm: {}",
+                total_raw_cost, max_possible, final_cost
+            );
+            println!("Placements: {:?}", placements);
         }
 
         final_cost
     }
 
     // Calculate the communication cost
-    pub fn communication_cost(&self, max_cost: f64, placements: &HashMap<Service, Node>) -> f64 {
+    // Normalize communication cost using aggregated node communications
+    pub fn communication_cost(
+        &self,
+        placement: &HashMap<Service, Node>,
+        service_comms: &HashMap<(Service, Service), (u32, f64)>,
+        max_cost: f64,
+    ) -> f64 {
         let mut total_cost = 0.0;
 
-        // get the length of the service comms
-        let service_comms_len = self.service_comms.len();
-
-        // get the max cost - multiply the max cost by the number of service comms
-        let max_cost = max_cost * service_comms_len as f64;
-
-        // Iterate over the service communication pairs
-        for ((s1, s2), (message_count, _latency)) in &self.service_comms {
-            if let (Some(node1), Some(node2)) = (placements.get(s1), placements.get(s2)) {
-                if node1 == node2 {
-                    // Services are on the same node, no communication cost
+        for ((svc1, svc2), (message_count, _)) in service_comms {
+            if let (Some(node1), Some(node2)) = (placement.get(svc1), placement.get(svc2)) {
+                if node1.name == node2.name {
+                    // Same node → no comms cost
                     continue;
-                } else {
-                    // Services are on different nodes, get the path cost
-                    let path_cost = self.node_comms
-                        .get(node1)
-                        .and_then(|edges| edges.iter().find(|edge| edge.destination == *node2))
-                        .map_or(f64::INFINITY, |edge| edge.edge);
+                }
 
-                    // Calculate the total communication cost for this pair
-                    let comm_cost = *message_count as f64 * path_cost;
-                    
-                    // Check if the cost is finite before adding
-                    if comm_cost.is_finite() {
-                        
-                        total_cost += comm_cost;
+                // --- FIXED: use node names, not Node structs ---
+                let src = node1.name.clone();
+                let dst = node2.name.clone();
 
-                    } else {
-                        println!("Infinite cost encountered - Message count: {}, Path cost: {} from {} to {} ", message_count, path_cost, node1.name, node2.name);
-                    }
+                let path_cost = self.node_comms
+                    .get(&src)
+                    .and_then(|edges| edges.iter().find(|edge| edge.destination == dst))
+                    .map_or(f64::INFINITY, |edge| edge.edge);
+
+                let comm_cost = (*message_count as f64) * path_cost;
+
+                if comm_cost.is_finite() {
+                    total_cost += comm_cost;
                 }
             }
         }
 
-        // Normalize the total cost based on the maximum observed communication cost
+        // Normalize
         let normalized_cost = if max_cost > 0.0 {
             total_cost / max_cost
         } else {
-            0.0 // If max_cost is 0 (which is unlikely but possible), set cost to 0
+            0.0
         };
 
-        // Clamp the normalized cost between 0 and 1
-        let final_cost = normalized_cost.max(0.0).min(1.0);
-
-        // Print the total cost, normalized cost, and final cost (optional)
-        // println!("Total cost: {}, Normalized cost: {}, Final cost: {}", total_cost, normalized_cost, final_cost);
-
-        final_cost
+        // Clamp 0..1
+        normalized_cost.clamp(0.0, 1.0)
     }
 
     // Consider remaining resources in the resource imbalance objective
@@ -362,83 +335,135 @@ impl OMicroservicePlacementProblem {
 }
 
 impl OEvaluator for OMicroservicePlacementProblem {
-    fn evaluate(&self, i: &OIndividual) -> Result<OEvaluationResult, Box<dyn Error>> {
+    fn evaluate(&self, i: &OIndividual) 
+        -> Result<OEvaluationResult, Box<dyn Error>> 
+    {
         let mut placements: HashMap<Service, Node> = HashMap::new();
 
-        // Decode variables from the individual into service-to-node mapping
-        for (_index, service) in self.config.services.iter().enumerate() {
+        // Decode service → node assignments
+        for service in &self.config.services {
+            let variable_value = i.get_variable_value(&service.name)?;
 
-            let variable_value = i.get_variable_value(&service.name)?; // Use service name as the key?
-
-            // Ensure we handle the `VariableValue` appropriately
             match variable_value {
-                // Assuming `VariableValue::Choice` contains the selected node's name
-                OVariableValue::OChoice(node_name) => {
-                    if let Some(node) = self.config.cluster.nodes.iter().find(|n| n.id as u64 == *node_name) {
-                        placements.insert(service.clone(), node.clone());
-                    } else {
-                        return Err(format!("Node with name '{}' not found", node_name).into());
-                    }
-                },
-                // Handle other possible cases if necessary
-                _ => {
-                    return Err("Unexpected variable value type".into());
-                },
-            }
+                OVariableValue::OChoice(node_id_u64) => {
+                    let node = self.config.cluster.nodes
+                        .iter()
+                        .find(|n| n.id as u64 == *node_id_u64)
+                        .ok_or_else(|| format!("Node id {} not found", node_id_u64))?;
 
+                    placements.insert(service.clone(), node.clone());
+                }
+                _ => return Err("Unexpected variable value".into()),
+            }
         }
 
-        // Calculate each objective
+        // === OBJECTIVES =======================================================
         let mut objectives = HashMap::new();
 
-        objectives.insert("resource_cost".to_string(), self.resource_cost(&placements));
-        objectives.insert("communication_cost".to_string(), self.communication_cost(self.max_opt_cost, &placements));
-        //objectives.insert("latency".to_string(), self.latency(&placements));
-        objectives.insert("resource_imbalance".to_string(), self.resource_imbalance(&placements));
+        objectives.insert(
+            "resource_cost".into(),
+            self.resource_cost(&placements)
+        );
 
-        let mut constraints: HashMap<String, (Option<u64>, Option<Vec<HashMap<String, u64>>>, Option<HashMap<u64, (f64, f64, f64, f64)>>)> = HashMap::new();
+        objectives.insert(
+            "communication_cost".into(),
+            self.communication_cost(
+                &placements,
+                &self.service_comms,
+                self.max_opt_cost
+            )
+        );
 
-        for constraint in &self.constraints.clone().unwrap() {
-            let name = constraint.name();
-            if let Some(_value) = constraint.target() {
-                let v = placements.get(&self.config.services.iter().find(|s| s.name == name).unwrap()).unwrap().id as u64;
-                constraints.insert(name.to_string(), (Some(v), None, None));
-            } else if let Some(services) = constraint.services() {
-                let services:Vec<HashMap<String, u64>> = services.iter().map(|service| {
-                    let v = placements.get(&self.config.services.iter().find(|s| s.name == service.clone()).unwrap()).unwrap().id as u64;
-                    let mut map = HashMap::new();
-                    map.insert(service.to_string(), v);
-                    map
-                }).collect();
-                constraints.insert(name.to_string(), (None, Some(services.clone()), None));
-            } else if let Some(_resource) = constraint.resource() {
-                for node in &self.config.cluster.nodes {
-                    let mut resource_constraint: HashMap<u64, (f64, f64, f64, f64)> = HashMap::new();
-                    // initialize the resource requests for each node
-                    let mut r = Resource::default();
-                    // determine resource requests for each service placed on this node in placements
-                    for (service, _) in &placements {
-                        if let Some(service_util) = self.utilization.get(service){
-                            let service_util = service_util.clone();
-                            for util in service_util {
-                                if let Some((nodex, resource)) = util {
-                                    if node.clone() == nodex {
-                                        r.add(&resource);
+        objectives.insert(
+            "resource_imbalance".into(),
+            self.resource_imbalance(&placements)
+        );
+
+        // === CONSTRAINTS ======================================================
+        let mut constraint_results: HashMap<
+            String,
+            (
+                Option<u64>, 
+                Option<Vec<HashMap<String, u64>>>, 
+                Option<HashMap<u64, (f64,f64,f64,f64)>>
+            )
+        > = HashMap::new();
+
+        if let Some(constraints) = &self.constraints {
+            for constraint in constraints {
+                let cname = constraint.name().to_string();
+
+                if let Some(target_node_id) = constraint.target() {
+                    // Direct equality constraint
+                    let svc = self.config.services
+                        .iter()
+                        .find(|s| s.name == cname)
+                        .ok_or("Constraint service not found")?;
+
+                    let placement_node = placements.get(svc).unwrap();
+                    constraint_results.insert(
+                        cname.clone(),
+                        (Some(placement_node.id as u64), None, None)
+                    );
+
+                } else if let Some(services) = constraint.services() {
+                    // Group constraint
+                    let mut group_vals = vec![];
+
+                    for sname in services {
+                        let svc = self.config.services
+                            .iter()
+                            .find(|s| s.name == *sname)
+                            .unwrap();
+
+                        let node = placements.get(svc).unwrap();
+
+                        let mut m = HashMap::new();
+                        m.insert(sname.to_string(), node.id as u64);
+                        group_vals.push(m);
+                    }
+
+                    constraint_results.insert(
+                        cname.clone(),
+                        (None, Some(group_vals), None)
+                    );
+
+                } else if let Some(_) = constraint.resource() {
+                    // Resource constraint
+                    let mut rmap = HashMap::new();
+
+                    for node in &self.config.cluster.nodes {
+                        let mut node_usage = Resource::default();
+
+                        for (svc, pnode) in &placements {
+                            if pnode.id == node.id {
+                                if let Some(util) = self.utilization.get(svc) {
+                                    for u in util {
+                                        if let Some((_n, res)) = u {
+                                            node_usage.add(res);
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        rmap.insert(
+                            node.id as u64,
+                            (node_usage.cpu, node_usage.memory, node_usage.disk, node_usage.network)
+                        );
                     }
-                    resource_constraint.insert(node.id as u64, (r.cpu, r.memory, r.disk, r.network));
-                    // add the constraint
-                    constraints.insert(node.name.clone(), (None, None, Some(resource_constraint)));
+
+                    constraint_results.insert(
+                        cname.clone(),
+                        (None, None, Some(rmap))
+                    );
                 }
             }
         }
 
         Ok(OEvaluationResult {
-            constraints: Some(constraints),
             objectives,
+            constraints: Some(constraint_results),
         })
     }
 }
