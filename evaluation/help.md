@@ -7,10 +7,10 @@
 
 
 ## Start the API
-```./target/debug/api -c ../evaluation/config.yaml -p 30000```
+```./target/debug/api -c ../evaluation/config-dev.yaml -p 30000```
 
 ## Start the Monitor
-```./target/debug/monitor -c ../evaluation/config.yaml```
+```./target/debug/monitor -c ../evaluation/config-dev.yaml```
 
 
 ## Sample NR/NE Results
@@ -71,8 +71,8 @@ Node: cr-dar, Coordinate: (505.67518706531337, 0.8703524271376406), Distance: 0.
 
 ### VM Setup
 
-for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
 # Add Docker's official GPG key:
 sudo apt-get update
@@ -116,7 +116,7 @@ docker node update --label-add name=ocas05 02inlnm7tzx3lnuaiz5o6atn6
 
 
 
-*/5 * * * * /bin/bash /proj/rip-PG0/ocas/scripts/yonga/perf.sh 10.10.1.X >> /var/log/ocas-perf.log 2>&1 && sudo mv /users/mwotila/ocas/evaluation/network/metrics.txt /var/lib/node_exporter/yonga.prom
+*/5 * * * * /bin/bash /proj/cranecloud-PG0/ocas/scripts/yonga/perf.sh 10.10.1.X >> /var/log/ocas-perf.log 2>&1 && sudo mv /users/mwotila/ocas/evaluation/network/metrics.txt /var/lib/node_exporter/yonga.prom
 
 
 sudo mkdir /var/lib/node_exporter
@@ -212,3 +212,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
 
 docker rmi hotel_reserv_geo_single_node hotel_reserv_frontend_single_node hotel_reserv_rate_single_node  hotel_reserv_user_single_node hotel_reserv_rsv_single_node  hotel_reserv_recommend_single_node hotel_reserv_profile_single_node hotel_reserv_search_single_node
+
+
+cp prometheus/prometheus/prometheus_dev.yml prometheus/prometheus/prometheus.yml

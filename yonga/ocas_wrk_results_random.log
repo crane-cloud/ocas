@@ -1,0 +1,650 @@
+Starting test run at Fri Jan 31 12:09:36 UTC 2025
+Iteration #1: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.57
+  Test #2
+  Test #3
+Requests/sec:      0.33
+  Test #4
+  Test #5
+Requests/sec:      0.47
+All tests completed for iteration #1!
+Iteration #2: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      2.46
+  Test #2
+  Test #3
+Requests/sec:      2.76
+  Test #4
+  Test #5
+Requests/sec:      2.43
+All tests completed for iteration #2!
+Iteration #3: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     10.45
+  Test #2
+  Test #3
+Requests/sec:      6.79
+  Test #4
+  Test #5
+Requests/sec:      0.17
+All tests completed for iteration #3!
+Iteration #4: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.17
+  Test #3
+  Test #4
+Requests/sec:      0.10
+  Test #5
+All tests completed for iteration #4!
+Iteration #5: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     34.42
+  Test #2
+  Test #3
+Requests/sec:     34.63
+  Test #4
+  Test #5
+Requests/sec:     35.32
+All tests completed for iteration #5!
+Iteration #6: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     38.05
+  Test #2
+  Test #3
+Requests/sec:     37.74
+  Test #4
+  Test #5
+Requests/sec:     37.15
+All tests completed for iteration #6!
+Iteration #7: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.27
+  Test #2
+  Test #3
+Requests/sec:     11.74
+  Test #4
+  Test #5
+Requests/sec:      9.68
+All tests completed for iteration #7!
+Iteration #8: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      5.46
+  Test #2
+  Test #3
+Requests/sec:      3.09
+  Test #4
+  Test #5
+Requests/sec:      0.00
+All tests completed for iteration #8!
+Iteration #9: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      6.89
+  Test #2
+  Test #3
+Requests/sec:      8.15
+  Test #4
+  Test #5
+Requests/sec:      8.42
+All tests completed for iteration #9!
+Iteration #10: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      8.76
+  Test #3
+  Test #4
+Requests/sec:      8.32
+  Test #5
+All tests completed for iteration #10!
+Iteration #11: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     13.21
+  Test #2
+  Test #3
+Requests/sec:     13.29
+  Test #4
+  Test #5
+Requests/sec:     13.31
+All tests completed for iteration #11!
+Iteration #12: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     24.19
+  Test #2
+  Test #3
+Requests/sec:     25.92
+  Test #4
+  Test #5
+Requests/sec:     24.35
+All tests completed for iteration #12!
+Iteration #13: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:     29.36
+  Test #3
+  Test #4
+Requests/sec:     35.73
+  Test #5
+All tests completed for iteration #13!
+Test run completed at Fri Jan 31 14:11:58 UTC 2025
+Starting test run at Fri Jan 31 15:37:53 UTC 2025
+Iteration #1: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      5.32
+  Test #2
+  Test #3
+Requests/sec:      5.39
+  Test #4
+  Test #5
+Requests/sec:      5.12
+All tests completed for iteration #1!
+Iteration #2: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     19.60
+  Test #2
+  Test #3
+Requests/sec:     20.03
+  Test #4
+  Test #5
+Requests/sec:     19.83
+All tests completed for iteration #2!
+Iteration #3: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     13.21
+  Test #2
+  Test #3
+Requests/sec:     14.28
+  Test #4
+  Test #5
+Requests/sec:     11.59
+All tests completed for iteration #3!
+Iteration #4: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      8.75
+  Test #2
+  Test #3
+Requests/sec:      2.00
+  Test #4
+  Test #5
+Requests/sec:      6.03
+All tests completed for iteration #4!
+Iteration #5: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.37
+  Test #2
+  Test #3
+Requests/sec:      0.17
+  Test #4
+  Test #5
+Requests/sec:      0.43
+All tests completed for iteration #5!
+Iteration #6: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     22.42
+  Test #2
+  Test #3
+Requests/sec:     24.32
+  Test #4
+  Test #5
+Requests/sec:     24.23
+All tests completed for iteration #6!
+Iteration #7: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.37
+  Test #2
+  Test #3
+Requests/sec:      0.13
+  Test #4
+  Test #5
+Requests/sec:      0.63
+All tests completed for iteration #7!
+Iteration #8: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     25.92
+  Test #2
+  Test #3
+Requests/sec:     19.63
+  Test #4
+  Test #5
+Requests/sec:     20.08
+All tests completed for iteration #8!
+Iteration #9: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.20
+  Test #2
+  Test #3
+Requests/sec:      0.27
+  Test #4
+  Test #5
+Requests/sec:      0.17
+All tests completed for iteration #9!
+Iteration #10: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      8.75
+  Test #3
+  Test #4
+Requests/sec:      8.90
+  Test #5
+All tests completed for iteration #10!
+Iteration #11: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     38.07
+  Test #2
+  Test #3
+Requests/sec:      0.20
+  Test #4
+  Test #5
+Requests/sec:      0.30
+All tests completed for iteration #11!
+Iteration #12: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      1.03
+  Test #3
+  Test #4
+Requests/sec:     22.38
+  Test #5
+All tests completed for iteration #12!
+Iteration #13: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 2 minutes before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     78.77
+  Test #2
+  Test #3
+Requests/sec:     48.44
+  Test #4
+  Test #5
+All tests completed for iteration #13!
+Test run completed at Fri Jan 31 17:42:12 UTC 2025
+Starting test run at Tue Feb  4 08:48:40 UTC 2025
+Iteration #1: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.27
+  Test #2
+  Test #3
+Requests/sec:      0.30
+  Test #4
+  Test #5
+Requests/sec:      0.63
+All tests completed for iteration #1!
+Iteration #2: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     10.14
+  Test #2
+  Test #3
+Requests/sec:      7.38
+  Test #4
+  Test #5
+Requests/sec:     25.33
+All tests completed for iteration #2!
+Iteration #3: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:     16.57
+  Test #2
+  Test #3
+Requests/sec:     18.93
+  Test #4
+  Test #5
+Requests/sec:     16.67
+All tests completed for iteration #3!
+Iteration #4: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.13
+  Test #3
+  Test #4
+Requests/sec:      0.30
+  Test #5
+All tests completed for iteration #4!
+Iteration #5: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.43
+  Test #2
+  Test #3
+Requests/sec:      0.17
+  Test #4
+  Test #5
+Requests/sec:      0.03
+All tests completed for iteration #5!
+Iteration #6: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      0.63
+  Test #3
+  Test #4
+Requests/sec:      6.52
+  Test #5
+All tests completed for iteration #6!
+Iteration #7: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      9.25
+  Test #2
+  Test #3
+Requests/sec:     10.75
+  Test #4
+  Test #5
+Requests/sec:      9.12
+All tests completed for iteration #7!
+Iteration #8: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+  Test #3
+  Test #4
+  Test #5
+All tests completed for iteration #8!
+Iteration #9: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+  Test #3
+  Test #4
+  Test #5
+All tests completed for iteration #9!
+Iteration #10: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+  Test #3
+  Test #4
+  Test #5
+All tests completed for iteration #10!
+Iteration #11: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      7.89
+  Test #2
+  Test #3
+Requests/sec:      3.99
+  Test #4
+  Test #5
+Requests/sec:      0.07
+All tests completed for iteration #11!
+Iteration #12: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+  Test #2
+Requests/sec:      4.26
+  Test #3
+  Test #4
+  Test #5
+Requests/sec:      0.47
+All tests completed for iteration #12!
+Iteration #13: Running 'ocas' command
+Random strategy selected
+Running the Random Strategy 0
+Skipping the "jaeger" service
+Number of services: 19
+Deployed the stack successfully!
+Waiting for 1 minute before running 'wrk' tests...
+Running 5 'wrk' tests
+  Test #1
+Requests/sec:      0.40
+  Test #2
+  Test #3
+  Test #4
+Requests/sec:      0.00
+  Test #5
+All tests completed for iteration #13!
+Test run completed at Tue Feb  4 10:47:33 UTC 2025
